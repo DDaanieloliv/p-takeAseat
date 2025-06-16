@@ -18,6 +18,35 @@ public class Utils {
 
 
 
+    public static List<Seat> setUpDatabase() {
+        return List.of(
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000001")).position(1).free(true).person(null).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000002")).position(2).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Alice", "00000000001", null)).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000003")).position(3).free(true).person(null).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000004")).position(4).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000002"), "Bob", "00000000002", null)).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000005")).position(5).free(true).person(null).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000006")).position(6).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Carol", "00000000003", null)).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000007")).position(7).free(true).person(null).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000008")).position(8).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000004"), "David", "00000000004", null)).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000009")).position(9).free(true).person(null).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000010")).position(10).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000005"), "Eva", "00000000005", null)).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000011")).position(11).free(true).person(null).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000012")).position(12).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000006"), "Frank", "00000000006", null)).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000013")).position(13).free(true).person(null).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000014")).position(14).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000007"), "Grace", "00000000007", null)).build(),
+                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000015")).position(15).free(false)
+                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000008"), "Hank", "00000000008", null)).build()
+        );
+    }
+
+
     public static Seat createSeatWithoutPerson(Integer position) {
 
         return Seat.builder()
