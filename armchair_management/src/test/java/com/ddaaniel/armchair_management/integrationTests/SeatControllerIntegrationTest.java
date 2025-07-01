@@ -1,19 +1,27 @@
 package com.ddaaniel.armchair_management.integrationTests;
 
 import com.ddaaniel.armchair_management.controller.SeatController;
+import com.ddaaniel.armchair_management.model.Person;
+import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
+import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
+import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 import com.ddaaniel.armchair_management.utilsObjects.Utils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,25 +33,63 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class SeatControllerIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
+    private final SeatController seatController;
+    private final ISeatRepository seatRepository;
+    private final IPersonRepository personRepository;
 
     @Autowired
-    private SeatController seatController;
-
+    public SeatControllerIntegrationTest(MockMvc mockMvc, SeatController seatController, ISeatRepository seatRepository, IPersonRepository personRepository) {
+        this.mockMvc = mockMvc;
+        this.seatController = seatController;
+        this.seatRepository = seatRepository;
+        this.personRepository = personRepository;
+    }
 
     @BeforeEach
-    void setUp() {
-        // Initialize test data if needed
-        Utils.setUpDatabase();
+    void setupTestData() {
+        for (int i = 1; i <= 15; i++) {
+            Seat seat = new Seat();
+            seat.setPosition(i);
+
+            // Para simular algumas poltronas ocupadas
+            if (i % 5 == 0) { // Ex: posições 5, 10, 15 estarão ocupadas
+                Person person = Person.builder()
+                        .name("Pessoa " + i)
+                        .cpf(String.format("%011d", i)) // CPF com 11 dígitos, baseado na posição
+                        .build();
+
+                personRepository.save(person);
+
+                seat.setFree(false);
+                seat.setPerson(person);
+            } else {
+                seat.setFree(true);
+                seat.setPerson(null);
+            }
+
+            seatRepository.save(seat);
+        }
     }
+
+    @AfterEach
+    void cleanUp() {
+        List<Seat> seats = seatRepository.findAll();
+        for (Seat seat : seats) {
+            seat.setPerson(null);
+        }
+        seatRepository.saveAll(seats);
+        seatRepository.deleteAll();
+        personRepository.deleteAll();
+    }
+
 
     @Test
     void getAllStatusPoltronas_ShouldReturnAllSeats() throws Exception {
         // Act & Assert using MockMvc
         mockMvc.perform(get("/seats"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(15)); // Assuming 15 seats in test data
+                .andExpect(jsonPath("$.length()").value(15)); // Assumindo que há 15 Seats nos dados de Teste.
     }
 
     @Test
@@ -60,9 +106,9 @@ public class SeatControllerIntegrationTest {
 
     @Test
     public void getBySeat_ShouldReturnCorrectSeat() throws Exception {
-        mockMvc.perform(get("/seats/2"))
+        mockMvc.perform(get("/seats/8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.position").value(2))
+                .andExpect(jsonPath("$.position").value(8))
                 .andExpect(jsonPath("$.free").value(true)) // Alterado para true
                 .andExpect(jsonPath("$.occupant").isEmpty());
     }

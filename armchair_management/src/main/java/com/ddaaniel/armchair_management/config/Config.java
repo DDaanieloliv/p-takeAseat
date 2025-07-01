@@ -3,12 +3,14 @@ package com.ddaaniel.armchair_management.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Profile("!test") // Só executa quando NÃO estiver no perfil "test"
 @Configuration
 public class Config implements CommandLineRunner {
 

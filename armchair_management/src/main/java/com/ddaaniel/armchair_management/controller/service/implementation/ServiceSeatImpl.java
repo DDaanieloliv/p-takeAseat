@@ -23,12 +23,14 @@ import java.util.List;
 public class ServiceSeatImpl implements ISeatService {
 
 
+    private final IPersonRepository personRepository;
     private final ISeatRepository seatRepository;
     private final SeatMapper seatMapper;
 
     @Autowired
-    public ServiceSeatImpl(ISeatRepository seatRepository, IPersonRepository personRepository, SeatMapper seatMapper) {
+    public ServiceSeatImpl(ISeatRepository seatRepository, IPersonRepository personRepository, IPersonRepository personRepository1, SeatMapper seatMapper) {
         this.seatRepository = seatRepository;
+        this.personRepository = personRepository1;
         this.seatMapper = seatMapper;
     }
 
@@ -101,6 +103,7 @@ public class ServiceSeatImpl implements ISeatService {
         seat.setFree(false);
         //seat.setFree(false);
         //seat.setPerson(pessoa);
+        personRepository.save(pessoa);
         seatRepository.save(seat);
         //seatRepository.save(seat);
     }

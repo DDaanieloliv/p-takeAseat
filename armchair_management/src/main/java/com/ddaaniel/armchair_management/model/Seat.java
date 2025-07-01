@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Entity
@@ -31,7 +32,7 @@ public class Seat {
     @Builder.Default
     private Boolean free = true;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(/*cascade = CascadeType.PERSIST*/)
     @JoinColumn(name = "person_ID", unique = true)
     @JsonIgnoreProperties({"seat"}) // Evita loop infinito
     private Person person;

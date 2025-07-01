@@ -4,9 +4,13 @@ import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
+import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.javafaker.Faker;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
 
@@ -16,36 +20,113 @@ public class Utils {
     private static final Faker faker = Faker.instance();
     private static final Random randomGenerator = new Random();
 
+    @Autowired
+    private static IPersonRepository personRepository;
 
-
-    public static List<Seat> setUpDatabase() {
-        return List.of(
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000001")).position(1).free(true).person(null).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000002")).position(2).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Alice", "00000000001", null)).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000003")).position(3).free(true).person(null).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000004")).position(4).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000002"), "Bob", "00000000002", null)).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000005")).position(5).free(true).person(null).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000006")).position(6).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Carol", "00000000003", null)).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000007")).position(7).free(true).person(null).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000008")).position(8).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000004"), "David", "00000000004", null)).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000009")).position(9).free(true).person(null).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000010")).position(10).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000005"), "Eva", "00000000005", null)).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000011")).position(11).free(true).person(null).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000012")).position(12).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000006"), "Frank", "00000000006", null)).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000013")).position(13).free(true).person(null).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000014")).position(14).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000007"), "Grace", "00000000007", null)).build(),
-                Seat.builder().seatID(UUID.fromString("10000000-0000-0000-0000-000000000015")).position(15).free(false)
-                        .person(new Person(UUID.fromString("00000000-0000-0000-0000-000000000008"), "Hank", "00000000008", null)).build()
-        );
-    }
-
+//    @Autowired
+//    private  JdbcTemplate jdbcTemplate;
+//
+//    @Transactional
+//    public void setUpDatabase() {
+//
+//        UUID person1 = UUID.randomUUID();
+//        UUID seat1 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person1, "Pessoa 1", "00000000001");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat1, 1, false, person1);
+//
+//        UUID person2 = UUID.randomUUID();
+//        UUID seat2 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person2, "Pessoa 2", "00000000002");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat2, 2, false, person2);
+//
+//        UUID person3 = UUID.randomUUID();
+//        UUID seat3 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person3, "Pessoa 3", "00000000003");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat3, 3, false, person3);
+//
+//        UUID person4 = UUID.randomUUID();
+//        UUID seat4 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person3, "Pessoa 4", "00000000004");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat4, 4, false, person4);
+//
+//        UUID person5 = UUID.randomUUID();
+//        UUID seat5 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person5, "Pessoa 5", "00000000005");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat5, 5, false, person5);
+//
+//        UUID person6 = UUID.randomUUID();
+//        UUID seat6 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person6, "Pessoa 6", "00000000006");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat6, 6, false, person6);
+//
+//        UUID person7 = UUID.randomUUID();
+//        UUID seat7 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person7, "Pessoa 7", "00000000007");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat7, 7, false, person7);
+//
+//        UUID seatId8 = UUID.randomUUID();
+//        jdbcTemplate.update(
+//                "INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seatId8, 8, true, null
+//        );
+//
+//        UUID seatId9 = UUID.randomUUID();
+//        jdbcTemplate.update(
+//                "INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seatId9, 9, true, null
+//        );
+//
+//        UUID seatId10 = UUID.randomUUID();
+//        jdbcTemplate.update(
+//                "INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seatId10, 10, true, null
+//        );
+//
+//        UUID seatId11 = UUID.randomUUID();
+//        jdbcTemplate.update(
+//                "INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seatId11, 11, true, null
+//        );
+//
+//        UUID seatId12 = UUID.randomUUID();
+//        jdbcTemplate.update(
+//                "INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seatId12, 12, true, null
+//        );
+//
+//        UUID seatId13 = UUID.randomUUID();
+//        jdbcTemplate.update(
+//                "INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seatId13, 13, true, null
+//        );
+//
+//        UUID seatId14 = UUID.randomUUID();
+//        jdbcTemplate.update(
+//                "INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seatId14, 14, true, null
+//        );
+//
+//        UUID person15 = UUID.randomUUID();
+//        UUID seat15 = UUID.randomUUID();
+//        jdbcTemplate.update("INSERT INTO tb_persons (personid, name, cpf) VALUES (?, ?, ?)",
+//                person15, "Pessoa 15", "00000000015");
+//        jdbcTemplate.update("INSERT INTO tb_seats (seatid, position, free, person_ID) VALUES (?, ?, ?, ?)",
+//                seat15, 15, false, person15);
+//    }
 
     public static Seat createSeatWithoutPerson(Integer position) {
 
