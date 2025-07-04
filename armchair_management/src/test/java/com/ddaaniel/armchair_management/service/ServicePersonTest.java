@@ -2,6 +2,7 @@ package com.ddaaniel.armchair_management.service;
 
 import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;
+import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
@@ -102,9 +103,28 @@ class ServicePersonTest {
     }
 
     @Test
-    void ShouldThrowSeatAlreadyFree () {
+    void ShouldThrowNotFoundException () {
+
+        // ARRANGE
+        var acceptablePosition = Utils.randomIntegerWithRange15();
+        Mockito.when(seatRepository.findByPosition(
+                Mockito.eq(acceptablePosition))).thenReturn(Optional.empty());
+//        Mockito.doReturn(Optional.empty()).when(
+//                seatRepository.findByPosition(Mockito.eq(acceptablePosition))
+//        );
+
+        // ACT
+        Exception exception = Assertions.assertThrows(NotFoundException.class,
+                ()-> servicePerson.removePessoaFromSeat(acceptablePosition));
 
         // ASSERT
+        Assertions.assertEquals("Poltrona não encontrada.", exception.getMessage());
+    }
+
+    @Test
+    void ShouldThrowSeatAlreadyFree () {
+
+        // ARRANGE
         var randomPosition = Utils.randomIntegerWithRange15();
         var seatFoundWithoutPerson = Optional.of(Utils.createSeatWithoutPerson(randomPosition));
 
@@ -115,7 +135,7 @@ class ServicePersonTest {
         Exception exception = Assertions.assertThrows(BadRequestException.class,
                 () -> servicePerson.removePessoaFromSeat(randomPosition));
 
-        // ARRANGE
+        // ASSERT
         Assertions.assertEquals(
                 "A Poltrona já está desocupada.", exception.getMessage());
     }

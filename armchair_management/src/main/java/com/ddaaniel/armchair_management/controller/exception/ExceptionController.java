@@ -28,6 +28,10 @@ public class ExceptionController {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<?> handleValidationException (ValidationException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {

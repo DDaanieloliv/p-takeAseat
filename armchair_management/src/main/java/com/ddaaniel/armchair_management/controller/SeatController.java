@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -47,7 +46,7 @@ public class SeatController {
 
     // Alocando uma poltrona para pessoa
     @PutMapping("/allocate")
-    public ResponseEntity<?> addPessoaToSeat (@RequestBody RequestAllocationDTO dto)  {
+    public ResponseEntity<?> addPersonToSeat(@RequestBody RequestAllocationDTO dto)  {
         serviceSeat.allocateSeatToPessoa(dto.position(), dto.name(), dto.cpf());
 
         MessageResponseDTO message = new MessageResponseDTO("Poltrona alocada com sucesso.");
@@ -58,7 +57,7 @@ public class SeatController {
     // Removendo a relação de pessoa e poltrona e também removendo o registro da respectiva
     // pessoa para não ficar acumulando no BD
     @PutMapping("/remove/{position}")
-    public ResponseEntity<?> removePessoaFromSeat(@PathVariable Integer position) {
+    public ResponseEntity<?> removePersonFromSeat(@PathVariable Integer position) {
         servicePessoa.removePessoaFromSeat(position);
 
         MessageResponseDTO message = new MessageResponseDTO("Pessoa removida da Poltrona.");

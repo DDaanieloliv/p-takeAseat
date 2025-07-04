@@ -4,7 +4,6 @@ package com.ddaaniel.armchair_management.controller;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
 import com.ddaaniel.armchair_management.utilsObjects.Utils;
-import jdk.jshell.execution.Util;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.MimeType;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +68,7 @@ public class ControllerTests {
     }
 
     @Nested
-    class getBySeatClassTestClass {
+    class getBySeatTestClass {
 
         @Test
         void shouldMapCurrently() throws Exception {
@@ -92,7 +90,7 @@ public class ControllerTests {
 
 
     @Nested
-    class addPessoaToSeatTestClass {
+    class addPersonToSeatTestClass {
 
         @Test
         void shouldMapCurrently() throws Exception {
@@ -116,7 +114,7 @@ public class ControllerTests {
     }
 
     @Nested
-    class removePessoaFromSeatTestClass {
+    class removePersonFromSeatTestClass {
 
         @Test
         void shouldMapCurrently () throws Exception {

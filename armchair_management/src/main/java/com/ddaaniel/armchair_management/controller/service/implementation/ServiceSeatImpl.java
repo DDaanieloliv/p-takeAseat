@@ -13,6 +13,8 @@ import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import java.util.List;
 @Service
 public class ServiceSeatImpl implements ISeatService {
 
+    private final Logger logger = LoggerFactory.getLogger(ServiceSeatImpl.class);
 
     private final IPersonRepository personRepository;
     private final ISeatRepository seatRepository;
@@ -104,7 +107,10 @@ public class ServiceSeatImpl implements ISeatService {
         //seat.setFree(false);
         //seat.setPerson(pessoa);
         personRepository.save(pessoa);
+        logger.info("Foreign key ( Person --> Seat ) successfully linked !");
+
         seatRepository.save(seat);
+        logger.info("Entity Seat, successfully saved !");
         //seatRepository.save(seat);
     }
 }

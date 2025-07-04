@@ -3,6 +3,7 @@ package com.ddaaniel.armchair_management.integrationTests;
 import com.ddaaniel.armchair_management.controller.SeatController;
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
+import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
@@ -13,25 +14,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class SeatControllerIntegrationTest {
+public class ControllerIntegrationTestAllContext {
 
     private final MockMvc mockMvc;
     private final SeatController seatController;
@@ -39,7 +37,7 @@ public class SeatControllerIntegrationTest {
     private final IPersonRepository personRepository;
 
     @Autowired
-    public SeatControllerIntegrationTest(MockMvc mockMvc, SeatController seatController, ISeatRepository seatRepository, IPersonRepository personRepository) {
+    public ControllerIntegrationTestAllContext(MockMvc mockMvc, SeatController seatController, ISeatRepository seatRepository, IPersonRepository personRepository) {
         this.mockMvc = mockMvc;
         this.seatController = seatController;
         this.seatRepository = seatRepository;
@@ -101,7 +99,7 @@ public class SeatControllerIntegrationTest {
         // Assert
         assertEquals(15, seats.size()); // Verify number of seats
         assertEquals(1, seats.get(0).position()); // Verify first seat position
-        assertEquals(true, seats.get(0).free()); // Verify first seat status
+        assertTrue(seats.get(0).free()); // Verify first seat status
     }
 
     @Test
@@ -119,4 +117,39 @@ public class SeatControllerIntegrationTest {
                 .andExpect(status().isBadRequest()) // Alterado para isBadRequest()
                 .andExpect(jsonPath("$.error").value("Assento Inválido"))
                 .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
-    }}
+    }
+
+    @Test
+    void addPersonToSeat_ShouldReturnSuccess () throws Exception {
+
+        // ARRANGE
+        var randomPosition = Utils.randomIntegerWithRange15();
+        var randomName = Utils.randomNameString();
+        var randomCPF = Utils.randomCpf();
+        RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, randomName, randomCPF);
+
+
+        // ACT / ASSERT
+        mockMvc.perform(put("/seats/allocate")
+                .content(Utils.asJsonString(dto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message")
+                        .value("Poltrona alocada com sucesso."));
+    }
+
+    @Test
+    void addPersonToSeat_ShouldReturnBadRequest () throws Exception {
+
+        // ARRANGE
+        String nonValidName = null;
+        var randomPosition = Utils.randomIntegerWithRange15();
+        var randomCPF = Utils.randomCpf();
+        RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, nonValidName, randomCPF);
+
+        // ACT / ASSERT
+        mockMvc.perform(put("/seats/allocate")
+                .content(Utils.asJsonString(dto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("O nome deve ter no máximo 50 caracteres."));
+    }
+}

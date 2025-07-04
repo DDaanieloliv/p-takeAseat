@@ -1,10 +1,14 @@
 package com.ddaaniel.armchair_management.service;
 
+import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
+import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
+import com.ddaaniel.armchair_management.controller.exception.ValidationException;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
 import com.ddaaniel.armchair_management.controller.service.mapper.SeatMapper;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 import com.ddaaniel.armchair_management.utilsObjects.Utils;
+import com.sun.source.tree.ModuleTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -91,6 +95,35 @@ class ServiceSeatTest {
                     .toDTO(Mockito.eq(seatEntityBuilt));
 
         }
+
+        @Test
+        void shouldThrowInvalidSeatException () {
+
+            // ARRANGE
+            var IntPosition = 16;
+
+            // ACT
+            Exception exception = Assertions.assertThrows(AssentoInvalidoException.class,
+                    ()-> serviceSeat.detailsFromSpecificSeat(IntPosition/*Mockito.eq(IntPosition)*/));
+
+            // ASSERT
+            Assertions.assertEquals("O assento informado é inválido.", exception.getMessage());
+        }
+
+        @Test
+        void shouldThrowNotFoundException (){
+
+            // ARRANGE
+            var IntPosition = 17;
+            Mockito.when(seatRepository.findByPosition(IntPosition)).thenReturn(Optional.empty());
+
+            // ACT
+            Exception exception = Assertions.assertThrows(NotFoundException.class,
+                    ()-> serviceSeat.detailsFromSpecificSeat(IntPosition));
+
+            // ASSERT
+            Assertions.assertEquals("Poltrona não encontrada.", exception.getMessage());
+        }
     }
 
 
@@ -99,7 +132,7 @@ class ServiceSeatTest {
 
 
         @Test
-        void someTestName() {
+        void shouldAllocateSeatCorrectly() {
 
             // ARRANGE
             var randomPosition = Utils.randomIntegerWithRange15();
@@ -134,8 +167,62 @@ class ServiceSeatTest {
             Assertions.assertEquals(seatCaptor.getValue().getPerson().getCpf(), seatCreated.getPerson().getCpf());
 
         }
+
+        @Test
+        void shouldThrowValidationExceptionInName () {
+
+            // ARRANGE
+            String unAcceptableName = null;
+            var validCPF = "11111111111";
+            var validPosition = 7;
+
+            // ACT
+            Exception exception = Assertions.assertThrows(ValidationException.class,
+                    ()-> serviceSeat.allocateSeatToPessoa(
+                            validPosition , unAcceptableName, validCPF ));
+
+            // ASSERT
+            Assertions.assertEquals("O nome deve ter no máximo 50 caracteres.", exception.getMessage());
+        }
+
+
+        @Test
+        void shouldThrowValidationExceptionInCPF () {
+
+
+            // ARRANGE
+            String ValidName = "someName";
+            var UnValidCPF = "111111111111";
+            var validPosition = 7;
+
+            // ACT
+            Exception exception = Assertions.assertThrows(ValidationException.class,
+                    ()-> serviceSeat.allocateSeatToPessoa(
+                            validPosition , ValidName, UnValidCPF));
+
+            // ASSERT
+            Assertions.assertEquals(
+                    "O CPF deve conter exatamente 11 dígitos numéricos.", exception.getMessage());
+        }
+
+        @Test
+        void shouldThrowInvalidSeatException() {
+
+            // ARRANGE
+            var randomName = Utils.randomNameString();
+            var randomCPF = Utils.randomCpf();
+            var unValidPosition = 17;
+
+            // ACT
+            Exception exception = Assertions.assertThrows(AssentoInvalidoException.class,
+                    ()-> serviceSeat.allocateSeatToPessoa(unValidPosition, randomName, randomCPF));
+
+            // ASSERT
+            Assertions.assertEquals("O assento informado é inválido.", exception.getMessage());
+        }
     }
 }
+
 
 
 
