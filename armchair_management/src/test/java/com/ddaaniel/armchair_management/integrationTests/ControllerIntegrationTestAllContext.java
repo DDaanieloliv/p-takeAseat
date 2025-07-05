@@ -10,6 +10,7 @@ import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 import com.ddaaniel.armchair_management.utilsObjects.Utils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -81,75 +82,149 @@ public class ControllerIntegrationTestAllContext {
         personRepository.deleteAll();
     }
 
+    @Nested
+    class GetMapping_getAllStatusPoltronas {
 
-    @Test
-    void getAllStatusPoltronas_ShouldReturnAllSeats() throws Exception {
-        // Act & Assert using MockMvc
-        mockMvc.perform(get("/seats"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(15)); // Assumindo que há 15 Seats nos dados de Teste.
+        @Test
+        void getAllStatusPoltronas_ShouldReturnAllSeats() throws Exception {
+            // Act & Assert using MockMvc
+            mockMvc.perform(get("/seats"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(15)); // Assumindo que há 15 Seats nos dados de Teste.
+        }
+
+        @Test
+        void getAllStatusPoltronas_DirectControllerCall_ShouldReturnCorrectData() {
+            // Act
+            var response = seatController.getAllStatusPoltronas();
+            List<SeatResponseDTO> seats = response.getBody();
+
+            // Assert
+            assertEquals(15, seats.size()); // Verify number of seats
+            assertEquals(1, seats.get(0).position()); // Verify first seat position
+            assertTrue(seats.get(0).free()); // Verify first seat status
+        }
     }
 
-    @Test
-    void getAllStatusPoltronas_DirectControllerCall_ShouldReturnCorrectData() {
-        // Act
-        var response = seatController.getAllStatusPoltronas();
-        List<SeatResponseDTO> seats = response.getBody();
+    @Nested
+    class GetMapping_getBySeat {
 
-        // Assert
-        assertEquals(15, seats.size()); // Verify number of seats
-        assertEquals(1, seats.get(0).position()); // Verify first seat position
-        assertTrue(seats.get(0).free()); // Verify first seat status
+        @Test
+        public void getBySeat_ShouldReturnCorrectSeat() throws Exception {
+            mockMvc.perform(get("/seats/8"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.position").value(8))
+                    .andExpect(jsonPath("$.free").value(true)) // Alterado para true
+                    .andExpect(jsonPath("$.occupant").isEmpty());
+        }
+
+        @Test
+        public void getBySeat_InvalidPosition_ShouldReturnBadRequest() throws Exception {
+            mockMvc.perform(get("/seats/999"))
+                    .andExpect(status().isBadRequest()) // Alterado para isBadRequest()
+                    .andExpect(jsonPath("$.error").value("Assento Inválido"))
+                    .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
+        }
     }
 
-    @Test
-    public void getBySeat_ShouldReturnCorrectSeat() throws Exception {
-        mockMvc.perform(get("/seats/8"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.position").value(8))
-                .andExpect(jsonPath("$.free").value(true)) // Alterado para true
-                .andExpect(jsonPath("$.occupant").isEmpty());
+    @Nested
+    class PutMapping_addPersonToSeat {
+
+        @Test
+        void addPersonToSeat_ShouldReturnSuccess() throws Exception {
+
+            // ARRANGE
+            var randomPosition = Utils.randomIntegerWithRange15();
+            var randomName = Utils.randomNameString();
+            var randomCPF = Utils.randomCpf();
+            RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, randomName, randomCPF);
+
+
+            // ACT / ASSERT
+            mockMvc.perform(put("/seats/allocate")
+                            .content(Utils.asJsonString(dto))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.message")
+                            .value("Poltrona alocada com sucesso."));
+        }
+
+        @Test
+        void addPersonToSeat_ShouldReturnBadRequest_Name() throws Exception {
+
+            // ARRANGE
+            String nonValidName = null;
+            var randomPosition = Utils.randomIntegerWithRange15();
+            var randomCPF = Utils.randomCpf();
+            RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, nonValidName, randomCPF);
+
+            // ACT / ASSERT
+            mockMvc.perform(put("/seats/allocate")
+                            .content(Utils.asJsonString(dto))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.message").value("O nome deve ter no máximo 50 caracteres."));
+        }
+
+        @Test
+        void addPersonToSeat_ShouldReturnBadRequest_Position() throws Exception {
+
+            // ARRANGE
+            var ValidName = Utils.randomNameString();
+            var nonValidPosition = 16;
+            var randomCPF = Utils.randomCpf();
+            RequestAllocationDTO dto = new RequestAllocationDTO(nonValidPosition, ValidName, randomCPF);
+
+            // ACT / ASSERT
+            mockMvc.perform(put("/seats/allocate")
+                            .content(Utils.asJsonString(dto))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
+        }
+
+        @Test
+        void addPersonToSeat_ShouldReturnBadRequest_Cpf() throws Exception {
+
+            // ARRANGE
+            var ValidName = Utils.randomNameString();
+            var validPosition = Utils.randomIntegerWithRange15();
+            var nonValidCPF = "111111111111";
+            RequestAllocationDTO dto = new RequestAllocationDTO(validPosition, ValidName, nonValidCPF);
+
+            // ACT / ASSERT
+            mockMvc.perform(put("/seats/allocate")
+                            .content(Utils.asJsonString(dto))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.message").value("O CPF deve conter exatamente 11 dígitos numéricos."));
+        }
     }
 
-    @Test
-    public void getBySeat_InvalidPosition_ShouldReturnBadRequest() throws Exception {
-        mockMvc.perform(get("/seats/999"))
-                .andExpect(status().isBadRequest()) // Alterado para isBadRequest()
-                .andExpect(jsonPath("$.error").value("Assento Inválido"))
-                .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
-    }
+    @Nested
+    class PutMapping_removePersonFromSeat {
 
-    @Test
-    void addPersonToSeat_ShouldReturnSuccess () throws Exception {
+        @Test
+        void removePersonFromSeat_ShouldReturnSuccess () throws Exception {
 
-        // ARRANGE
-        var randomPosition = Utils.randomIntegerWithRange15();
-        var randomName = Utils.randomNameString();
-        var randomCPF = Utils.randomCpf();
-        RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, randomName, randomCPF);
+            // ARRANGE
+            var occupiedPosition = 5;
+
+            // ACT / ASSERT
+            mockMvc.perform(put("/seats/remove/{position}", occupiedPosition)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.message").value("Pessoa removida da Poltrona."));
+        }
 
 
-        // ACT / ASSERT
-        mockMvc.perform(put("/seats/allocate")
-                .content(Utils.asJsonString(dto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message")
-                        .value("Poltrona alocada com sucesso."));
-    }
+        @Test
+        void removePersonFromSeat_ShouldReturnBadRequest () throws Exception {
 
-    @Test
-    void addPersonToSeat_ShouldReturnBadRequest () throws Exception {
+            // ARRANGE
+            var nonValidPosition = 999;
 
-        // ARRANGE
-        String nonValidName = null;
-        var randomPosition = Utils.randomIntegerWithRange15();
-        var randomCPF = Utils.randomCpf();
-        RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, nonValidName, randomCPF);
-
-        // ACT / ASSERT
-        mockMvc.perform(put("/seats/allocate")
-                .content(Utils.asJsonString(dto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("O nome deve ter no máximo 50 caracteres."));
+            // ACT / ASSERT
+            mockMvc.perform(put("/seats/remove/{position}", nonValidPosition)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
+        }
     }
 }
