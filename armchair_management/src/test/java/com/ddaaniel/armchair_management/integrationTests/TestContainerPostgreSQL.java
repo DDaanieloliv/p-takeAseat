@@ -48,6 +48,7 @@ public class TestContainerPostgreSQL {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
+        System.out.println("✅ JDBC URL: " + postgresUnderTest.getJdbcUrl());
         registry.add("spring.datasource.url", postgresUnderTest::getJdbcUrl);
         registry.add("spring.datasource.username", postgresUnderTest::getUsername);
         registry.add("spring.datasource.password", postgresUnderTest::getPassword);

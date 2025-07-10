@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-@Profile("!test") // Só executa quando NÃO estiver no perfil "test"
+@Profile({"dev", "prod"}) // Só roda nesses perfis
 @Configuration
 public class Config implements CommandLineRunner {
 
