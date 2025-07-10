@@ -1,4 +1,4 @@
-package com.ddaaniel.armchair_management.service;
+package com.ddaaniel.armchair_management.utityTests.service;
 
 import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;
@@ -8,7 +8,7 @@ import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
-import com.ddaaniel.armchair_management.utilsObjects.Utils;
+import com.ddaaniel.armchair_management.utilsTestObjects.Utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

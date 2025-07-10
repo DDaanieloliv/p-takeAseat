@@ -1,16 +1,12 @@
-package com.ddaaniel.armchair_management.utilsObjects;
+package com.ddaaniel.armchair_management.utilsTestObjects;
 
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
-import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.javafaker.Faker;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
 

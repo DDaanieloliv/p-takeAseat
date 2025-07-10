@@ -1,20 +1,23 @@
 package com.ddaaniel.armchair_management.integrationTests;
 
 import com.ddaaniel.armchair_management.controller.SeatController;
+import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
+import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
-import com.ddaaniel.armchair_management.utilsObjects.Utils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import com.ddaaniel.armchair_management.utilsTestObjects.Utils;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,22 +30,39 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+
+
+// ##########################################################################
+// ##                                                                      ##
+// ## Ideal: Esses testes serem executados em ambiente de desnevolvimento, ##
+// ## devido dos mesmos estarem na classes TestContainerPostgresSQL.       ##
+// ##                                                                      ##
+// ##########################################################################
+@Disabled("Test class H2ControllerTest disable on build.")
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class ControllerIntegrationTestAllContext {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class H2ControllerTest {
+
+
+    @LocalServerPort
+    private Integer port;
 
     private final MockMvc mockMvc;
-    private final SeatController seatController;
     private final ISeatRepository seatRepository;
     private final IPersonRepository personRepository;
+    private final SeatController seatController;
+    private final ServiceSeatImpl serviceSeat;
+    private final ServicePersonImpl servicePerson;
 
     @Autowired
-    public ControllerIntegrationTestAllContext(MockMvc mockMvc, SeatController seatController, ISeatRepository seatRepository, IPersonRepository personRepository) {
+    public H2ControllerTest(MockMvc mockMvc, SeatController seatController, ISeatRepository seatRepository, IPersonRepository personRepository, ServiceSeatImpl serviceSeat, ServicePersonImpl servicePerson) {
         this.mockMvc = mockMvc;
         this.seatController = seatController;
         this.seatRepository = seatRepository;
         this.personRepository = personRepository;
+        this.serviceSeat = serviceSeat;
+        this.servicePerson = servicePerson;
     }
 
     @BeforeEach
@@ -80,6 +100,28 @@ public class ControllerIntegrationTestAllContext {
         seatRepository.saveAll(seats);
         seatRepository.deleteAll();
         personRepository.deleteAll();
+    }
+
+
+    @Nested
+    class TestsContainer {
+
+        @Test
+        void getAllStatusSeats () {
+
+            // ARRANGE / ACT
+            RestAssured.baseURI =  "http://localhost:" + port;
+            serviceSeat.listStatusOfAllSeats();
+
+            // ASSERT
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .get("/seats")
+                    .then()
+                    .statusCode(200)
+                    .body("size()", Matchers.equalTo(15));
+        }
     }
 
     @Nested
@@ -134,7 +176,7 @@ public class ControllerIntegrationTestAllContext {
         void addPersonToSeat_ShouldReturnSuccess() throws Exception {
 
             // ARRANGE
-            var randomPosition = Utils.randomIntegerWithRange15();
+            var randomPosition = 2;
             var randomName = Utils.randomNameString();
             var randomCPF = Utils.randomCpf();
             RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, randomName, randomCPF);
@@ -153,7 +195,7 @@ public class ControllerIntegrationTestAllContext {
 
             // ARRANGE
             String nonValidName = null;
-            var randomPosition = Utils.randomIntegerWithRange15();
+            var randomPosition = 3;
             var randomCPF = Utils.randomCpf();
             RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, nonValidName, randomCPF);
 
@@ -185,7 +227,7 @@ public class ControllerIntegrationTestAllContext {
 
             // ARRANGE
             var ValidName = Utils.randomNameString();
-            var validPosition = Utils.randomIntegerWithRange15();
+            var validPosition = 1;
             var nonValidCPF = "111111111111";
             RequestAllocationDTO dto = new RequestAllocationDTO(validPosition, ValidName, nonValidCPF);
 
@@ -193,6 +235,7 @@ public class ControllerIntegrationTestAllContext {
             mockMvc.perform(put("/seats/allocate")
                             .content(Utils.asJsonString(dto))
                             .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value("O CPF deve conter exatamente 11 dígitos numéricos."));
         }
     }
