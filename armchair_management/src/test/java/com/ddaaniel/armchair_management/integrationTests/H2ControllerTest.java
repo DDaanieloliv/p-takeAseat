@@ -12,7 +12,6 @@ import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 import com.ddaaniel.armchair_management.fakerObjects.Utils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.context.support.RequestHandledEvent;
 
 import java.util.List;
 
@@ -65,6 +67,8 @@ public class H2ControllerTest {
     private final SeatController seatController;
     private final ServiceSeatImpl serviceSeat;
     private final ServicePersonImpl servicePerson;
+
+    private final String BASE_URI_CONTROLLER = "/seats";
 
     @Autowired
     public H2ControllerTest(MockMvc mockMvc, SeatController seatController, ISeatRepository seatRepository, IPersonRepository personRepository, ServiceSeatImpl serviceSeat, ServicePersonImpl servicePerson) {
@@ -113,7 +117,6 @@ public class H2ControllerTest {
         personRepository.deleteAll();
     }
 
-
     @Nested
     class TestsContainerRestAssure {
 
@@ -127,8 +130,9 @@ public class H2ControllerTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .when()
-                    .get("/seats")
+                    .get(BASE_URI_CONTROLLER)
                     .then()
+                    .log().all()
                     .statusCode(200)
                     .body("size()", Matchers.equalTo(15));
         }
@@ -145,8 +149,9 @@ public class H2ControllerTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .when()
-                    .get("/seats/{position}", IntegerPosition)
+                    .get(BASE_URI_CONTROLLER + "/{position}", IntegerPosition)
                     .then()
+                    .log().all()
                     .statusCode(200)
                     .body(Matchers.equalTo(Utils.asJsonString(seatExpected)));
         }
@@ -170,11 +175,31 @@ public class H2ControllerTest {
                     .accept(ContentType.JSON)
                     .body(Utils.asJsonString(fakerObject))
                     .when()
-                    .put("seats/allocate")
+                    .put(BASE_URI_CONTROLLER + "/allocate")
                     .then()
+                    .log().all()
                     .statusCode(200)
                     .body("message", Matchers.equalTo("Poltrona alocada com sucesso."));
         }
+
+        @Test
+        void removePersonFromSeat () {
+
+            // ARRANGE
+            RestAssured.baseURI = "http://localhost:" + port;
+            var IntegerPosition = 5;
+
+            // ACT / ASSERT
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .put(BASE_URI_CONTROLLER + "/remove/{position}", IntegerPosition)
+                    .then()
+                    .log().all()
+                    .statusCode(200)
+                    .body("message", Matchers.equalTo("Pessoa removida da Poltrona."));
+        }
+
     }
 
     @Nested
@@ -183,7 +208,8 @@ public class H2ControllerTest {
         @Test
         void getAllStatusPoltronas_ShouldReturnAllSeats() throws Exception {
             // Act & Assert using MockMvc
-            mockMvc.perform(get("/seats"))
+            mockMvc.perform(get(BASE_URI_CONTROLLER))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(15)); // Assumindo que há 15 Seats nos dados de Teste.
         }
@@ -206,7 +232,8 @@ public class H2ControllerTest {
 
         @Test
         public void getBySeat_ShouldReturnCorrectSeat() throws Exception {
-            mockMvc.perform(get("/seats/8"))
+            mockMvc.perform(get(BASE_URI_CONTROLLER + "/8"))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.position").value(8))
                     .andExpect(jsonPath("$.free").value(true)) // Alterado para true
@@ -215,7 +242,8 @@ public class H2ControllerTest {
 
         @Test
         public void getBySeat_InvalidPosition_ShouldReturnBadRequest() throws Exception {
-            mockMvc.perform(get("/seats/999"))
+            mockMvc.perform(get(BASE_URI_CONTROLLER + "/999"))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(status().isBadRequest()) // Alterado para isBadRequest()
                     .andExpect(jsonPath("$.error").value("Assento Inválido"))
                     .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
@@ -236,9 +264,10 @@ public class H2ControllerTest {
 
 
             // ACT / ASSERT
-            mockMvc.perform(put("/seats/allocate")
+            mockMvc.perform(put(BASE_URI_CONTROLLER + "/allocate")
                             .content(Utils.asJsonString(dto))
                             .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(jsonPath("$.message")
                             .value("Poltrona alocada com sucesso."));
         }
@@ -253,9 +282,10 @@ public class H2ControllerTest {
             RequestAllocationDTO dto = new RequestAllocationDTO(randomPosition, nonValidName, randomCPF);
 
             // ACT / ASSERT
-            mockMvc.perform(put("/seats/allocate")
+            mockMvc.perform(put(BASE_URI_CONTROLLER + "/allocate")
                             .content(Utils.asJsonString(dto))
                             .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(jsonPath("$.message").value("O nome deve ter no máximo 50 caracteres."));
         }
 
@@ -269,9 +299,10 @@ public class H2ControllerTest {
             RequestAllocationDTO dto = new RequestAllocationDTO(nonValidPosition, ValidName, randomCPF);
 
             // ACT / ASSERT
-            mockMvc.perform(put("/seats/allocate")
+            mockMvc.perform(put(BASE_URI_CONTROLLER + "/allocate")
                             .content(Utils.asJsonString(dto))
                             .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
         }
 
@@ -285,9 +316,10 @@ public class H2ControllerTest {
             RequestAllocationDTO dto = new RequestAllocationDTO(validPosition, ValidName, nonValidCPF);
 
             // ACT / ASSERT
-            mockMvc.perform(put("/seats/allocate")
+            mockMvc.perform(put(BASE_URI_CONTROLLER + "/allocate")
                             .content(Utils.asJsonString(dto))
                             .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value("O CPF deve conter exatamente 11 dígitos numéricos."));
         }
@@ -303,8 +335,9 @@ public class H2ControllerTest {
             var occupiedPosition = 5;
 
             // ACT / ASSERT
-            mockMvc.perform(put("/seats/remove/{position}", occupiedPosition)
+            mockMvc.perform(put(BASE_URI_CONTROLLER + "/remove/{position}", occupiedPosition)
                             .accept(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("Pessoa removida da Poltrona."));
         }
@@ -317,8 +350,9 @@ public class H2ControllerTest {
             var nonValidPosition = 999;
 
             // ACT / ASSERT
-            mockMvc.perform(put("/seats/remove/{position}", nonValidPosition)
+            mockMvc.perform(put(BASE_URI_CONTROLLER + "/remove/{position}", nonValidPosition)
                             .accept(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.log())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value("O assento informado é inválido."));
         }
