@@ -9,7 +9,7 @@ import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
-import com.ddaaniel.armchair_management.utilsTestObjects.Utils;
+import com.ddaaniel.armchair_management.fakerObjects.Utils;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
@@ -39,7 +39,7 @@ import java.util.List;
 @AutoConfigureMockMvc
 @ActiveProfiles("testContainer")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TestContainerPostgreSQL {
+public class TestContainerPostgresSQL {
 
 
     @LocalServerPort
@@ -117,7 +117,7 @@ public class TestContainerPostgreSQL {
     private final ServiceSeatImpl serviceSeat;
 
     @Autowired
-    public TestContainerPostgreSQL(MockMvc mockMvc, SeatController seatController, IPersonRepository personRepository, ISeatRepository seatRepository, ServicePersonImpl servicePerson, ServiceSeatImpl serviceSeat) {
+    public TestContainerPostgresSQL(MockMvc mockMvc, SeatController seatController, IPersonRepository personRepository, ISeatRepository seatRepository, ServicePersonImpl servicePerson, ServiceSeatImpl serviceSeat) {
         this.mockMvc = mockMvc;
         this.seatController = seatController;
         this.personRepository = personRepository;
@@ -161,7 +161,7 @@ public class TestContainerPostgreSQL {
         @Test
         void getAllStatusPoltronas_DirectControllerCall_ShouldReturnCorrectData() {
             // Act
-            var response = seatController.getAllStatusPoltronas();
+            var response = seatController.getAllStatusPoltroons();
             List<SeatResponseDTO> seats = response.getBody();
 
             // Assert

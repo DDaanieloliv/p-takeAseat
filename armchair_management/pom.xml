@@ -153,6 +153,8 @@
 		</plugins>
 	</build>
 
+<!--	Perfis que são usados ​​quando executamos o projeto de uma destas maneiras: -->
+<!--    ('mvn spring boot:run' ou 'mvn spring boot:run -Pdev')                            -->
 	<profiles>
 			<!-- Perfil de Produção (Padrão) -->
 		<profile>

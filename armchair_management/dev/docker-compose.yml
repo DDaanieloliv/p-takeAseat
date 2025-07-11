@@ -12,35 +12,35 @@ services: # Diretiva que indica que sob essa sessão definiremos containers.
 
 
 
-  spring-app: # Definimos o nome do serviço.
-    build: # Definimos que a nossa Imagem será obtida por meio de um "build". E dentro dessa diretiva definimos como será feito o "build".
-      context: ..   # Usamos essa diretiva para informar o path de onde será feito o "build" da nossa Imagem.
-      dockerfile: dev/Dockerfile # Especificamos qual arquivo será utilizado para fazer o "build" da Imagem.
-    image: myapp  # Como faremos o "build" de uma Imagem, definimos o seu nome.
-    ports: # Fazemos o mapeamento que todo solicitação feita a porta 8080 do host para a porta 8080 do container.
-      - "127.0.0.1:8080:8080"
-    container_name: spring-app # "Settamos" o nome do container ao ser executado.
-    #    restart: always # Definimos a sua política de reinicialização em casos de falha ou parada.
-    #volumes:
-    #  - ../logs:/app/logs
-    depends_on: # Usamos essa diretiva para dizer que há uma dependência entre serviço.
-      postgres_db: # Com o nome / chave do serviço, nos explicitamos que há uma dependência entre o serviço atual e o mysql_db.
-        condition: service_healthy # Settamos a condição que o torna dependente do container mysql_db, para service_healthy.
-    environment: # Explicitamos que queremos passar variáveis de ambiente para a Imagem desse container. E as definimos.
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      SPRING_DATASOURCE_DRIVER: ${SPRING_DATASOURCE_DRIVER}
-      HIBERNATE_DIALECT: ${HIBERNATE_DIALECT}
-    #env_file: # Como não iremos usar a "file" automáticamente identificada pelo Docker (.env) usamos essa diretiva que nos permite explicitar de onde obteremos essa nova "file".
-    #  - ./env/.env  # Definimos a "file" que obteremos no ligar do padrão.
-    networks: # Associamos esse container com uma rede/s especifica.
-      - my_network
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+#  spring-app: # Definimos o nome do serviço.
+#    build: # Definimos que a nossa Imagem será obtida por meio de um "build". E dentro dessa diretiva definimos como será feito o "build".
+#      context: ..   # Usamos essa diretiva para informar o path de onde será feito o "build" da nossa Imagem.
+#      dockerfile: dev/Dockerfile # Especificamos qual arquivo será utilizado para fazer o "build" da Imagem.
+#    image: myapp  # Como faremos o "build" de uma Imagem, definimos o seu nome.
+#    ports: # Fazemos o mapeamento que todo solicitação feita a porta 8080 do host para a porta 8080 do container.
+#      - "127.0.0.1:8080:8080"
+#    container_name: spring-app # "Settamos" o nome do container ao ser executado.
+#    #    restart: always # Definimos a sua política de reinicialização em casos de falha ou parada.
+#    #volumes:
+#    #  - ../logs:/app/logs
+#    depends_on: # Usamos essa diretiva para dizer que há uma dependência entre serviço.
+#      postgres_db: # Com o nome / chave do serviço, nos explicitamos que há uma dependência entre o serviço atual e o mysql_db.
+#        condition: service_healthy # Settamos a condição que o torna dependente do container mysql_db, para service_healthy.
+#    environment: # Explicitamos que queremos passar variáveis de ambiente para a Imagem desse container. E as definimos.
+#      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+#      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+#      SPRING_DATASOURCE_DRIVER: ${SPRING_DATASOURCE_DRIVER}
+#      HIBERNATE_DIALECT: ${HIBERNATE_DIALECT}
+#    #env_file: # Como não iremos usar a "file" automáticamente identificada pelo Docker (.env) usamos essa diretiva que nos permite explicitar de onde obteremos essa nova "file".
+#    #  - ./env/.env  # Definimos a "file" que obteremos no ligar do padrão.
+#    networks: # Associamos esse container com uma rede/s especifica.
+#      - my_network
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
 
 
 #  prometheus:

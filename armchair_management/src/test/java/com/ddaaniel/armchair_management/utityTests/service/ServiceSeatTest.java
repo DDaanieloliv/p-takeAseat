@@ -7,7 +7,7 @@ import com.ddaaniel.armchair_management.controller.service.implementation.Servic
 import com.ddaaniel.armchair_management.controller.service.mapper.SeatMapper;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
-import com.ddaaniel.armchair_management.utilsTestObjects.Utils;
+import com.ddaaniel.armchair_management.fakerObjects.Utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

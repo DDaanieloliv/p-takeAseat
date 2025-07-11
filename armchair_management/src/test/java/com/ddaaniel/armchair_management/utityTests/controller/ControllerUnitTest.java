@@ -4,7 +4,7 @@ package com.ddaaniel.armchair_management.utityTests.controller;
 import com.ddaaniel.armchair_management.controller.SeatController;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
-import com.ddaaniel.armchair_management.utilsTestObjects.Utils;
+import com.ddaaniel.armchair_management.fakerObjects.Utils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 @ExtendWith(MockitoExtension.class)
-public class ControllerTests {
+public class ControllerUnitTest {
 
 
     @Mock

@@ -1,4 +1,4 @@
-package com.ddaaniel.armchair_management.utilsTestObjects;
+package com.ddaaniel.armchair_management.fakerObjects;
 
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
@@ -67,12 +67,44 @@ public class Utils {
         return dto;
     }
 
+
+    public static SeatResponseDTO moveToDTO(Optional<Seat> optionalSeat) {
+
+        if (optionalSeat.get().getPerson() != null){
+            Optional<SeatResponseDTO.PersonDTO> personDTO =
+                    Optional.of(new SeatResponseDTO.PersonDTO(
+                            optionalSeat.get().getPerson().getName(),
+                            optionalSeat.get().getPerson().getCpf()
+                    ));
+
+            SeatResponseDTO dto = new SeatResponseDTO(
+                    optionalSeat.get().getPosition(),
+                    optionalSeat.get().getFree(),
+                    personDTO);
+
+            return dto;
+        } else {
+
+            Optional<SeatResponseDTO.PersonDTO> personDTO = Optional.empty();
+
+            SeatResponseDTO dto = new SeatResponseDTO(
+                    optionalSeat.get().getPosition(),
+                    optionalSeat.get().getFree(),
+                    personDTO
+            );
+
+            return dto;
+        }
+    }
+
     public static SeatResponseDTO moveToDTO(Seat seat) {
 
         if (seat.getPerson() != null) {
 
             Optional<SeatResponseDTO.PersonDTO> personDTO =
-                    Optional.of(new SeatResponseDTO.PersonDTO(seat.getPerson().getName(), seat.getPerson().getCpf()));
+                    Optional.of(new SeatResponseDTO.PersonDTO(
+                            seat.getPerson().getName(),
+                            seat.getPerson().getCpf()));
 
             SeatResponseDTO dto = new SeatResponseDTO(
                     seat.getPosition(),

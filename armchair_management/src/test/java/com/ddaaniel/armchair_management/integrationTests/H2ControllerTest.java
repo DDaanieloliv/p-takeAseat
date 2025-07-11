@@ -9,9 +9,10 @@ import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
-import com.ddaaniel.armchair_management.utilsTestObjects.Utils;
+import com.ddaaniel.armchair_management.fakerObjects.Utils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // ##########################################################################
 // ##                                                                      ##
-// ## Ideal: Esses testes serem executados em ambiente de desnevolvimento, ##
-// ## devido dos mesmos estarem na classes TestContainerPostgresSQL.       ##
+// ## Ideal: Esses testes serem executados em ambiente de desenvolvimento, ##
+// ## devido dos mesmos estarem na classe TestContainerPostgresSQL.        ##
+// ##                                                                      ##
+// ## Essa classe de teste parece não ter muito sentido aparente para ser  ##
+// ## executada no momento de ‘build’ visto que pela classe de             ##
+// ## TestContainerPostgresSQL podemos fazer o mesmo e testando direto com ##
+// ## uma Imagem do Banco de Dados rodando no Docker. Diante disso decidi  ##
+// ## anotar essa classe de teste com @Disabled para não ser feita a sua   ##
+// ## execução no ‘build’ moment. Essa classe irá possuir os mesmos testes ##
+// ## de TestContainerPostgresSQL para que essa possa ser usada no momento ##
+// ## de desenvolvimento como uma alternativa com baixo OverHead. Para     ##
+// ## usá-la comente a linha '@Disabled("...")' .                          ##
 // ##                                                                      ##
 // ##########################################################################
-@Disabled("Test class H2ControllerTest disable on build.")
+//@Disabled("Test class H2ControllerTest disable on ‘build’.")
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -104,14 +115,13 @@ public class H2ControllerTest {
 
 
     @Nested
-    class TestsContainer {
+    class TestsContainerRestAssure {
 
         @Test
-        void getAllStatusSeats () {
+        void getAllStatusSeatsSuccessfully() {
 
             // ARRANGE / ACT
             RestAssured.baseURI =  "http://localhost:" + port;
-            serviceSeat.listStatusOfAllSeats();
 
             // ASSERT
             RestAssured.given()
@@ -121,6 +131,49 @@ public class H2ControllerTest {
                     .then()
                     .statusCode(200)
                     .body("size()", Matchers.equalTo(15));
+        }
+
+        @Test
+        void getBySeatPosition () {
+
+            // ARRANGE
+            RestAssured.baseURI = "http://localhost:" + port;
+            var IntegerPosition = 5;
+            var seatExpected = Utils.moveToDTO(seatRepository.findByPosition(IntegerPosition));
+
+            // ACT / ASSERT
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .get("/seats/{position}", IntegerPosition)
+                    .then()
+                    .statusCode(200)
+                    .body(Matchers.equalTo(Utils.asJsonString(seatExpected)));
+        }
+
+
+        @Test
+        void addPersonToSeat () {
+
+            // ARRANGE
+            RestAssured.baseURI = "http://localhost:" + port;
+            var IntegerPosition = 2;
+            var fakerObject = new RequestAllocationDTO(
+                    IntegerPosition,
+                    Utils.randomNameString(),
+                    Utils.randomCpf()
+            );
+
+            // ACT / ASSERT
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                    .body(Utils.asJsonString(fakerObject))
+                    .when()
+                    .put("seats/allocate")
+                    .then()
+                    .statusCode(200)
+                    .body("message", Matchers.equalTo("Poltrona alocada com sucesso."));
         }
     }
 
@@ -138,7 +191,7 @@ public class H2ControllerTest {
         @Test
         void getAllStatusPoltronas_DirectControllerCall_ShouldReturnCorrectData() {
             // Act
-            var response = seatController.getAllStatusPoltronas();
+            var response = seatController.getAllStatusPoltroons();
             List<SeatResponseDTO> seats = response.getBody();
 
             // Assert
