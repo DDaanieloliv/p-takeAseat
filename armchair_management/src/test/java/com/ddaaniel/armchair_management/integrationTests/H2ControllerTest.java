@@ -1,6 +1,7 @@
 package com.ddaaniel.armchair_management.integrationTests;
 
 import com.ddaaniel.armchair_management.controller.SeatController;
+import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
 import com.ddaaniel.armchair_management.model.Person;
@@ -12,6 +13,9 @@ import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 import com.ddaaniel.armchair_management.fakerObjects.Utils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.matcher.RestAssuredMatchers;
+import org.assertj.core.api.AssertJProxySetup;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +26,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.context.support.RequestHandledEvent;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -154,6 +155,25 @@ public class H2ControllerTest {
                     .log().all()
                     .statusCode(200)
                     .body(Matchers.equalTo(Utils.asJsonString(seatExpected)));
+        }
+
+        @Test
+        void shouldThrowInvalidPosition_getBySeatPosition() {
+
+            // ARRANGE
+            RestAssured.baseURI = "http://localhost:" + port;
+            var InvalidIntegerPosition = 999;
+
+            // ACT / ASSERT
+            RestAssured.when()
+                    .get(BASE_URI_CONTROLLER + "/{position}", InvalidIntegerPosition)
+                    .then()
+                    .statusCode(400);
+            Assertions.assertThatExceptionOfType(AssentoInvalidoException.class)
+                    .isThrownBy( () -> serviceSeat.detailsFromSpecificSeat(InvalidIntegerPosition))
+                    .withMessage("O assento informado é inválido.");
+
+
         }
 
 

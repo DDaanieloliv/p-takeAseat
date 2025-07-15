@@ -79,7 +79,7 @@ public class ServiceSeatImpl implements ISeatService {
 
     private void positionValidation(Integer position) {
         if (position <= 0 || position > 15) {   // Verifica se é um parâmetro válido
-            throw new AssentoInvalidoException("O assento informado é inválido.");
+                throw new AssentoInvalidoException("O assento informado é inválido.");
         }
     }
 
