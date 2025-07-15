@@ -14,4 +14,5 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
     Optional<Seat> findByPosition(Integer position);
 
 
+    void deleteById(UUID seatIdToDelete);
 }

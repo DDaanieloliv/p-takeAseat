@@ -2,6 +2,7 @@ package com.ddaaniel.armchair_management.integrationTests;
 
 import com.ddaaniel.armchair_management.controller.SeatController;
 import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
+import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
 import com.ddaaniel.armchair_management.model.Person;
@@ -18,6 +19,8 @@ import org.assertj.core.api.AssertJProxySetup;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,6 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class H2ControllerTest {
 
+    private final Logger logger = LoggerFactory.getLogger(H2ControllerTest.class);
 
     @LocalServerPort
     private Integer port;
@@ -157,25 +161,6 @@ public class H2ControllerTest {
                     .body(Matchers.equalTo(Utils.asJsonString(seatExpected)));
         }
 
-        @Test
-        void shouldThrowInvalidPosition_getBySeatPosition() {
-
-            // ARRANGE
-            RestAssured.baseURI = "http://localhost:" + port;
-            var InvalidIntegerPosition = 999;
-
-            // ACT / ASSERT
-            RestAssured.when()
-                    .get(BASE_URI_CONTROLLER + "/{position}", InvalidIntegerPosition)
-                    .then()
-                    .statusCode(400);
-            Assertions.assertThatExceptionOfType(AssentoInvalidoException.class)
-                    .isThrownBy( () -> serviceSeat.detailsFromSpecificSeat(InvalidIntegerPosition))
-                    .withMessage("O assento informado é inválido.");
-
-
-        }
-
 
         @Test
         void addPersonToSeat () {
@@ -220,10 +205,57 @@ public class H2ControllerTest {
                     .body("message", Matchers.equalTo("Pessoa removida da Poltrona."));
         }
 
+
     }
 
     @Nested
+    class ShouldThrowException {
+
+        @Test
+        void shouldThrowInvalidPosition_getBySeatPosition() {
+
+            // ARRANGE
+            RestAssured.baseURI = "http://localhost:" + port;
+            var InvalidIntegerPosition = 999;
+
+
+            // ACT / ASSERT
+            RestAssured.when()
+                    .get(BASE_URI_CONTROLLER + "/{position}", InvalidIntegerPosition)
+                    .then()
+                    .statusCode(400);
+            Assertions.assertThatExceptionOfType(AssentoInvalidoException.class)
+                    .isThrownBy( () -> serviceSeat.detailsFromSpecificSeat(InvalidIntegerPosition))
+                    .withMessage("O assento informado é inválido.");
+
+        }
+
+        @Test
+        void shouldThrowNotFoundException_getBySeatPosition() {
+
+            // ARRANGE
+            RestAssured.baseURI = "http://localhost:" + port;
+            var ValidIntegerPosition = 1;
+            var SeatIdToDelete = seatRepository.findByPosition(ValidIntegerPosition);
+            var IdSeat = SeatIdToDelete.get().getSeatID();
+
+            logger.info("ARRANGE phase done with success!");
+
+            seatRepository.deleteById(IdSeat);
+
+            // ACT / ASSERT
+            RestAssured.when()
+                    .get(BASE_URI_CONTROLLER + "/{position}", ValidIntegerPosition)
+                    .then()
+                    .statusCode(404);
+            Assertions.assertThatExceptionOfType(NotFoundException.class)
+                    .isThrownBy( () -> serviceSeat.detailsFromSpecificSeat(ValidIntegerPosition));
+
+        }
+    }
+    @Nested
     class GetMapping_getAllStatusPoltronas {
+
 
         @Test
         void getAllStatusPoltronas_ShouldReturnAllSeats() throws Exception {
