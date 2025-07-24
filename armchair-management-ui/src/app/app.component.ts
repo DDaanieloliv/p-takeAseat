@@ -9,6 +9,8 @@ import { LayoutBottomLeftComponent } from './components/layout-bottom-left/layou
 import { LayoutTopRightComponent } from './components/layout-top-right/layout-top-right.component';
 import { LayoutBottomRightComponent } from './components/layout-bottom-right/layout-bottom-right.component';
 
+
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -19,4 +21,5 @@ import { LayoutBottomRightComponent } from './components/layout-bottom-right/lay
 })
 export class AppComponent {
   title = 'armchair-management-ui';
+
 }

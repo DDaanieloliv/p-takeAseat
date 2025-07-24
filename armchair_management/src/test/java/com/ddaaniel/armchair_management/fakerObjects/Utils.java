@@ -6,222 +6,267 @@ import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.github.dockerjava.api.model.SearchItem;
 import com.github.javafaker.Faker;
+
 
 import java.util.*;
 
-
 public class Utils {
 
-    private static final Faker faker = Faker.instance();
-    private static final Random randomGenerator = new Random();
+	private static final Faker faker = Faker.instance();
+	private static final Random randomGenerator = new Random();
 
+	public static Seat createSeatWithoutPerson(Integer position) {
 
-    public static Seat createSeatWithoutPerson(Integer position) {
+		// Seat seat = new Seat();
+		// seat.setSeatID(UUID.randomUUID());
+		// seat.setPosition(position);
+		// seat.setFree(true);
 
-        return Seat.builder()
-                .seatID(UUID.randomUUID())
-                .position(position)
-                .free(true)
-                .build();
-    }
+		return /* null; */
 
-    public static Seat createSeatWithParameterWithoutPersonID(UUID usedSeatId, Integer position, String name, String cpf) {
+		Seat.builder()
+				.seatID(UUID.randomUUID())
+				.position(position)
+				.free(true)
+				.build();
 
-        return Seat.builder()
-                .seatID(usedSeatId)
-                .position(position)
-                .free(false)
-                .person(
-                        Person.builder()
-                                .name(name)
-                                .cpf(cpf)
-                                .build()
-                ).build();
-    }
+	}
 
-    public static Seat createSeatWithParameterWithPersonID(UUID usedSeatId, Integer position, String name, String cpf) {
+	public static Seat createSeatWithParameterWithoutPersonID(UUID usedSeatId, Integer position, String name,
+			String cpf) {
 
-        return Seat.builder()
-                .seatID(usedSeatId)
-                .position(position)
-                .free(false)
-                .person(
-                        Person.builder()
-                                .personID(UUID.randomUUID())
-                                .name(name)
-                                .cpf(cpf)
-                                .build()
-                ).build();
-    }
+		// Seat seat = new Seat();
+		// seat.setSeatID(usedSeatId);
+		// seat.setPosition(position);
+		// seat.setFree(false);
+		//
+		// Person person = new Person();
+		// seat.setPerson(person);
+		//
+		//
+		// person.setName(name);
+		// person.setCpf(cpf);
 
+		return /* seat; */
 
-    public static List<SeatResponseDTO> convertSeatListToDTO (List<Seat> seats) {
+		Seat.builder()
+		.seatID(usedSeatId)
+		.position(position)
+		.free(false)
+		.person(
+		Person.builder()
+		.name(name)
+		.cpf(cpf)
+		.build())
+		.build();
 
-        List<SeatResponseDTO> dto = new ArrayList<>();
+	}
 
-        for (Seat seat : seats){
-            dto.add(moveToDTO(seat));
-        }
+	public static Seat createSeatWithParameterWithPersonID(UUID usedSeatId, Integer position, String name, String cpf) {
 
-        return dto;
-    }
+		// Seat seat = new Seat();
+		// seat.setSeatID(usedSeatId);
+		// seat.setPosition(position);
+		// seat.setFree(false);
+		//
+		// Person person = new Person();
+		// seat.setPerson(person);
+		//
+		// person.setPersonID(UUID.randomUUID());
+		// person.setName(name);
+		// person.setCpf(cpf);
 
+		return /* seat; */
 
-    public static SeatResponseDTO moveToDTO(Optional<Seat> optionalSeat) {
+		Seat.builder()
+		.seatID(usedSeatId)
+		.position(position)
+		.free(false)
+		.person(
+		Person.builder()
+		.personID(UUID.randomUUID())
+		.name(name)
+		.cpf(cpf)
+		.build())
+		.build();
 
-        if (optionalSeat.get().getPerson() != null){
-            Optional<SeatResponseDTO.PersonDTO> personDTO =
-                    Optional.of(new SeatResponseDTO.PersonDTO(
-                            optionalSeat.get().getPerson().getName(),
-                            optionalSeat.get().getPerson().getCpf()
-                    ));
+	}
 
-            SeatResponseDTO dto = new SeatResponseDTO(
-                    optionalSeat.get().getPosition(),
-                    optionalSeat.get().getFree(),
-                    personDTO);
+	public static List<SeatResponseDTO> convertSeatListToDTO(List<Seat> seats) {
 
-            return dto;
-        } else {
+		List<SeatResponseDTO> dto = new ArrayList<>();
 
-            Optional<SeatResponseDTO.PersonDTO> personDTO = Optional.empty();
+		for (Seat seat : seats) {
+			dto.add(moveToDTO(seat));
+		}
 
-            SeatResponseDTO dto = new SeatResponseDTO(
-                    optionalSeat.get().getPosition(),
-                    optionalSeat.get().getFree(),
-                    personDTO
-            );
+		return dto;
+	}
 
-            return dto;
-        }
-    }
+	public static SeatResponseDTO moveToDTO(Optional<Seat> optionalSeat) {
 
-    public static SeatResponseDTO moveToDTO(Seat seat) {
+		if (optionalSeat.get().getPerson() != null) {
+			Optional<SeatResponseDTO.PersonDTO> personDTO = Optional.of(new SeatResponseDTO.PersonDTO(
+					optionalSeat.get().getPerson().getName(),
+					optionalSeat.get().getPerson().getCpf()));
 
-        if (seat.getPerson() != null) {
+			SeatResponseDTO dto = new SeatResponseDTO(
+					optionalSeat.get().getPosition(),
+					optionalSeat.get().getFree(),
+					personDTO);
 
-            Optional<SeatResponseDTO.PersonDTO> personDTO =
-                    Optional.of(new SeatResponseDTO.PersonDTO(
-                            seat.getPerson().getName(),
-                            seat.getPerson().getCpf()));
+			return dto;
+		} else {
 
-            SeatResponseDTO dto = new SeatResponseDTO(
-                    seat.getPosition(),
-                    seat.getFree(),
-                    personDTO
-                    );
+			Optional<SeatResponseDTO.PersonDTO> personDTO = Optional.empty();
 
-            return dto;
-        }
-        else {
+			SeatResponseDTO dto = new SeatResponseDTO(
+					optionalSeat.get().getPosition(),
+					optionalSeat.get().getFree(),
+					personDTO);
 
-            Optional<SeatResponseDTO.PersonDTO> personDTO = Optional.empty();
+			return dto;
+		}
+	}
 
-            SeatResponseDTO dto = new SeatResponseDTO(
-                    seat.getPosition(),
-                    seat.getFree(),
-                    personDTO
-            );
+	public static SeatResponseDTO moveToDTO(Seat seat) {
 
-            return dto;
-        }
-    }
+		if (seat.getPerson() != null) {
 
+			Optional<SeatResponseDTO.PersonDTO> personDTO = Optional.of(new SeatResponseDTO.PersonDTO(
+					seat.getPerson().getName(),
+					seat.getPerson().getCpf()));
 
+			SeatResponseDTO dto = new SeatResponseDTO(
+					seat.getPosition(),
+					seat.getFree(),
+					personDTO);
 
+			return dto;
+		} else {
 
+			Optional<SeatResponseDTO.PersonDTO> personDTO = Optional.empty();
 
-    public static List<Seat> seatListGenerate() {
+			SeatResponseDTO dto = new SeatResponseDTO(
+					seat.getPosition(),
+					seat.getFree(),
+					personDTO);
 
-        List<Seat> seatList = new ArrayList<>();
-        for (int i = 1; i <= 15; i++){
+			return dto;
+		}
+	}
 
-            seatList.add(randomlyCreateSeatEntity(i));
+	public static List<Seat> seatListGenerate() {
 
-        }
+		List<Seat> seatList = new ArrayList<>();
+		for (int i = 1; i <= 15; i++) {
 
-        return seatList;
-    }
+			seatList.add(randomlyCreateSeatEntity(i));
 
-    public static Seat randomlyCreateSeatEntity (Integer position) {
+		}
 
-        Seat seat = new Seat();
+		return seatList;
+	}
 
-        seat.setSeatID(UUID.randomUUID());
-        seat.setPosition(position);
-        seat.setFree(randomGenerator.nextBoolean());
+	public static Seat randomlyCreateSeatEntity(Integer position) {
 
-        if (!seat.getFree()){
-            Person person = new Person();
+		Seat seat = new Seat();
 
-            person.setPersonID(UUID.randomUUID());
-            person.setName(faker.name().username());
-            person.setCpf(faker.regexify("[0-9]{11}"));
+		seat.setSeatID(UUID.randomUUID());
+		seat.setPosition(position);
+		seat.setFree(randomGenerator.nextBoolean());
 
-            seat.setPerson(person);
-        }
+		if (!seat.getFree()) {
+			Person person = new Person();
 
-        return seat;
-    }
+			person.setPersonID(UUID.randomUUID());
+			person.setName(faker.name().username());
+			person.setCpf(faker.regexify("[0-9]{11}"));
 
-    public static RequestAllocationDTO createRandomAllocateDTO() {
+			seat.setPerson(person);
+		}
 
-        return new RequestAllocationDTO(
-                randomIntegerWithRange15(), randomNameString(), randomCpf());
-    }
+		return seat;
+	}
 
-    public static Integer randomIntegerWithRange15() {
-        return randomGenerator.nextInt(1, 16);
-    }
+	public static RequestAllocationDTO createRandomAllocateDTO() {
 
-    public static String randomNameString() {
-        return faker.artist().name();
-    }
+		return new RequestAllocationDTO(
+				randomIntegerWithRange15(), randomNameString(), randomCpf());
+	}
 
-    public static String randomCpf() {
-        return faker.regexify("[0-9]{11}");
-    }
+	public static Integer randomIntegerWithRange15() {
+		return randomGenerator.nextInt(1, 16);
+	}
 
-    public static Person buildPerson() {
+	public static String randomNameString() {
+		return faker.artist().name();
+	}
 
-        return Person.builder()
-                .personID(UUID.randomUUID())
-                .name("Filho da puta")
-                .cpf("00000000000")
-                .build();
-    }
+	public static String randomCpf() {
+		return faker.regexify("[0-9]{11}");
+	}
 
-    public static Seat buildSeatEntityByPositionWithPerson(Integer position) {
+	public static Person buildPerson() {
 
+		// Person person = new Person();
+		// person.setPersonID(UUID.randomUUID());
+		// person.setName("Filho da puta");
+		// person.setCpf("00000000000");
 
-        return Seat.builder()
-                .seatID(UUID.randomUUID())
-                .position(position)
-                .free(false)
-                .person(Utils.buildPerson())
-                .build();
-    }
+		return /* person; */
 
+		Person.builder()
+		.personID(UUID.randomUUID())
+		.name("Filho da puta")
+		.cpf("00000000000")
+		.build();
+	}
 
-    public static Seat seatBuiltRemovingPerson (Seat seat){
+	public static Seat buildSeatEntityByPositionWithPerson(Integer position) {
 
-        return Seat.builder()
-                .seatID(seat.getSeatID())
-                .position(seat.getPosition())
-                .free(true)
-                .build();
-    }
+		// Seat seat = new Seat();
+		// seat.setSeatID(UUID.randomUUID());
+		// seat.setPosition(position);
+		// seat.setFree(false);
+		// seat.setPerson(Utils.buildPerson());
 
+		return /* seat; */
 
-    public static String asJsonString(final Object obj) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new Jdk8Module()); // Suporte a Optional<T>
-            return mapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+		Seat.builder()
+		.seatID(UUID.randomUUID())
+		.position(position)
+		.free(false)
+		.person(Utils.buildPerson())
+		.build();
+	}
+
+	public static Seat seatBuiltRemovingPerson(Seat seat) {
+
+		// Seat seatt = new Seat();
+		// seatt.setSeatID(seat.getSeatID());
+		// seatt.setPosition(seat.getPosition());
+		// seatt.setFree(true);
+
+		return /* seatt; */
+
+		Seat.builder()
+		.seatID(seat.getSeatID())
+		.position(seat.getPosition())
+		.free(true)
+		.build();
+	}
+
+	public static String asJsonString(final Object obj) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new Jdk8Module()); // Suporte a Optional<T>
+			return mapper.writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }

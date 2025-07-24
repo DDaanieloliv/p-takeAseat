@@ -83,6 +83,9 @@ public class TestContainerPostgresSQL {
                         .name("Pessoa " + i)
                         .cpf(String.format("%011d", i)) // CPF com 11 dígitos, baseado na posição
                         .build();
+                // Person person = new Person();
+                // person.setName("Pessoa " + i);
+                // person.setCpf(String.format("%011d", i));
 
                 personRepository.save(person);
 

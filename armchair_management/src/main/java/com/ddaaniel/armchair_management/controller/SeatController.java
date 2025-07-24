@@ -7,6 +7,7 @@ import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.aot.PublicMethodReflectiveProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/seats")
 public class SeatController {
 
+   
 
     private final ServiceSeatImpl serviceSeat;
     private final ServicePersonImpl servicePessoa;

@@ -22,24 +22,57 @@ import java.util.UUID;
 @Table(name = "tb_seats")
 public class Seat {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "seatid")
-    private UUID seatID;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "seatid")
+  private UUID seatID;
 
-    private Integer position;
+  private Integer position;
 
-    @Builder.Default
-    private Boolean free = true;
+  @Builder.Default
+  private Boolean free = true;
 
-    @OneToOne(/*cascade = CascadeType.PERSIST*/)
-    @JoinColumn(name = "person_ID", unique = true)
-    @JsonIgnoreProperties({"seat"}) // Evita loop infinito
-    private Person person;
+  @OneToOne(/* cascade = CascadeType.PERSIST */)
+  @JoinColumn(name = "person_ID", unique = true)
+  @JsonIgnoreProperties({ "seat" }) // Evita loop infinito
+  private Person person;
+
+  @Override
+  public String toString() {
+    return "Seat{id=" + seatID + ", position=" + position + ", free=" + free + "}";
+  }
 
 
-    @Override
-    public String toString() {
-        return "Seat{id=" + seatID + ", position=" + position + ", free=" + free + "}";
-    }
+  // public UUID getSeatID() {
+  //   return seatID;
+  // }
+  //
+  // public void setSeatID(UUID seatID) {
+  //   this.seatID = seatID;
+  // }
+  //
+  // public Integer getPosition() {
+  //   return position;
+  // }
+  //
+  // public void setPosition(Integer position) {
+  //   this.position = position;
+  // }
+  //
+  // public Boolean getFree() {
+  //   return free;
+  // }
+  //
+  // public void setFree(Boolean free) {
+  //   this.free = free;
+  // }
+  //
+  // public Person getPerson() {
+  //   return person;
+  // }
+  //
+  // public void setPerson(Person person) {
+  //   this.person = person;
+  // }
+
 }
