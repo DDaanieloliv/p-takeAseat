@@ -67,13 +67,13 @@ public class ServiceSeatImpl implements ISeatService {
             throw new BadRequestException("Poltrona já está ocupada.");
         }
 
-        Person person = new Person();
-        person.setName(name);
-        person.setCpf(cpf);
-        // Person person = Person.builder()
-        //         .name(name)
-        //         .cpf(cpf)
-        //         .build();
+        // Person person = new Person();
+        // person.setName(name);
+        // person.setCpf(cpf);
+        Person person = Person.builder()
+                .name(name)
+                .cpf(cpf)
+                .build();
         allocating(seat, person);
     }
 
