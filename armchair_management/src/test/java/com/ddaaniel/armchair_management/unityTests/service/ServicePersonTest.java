@@ -1,4 +1,4 @@
-package com.ddaaniel.armchair_management.utityTests.service;
+package com.ddaaniel.armchair_management.unityTests.service;
 
 import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;

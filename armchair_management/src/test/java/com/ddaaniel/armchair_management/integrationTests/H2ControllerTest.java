@@ -131,7 +131,7 @@ public class H2ControllerTest {
 	class TestsContainerRestAssure {
 
 		@Test
-		void getAllStatusSeatsSuccessfully() {
+		void getAllStatusPoltronas_Successfully() {
 
 			// ARRANGE / ACT
 			RestAssured.baseURI = "http://localhost:" + port;
@@ -148,7 +148,7 @@ public class H2ControllerTest {
 		}
 
 		@Test
-		void getBySeatPosition() {
+		void getBySeat_ShouldReturnTheCorrectSeatByPosition() {
 
 			// ARRANGE
 			RestAssured.baseURI = "http://localhost:" + port;
@@ -167,7 +167,7 @@ public class H2ControllerTest {
 		}
 
 		@Test
-		void addPersonToSeat() {
+		void addPersonToSeat_ShouldAllocateSeatSuccessfully() {
 
 			// ARRANGE
 			RestAssured.baseURI = "http://localhost:" + port;
@@ -191,7 +191,7 @@ public class H2ControllerTest {
 		}
 
 		@Test
-		void removePersonFromSeat() {
+		void removePersonFromSeat_ShouldDeletePersonFromSeatSuccessfully() {
 
 			// ARRANGE
 			RestAssured.baseURI = "http://localhost:" + port;
@@ -211,10 +211,10 @@ public class H2ControllerTest {
 	}
 
 	@Nested
-	class ShouldThrowException {
+	class getBySeat_ShouldThrowException_RestAssured{
 
 		@Test
-		void shouldThrowInvalidPosition_getBySeatPosition() {
+		void shouldThrowInvalidPosition_detailsFromSpecificSeat() {
 
 			// ARRANGE
 			RestAssured.baseURI = "http://localhost:" + port;
@@ -233,7 +233,7 @@ public class H2ControllerTest {
 		}
 
 		@Test
-		void shouldThrowNotFoundException_getBySeatPosition() {
+		void shouldThrowNotFoundException_detailsFromSpecificSeat() {
 
 			// ARRANGE
 			RestAssured.baseURI = "http://localhost:" + port;
@@ -256,6 +256,11 @@ public class H2ControllerTest {
 					.withMessage("Poltrona não encontrada.");
 
 		}
+	}
+
+
+	@Nested
+	class addPersonToSeat_ShouldThrowException_RestAssured {
 
 		@Test
 		void shouldThrowValidationException_toLenghName_allocateSeatToPessoa() {
@@ -272,16 +277,16 @@ public class H2ControllerTest {
 
 			// ACT / ASSERT
 			RestAssured.given()
-					.contentType(ContentType.JSON)
-					.body(Utils.asJsonString(dto))
-					.when()
-					.put(BASE_URI_CONTROLLER + "/allocate")
-					.then()
-					.log().all()
-					.statusCode(400);
+				.contentType(ContentType.JSON)
+				.body(Utils.asJsonString(dto))
+				.when()
+				.put(BASE_URI_CONTROLLER + "/allocate")
+				.then()
+				.log().all()
+				.statusCode(400);
 			Assertions.assertThatExceptionOfType(ValidationException.class)
-					.isThrownBy(() -> serviceSeat.allocateSeatToPessoa(validPosotion, invalidName, validCpf))
-					.withMessage("O nome deve ter no máximo 50 caracteres.");
+				.isThrownBy(() -> serviceSeat.allocateSeatToPessoa(validPosotion, invalidName, validCpf))
+				.withMessage("O nome deve ter no máximo 50 caracteres.");
 
 		}
 
@@ -313,7 +318,6 @@ public class H2ControllerTest {
 
 		}
 
-
 		@Test
 		void shouldThrowAssentoInvalidoException_toPosition_allocateSeatToPessoa() {
 
@@ -342,7 +346,6 @@ public class H2ControllerTest {
 
 		}
 
-
 		@Test
 		void shouldThrowNotFoundException_whenSearchToPositionInBD_allocateSeatToPessoa() {
 
@@ -360,7 +363,6 @@ public class H2ControllerTest {
 
 			logger.info("ARRANGE phase done with success!");
 
-
 			// ACT / ASSERT
 			RestAssured.given()
 					.contentType(ContentType.JSON)
@@ -376,7 +378,6 @@ public class H2ControllerTest {
 
 		}
 
-
 		@Test
 		void shouldThrowBadRequestException_whenSearchToOccupiedPositionInBD_allocateSeatToPessoa() {
 
@@ -390,7 +391,6 @@ public class H2ControllerTest {
 
 			logger.info("ARRANGE phase done with success!");
 
-
 			// ACT / ASSERT
 			RestAssured.given()
 					.contentType(ContentType.JSON)
@@ -403,10 +403,11 @@ public class H2ControllerTest {
 			Assertions.assertThatExceptionOfType(BadRequestException.class)
 					.isThrownBy(() -> serviceSeat.allocateSeatToPessoa(validPositionAlreadyOccupide, validName, validCpf))
 					.withMessage("Poltrona já está ocupada.");
-
 		}
+	}
 
-
+	@Nested
+	class removePersonFromSeat_ShouldThrowException_RestAssured {
 
 		@Test
 		void shouldThrowAssentoInvalidoException_toPosition_removePessoaFromSeat() {
@@ -416,7 +417,6 @@ public class H2ControllerTest {
 			Integer invalidPosition = 17;
 
 			logger.info("ARRANGE phase done with success!");
-
 
 			// ACT / ASSERT
 			RestAssured
@@ -430,8 +430,6 @@ public class H2ControllerTest {
 					.withMessage("O assento informado é inválido.");
 
 		}
-
-
 
 		@Test
 		void shouldThrowNotFoundException_toPositionDeletedFromDB_removePessoaFromSeat() {
@@ -447,7 +445,6 @@ public class H2ControllerTest {
 
 			logger.info("ARRANGE phase done with success!");
 
-
 			// ACT / ASSERT
 			RestAssured
 					.when()
@@ -460,7 +457,6 @@ public class H2ControllerTest {
 					.withMessage("Poltrona não encontrada.");
 		}
 
-
 		@Test
 		void shouldThrowBadRequestException_toPositionAlreadyOccupeid_removePessoaFromSeat() {
 
@@ -469,7 +465,6 @@ public class H2ControllerTest {
 			Integer validPositionAlreadyOccupeid = 1;
 
 			logger.info("ARRANGE phase done with success!");
-
 
 			// ACT / ASSERT
 			RestAssured
@@ -484,7 +479,6 @@ public class H2ControllerTest {
 		}
 
 	}
-
 
 	@Nested
 	class GetMapping_getAllStatusPoltronas {
@@ -501,7 +495,7 @@ public class H2ControllerTest {
 		@Test
 		void getAllStatusPoltronas_DirectControllerCall_ShouldReturnCorrectData() {
 			// Act
-			var response = seatController.getAllStatusPoltroons();
+			var response = seatController.getAllStatusPoltronas();
 			List<SeatResponseDTO> seats = response.getBody();
 
 			// Assert

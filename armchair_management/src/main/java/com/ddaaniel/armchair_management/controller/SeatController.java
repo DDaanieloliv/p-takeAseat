@@ -29,7 +29,7 @@ public class SeatController {
 
 	// buscando os status de cada poltrona pela sua posição
 	@GetMapping
-	public ResponseEntity<List<SeatResponseDTO>> getAllStatusPoltroons() {
+	public ResponseEntity<List<SeatResponseDTO>> getAllStatusPoltronas() {
 		var response = serviceSeat.listStatusOfAllSeats();
 		return ResponseEntity.ok().body(response);
 	}

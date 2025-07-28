@@ -1,4 +1,4 @@
-package com.ddaaniel.armchair_management.utityTests.controller;
+package com.ddaaniel.armchair_management.unityTests.controller;
 
 
 import com.ddaaniel.armchair_management.controller.SeatController;
