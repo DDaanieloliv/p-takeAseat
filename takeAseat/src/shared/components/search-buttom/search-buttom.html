@@ -1,0 +1,54 @@
+<div class="search-container">
+
+  <fa-icon
+    [icon]="faMagnifyingGlass"
+    size="lg"
+    class="magnifying"
+    (click)="showSearchWindow()"
+    (mouseenter)="onHover(true)"
+    (mouseleave)="onHover(false)"
+  ></fa-icon>
+
+  <div class="info-box-container" [class.visible]="shouldShowInfoBox()">
+    <div class="info-box">Find Customer</div>
+  </div>
+
+
+    <div class="window-blur" [class.window-blur-show]="showWindow"> </div>
+
+    <div class="search-barr" [class.search-barr-visible]="showWindow">
+      <input
+      class="input-barr"
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="onSearchInput()"
+      placeholder="Inseira um Nome ou CPF válido."
+      [tabindex]="showWindow ? 0 : -1"
+      name=""
+      value="">
+    </div>
+
+    <div class="xmark-container" [class.xmark-container-visible]="showWindow">
+      <fa-icon
+        [icon]="faXmark"
+        size="lg"
+        class="xmark"
+        (click)="showSearchWindow()"
+      ></fa-icon>
+    </div>
+
+    <div class="results-container" [class.results-container-visible]="showWindow" *ngIf="showResults && searchQuery">
+      <div *ngFor="let item of filteredResults" class="result-item">
+        <h3>{{ item.name }}</h3>
+        <p class="category">{{ item.category }}</p>
+      </div>
+
+      <!-- <div *ngIf="filteredResults.length === 0" class="no-results"> -->
+      <!--   Nenhum resultado encontrado para "{{ searchQuery }}" -->
+      <!-- </div> -->
+    </div>
+
+</div>
+
+
+

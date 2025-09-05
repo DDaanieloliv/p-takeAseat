@@ -1,0 +1,16 @@
+<div class="fuckDOM">
+ <button class="hamburger" (click)="toggle()" [class.active]="isActive" aria-label="Menu"
+          (mouseenter)="onHover(true)" (mouseleave)="onHover(false)">
+    <span class="line top"></span>
+    <span class="line middle"></span>
+    <span class="line bottom"></span>
+  </button>
+
+  <div class="info-box-container-hamburger" [class.visible]="shouldShowInfoBox()">
+    <div class="info-box-hamburger">More Options</div>
+  </div>
+
+  <div class="hamburger-window" [class.hamburger-window-active]="showUpWindow" ></div>
+</div>
+
+

@@ -1,0 +1,107 @@
+.gambiarra2 {
+  /* z-index: 9; */
+  /* display: relative; */
+  display: flex;
+  /* position: absolute; */
+  justify-content: space-between;
+  height: 3%;
+  /* width: 71.34%; */
+  width: 100%;
+  background: #A9A9A9;
+  border-top-right-radius: 30px;
+  border-top-left-radius: 30px;
+}
+
+.gambiarra3 {
+  border-top-right-radius: 100vw;
+  border-top-left-radius: 90vw;
+  height: 100%;
+  width: 40%;
+  background: #f5f0f0;
+  /* background: #A9A9A9; */
+}
+
+.gambiarra4 {
+  border-top-left-radius: 100vw;
+  border-top-right-radius: 90vw;
+  height: 100%;
+  width: 40%;
+  background: #f5f0f0;
+  /* background: #A9A9A9; */
+}
+
+.gambiarra-do-meio {
+  position: relative;
+  /* left: 36.1%; */
+  margin: 0 auto;
+  width: 20%;
+  height: 1.7vh;
+  border-bottom-left-radius: 10vw;
+  border-bottom-right-radius: 10vw;
+  background: #A9A9A9;
+}
+
+
+
+/* Condição	Significa...
+   min-width: 801px	A tela estar mais larga que 800px
+   max-width: 600px	A tela estar mais estreita que 600px
+   min-height: 700px	A tela estar mais alta que 700px
+   max-height: 620px	A tela estar mais baixa que 620px */
+
+@media (min-width: 700px) and (max-width: 1000px) {
+
+  /* .gambiarra-do-meio { */
+  /*   width: 14vw; */
+  /*   height: 4vh; */
+  /* } */
+
+  .gambiarra2 {
+    height: 3vh;
+    /* width: 70.3vw; */
+  }
+
+
+}
+
+
+/* Media queries permanecem iguais */
+/* @media (min-width: 800px) and (max-height: 620px) { */
+/*   .gambiarra2 { */
+/*     height: 2vw; */
+/*   } */
+/* } */
+
+@media (min-height: 1025px) and (min-width: 900px) {
+
+  .gambiarra2 {
+    height: 4vh;
+  }
+}
+
+
+@media (max-width: 701px) {
+
+  .gambiarra2,
+  .gambiarra3,
+  .gambiarra4,
+  .gambiarra-do-meio {
+    display: none !important;
+  }
+}
+
+
+@media (max-height: 590px) {
+
+  /* .gambiarra-do-meio { */
+  /*   width: 14vw; */
+  /*   height: 4vh; */
+  /* } */
+
+  .gambiarra2 {
+    height: 4vh;
+    /* width: 70.3vw; */
+  }
+
+
+}

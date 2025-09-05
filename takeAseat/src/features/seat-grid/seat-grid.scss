@@ -1,0 +1,376 @@
+:host {
+}
+
+
+.seat-grid {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  position: relative;
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+
+  .grid-container {
+    display: inline-block;
+    /* border: 2px solid #333; */
+    padding: 10px;
+  }
+
+  .grid-row {
+    display: flex;
+    margin-bottom: 5px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .seat {
+    width: 2.15vw;
+    height: 4.8vh;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 8px;
+    font-weight: bold;
+    transition: all 0.2s;
+
+    &.available {
+      background-color: #4CAF50;
+      color: white;
+      &.unavailable {
+        background-color: #f44336;
+        color: white;
+        cursor: not-allowed;
+      }
+
+      &.selected {
+        background-color: #2196F3;
+        color: white;
+      }
+
+      &.reserved {
+        background-color: #9E9E9E;
+        cursor: not-allowed;
+      }
+
+      &:hover:not(.unavailable):not(.reserved) {
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      }
+    }
+
+
+    .grid-wrapper {
+      display: grid;
+    }
+
+    .column-control-container {
+      position: relative;
+      border-radius: 7px;
+      width: 24%;
+      /* height: 6vh; */
+      height: 90%;
+      /* background: white; */
+      /* box-shadow: 0 -8px 8px rgba(0,0,0,0.3); */
+      /* margin-bottom: 5px; */
+      margin: 0 auto 8px auto;
+      /* text-align: center; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+
+      .name-content {
+        position: relative;
+        width: 30%;
+        height: 80%;
+        border-radius: 7px;
+        /* background: blue; */
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;      /* Alinha verticalmente */
+        justify-content: center;  /* Alinha horizontalmente (opcional) */
+        margin-right: 7px;
+        /* box-shadow: 3px 0px 8px rgba(0,0,0,0.3); */
+      }
+
+      .minus-icon {
+        position: absolute;
+        color: grey;
+        z-index: 6;
+        font-size: 0.8rem;
+        padding-left: 8px;
+        cursor: pointer;
+        transition: all 0.5s ease;
+        /* box-shadow: 3px 3px 8px 8px rgba(0, 0, 0, 0.15); */
+        /* padding: 2px 10px 2px 10px; */
+        border-radius: 12px;
+      }
+
+      .faMinus-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 18%;
+        height: 80%;
+        /* background: black; */
+        margin-right: 4px;
+        border-radius: 7px;
+        box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+      }
+      .count-number {
+        text-align: center;
+        width: 20%;
+        height: 70%;
+      }
+
+      .plus-icon {
+        position: absolute;
+        color: grey;
+        z-index: 6;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.5s ease;
+        /* box-shadow: 3px 3px 8px 8px rgba(0, 0, 0, 0.15); */
+        /* padding: 2px 10px 2px 10px; */
+        border-radius: 12px;
+      }
+
+      .faPlus-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 18%;
+        height: 80%;
+        /* background: black; */
+        margin-right: 4px;
+        border-radius: 7px;
+        box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+      }
+
+      .arrow-container {
+        display: flex;
+        /* gap: 20px; */
+        align-items: center;
+      }
+
+      .arrow {
+        width: 0;
+        height: 0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+
+      .arrow-left {
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-right: 25px solid grey;
+      }
+
+      .arrow-right {
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-left: 25px solid grey;
+      }
+
+    }
+
+    .row-control-container {
+      position: absolute;
+      border-radius: 7px;
+      width: 4%;
+      height: 100%;
+      /* background: white; */
+      /* box-shadow: -12px 0 8px rgba(0,0,0,0.3); */
+      /* margin-right: 5px; */
+      /* margin: auto 0 auto ; */
+      display: block;
+      justify-content: center;
+      align-items: center;
+      /* grid-template-columns: repeat(1, 1fr); */
+      /* grid-template-rows: repeat(4, 1fr); */
+
+      .name-content {
+        position: relative;
+        width: 100%;
+        height: 14%;
+        border-radius: 7px;
+        /* background: blue; */
+        font-size: 0.8rem;
+        display: flex;
+        /* text-align: center; */
+        align-items: center;
+        justify-content: center;
+        margin-top: 24vh;
+        /* box-shadow: 3px 0px 8px rgba(0,0,0,0.3); */
+      }
+
+      .minus-icon {
+        position: absolute;
+        color: grey;
+        z-index: 6;
+        font-size: 0.8rem;
+        padding-top: 7px;
+        cursor: pointer;
+        transition: all 0.5s ease;
+        /* box-shadow: 3px 3px 8px 8px rgba(0, 0, 0, 0.15); */
+        /* padding: 2px 10px 2px 10px; */
+        border-radius: 12px;
+      }
+
+      .faMinus-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 6.4%;
+        /* background: black; */
+        /* margin-right: 4px; */
+        border-radius: 7px;
+        box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+      }
+      .count-number {
+        /* text-align: center; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 10%;
+      }
+
+      .plus-icon {
+        position: absolute;
+        color: grey;
+        z-index: 6;
+        font-size: 0.8rem;
+        padding-top: 0;
+        cursor: pointer;
+        transition: all 0.5s ease;
+        /* box-shadow: 3px 3px 8px 8px rgba(0, 0, 0, 0.15); */
+        /* padding: 2px 10px 2px 10px; */
+        border-radius: 12px;
+      }
+
+      .faPlus-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 6.4%;
+        /* background: black; */
+        /* margin-right: 4px; */
+        border-radius: 7px;
+        box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+      }
+
+      .arrow-container {
+        display: flex;
+        /* gap: 2px; */
+        /* padding: 2px; */
+        justify-content: center;
+      }
+
+      .arrow {
+        width: 0;
+        height: 0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .arrow-up {
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 25px solid grey;
+      }
+
+      .arrow-down {
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 25px solid grey;
+      }
+    }
+
+    .grid-container {
+      display: inline-block;
+      padding: 10px;
+    }
+
+    .grid-row {
+      /* display: flex; */
+      margin-top: 0px;
+      margin-bottom: 5px;
+      margin-left: 0vw;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+  }
+
+  .menu-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60%;
+    height: 10vh;
+    /* background: black; */
+    margin: 0 auto 0;
+    border-radius: 10px;
+    box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+
+    .sub-menu-control {
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 40%;
+      height: 100%;
+      border-radius: 10px;
+
+      .menu-clicable {
+        width: 14%;
+        height: 90%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+        margin: 0px 2px 0px 2px;
+
+      }
+    }
+  }
+
+
+  /* Condição	Significa...
+  min-width: 801px	A tela estar mais larga que 800px
+  max-width: 600px	A tela estar mais estreita que 600px
+  min-height: 700px	A tela estar mais alta que 700px
+  max-height: 620px	A tela estar mais baixa que 620px */
+  @media (max-height: 451px) {
+
+    .seat-grid {
+      .seat {
+        width: 2.2vw;
+        height: 4.5vh;
+      }
+    }
+
+  }
+
+  @media (max-height: 355px) {
+
+    .seat-grid {
+      .seat {
+        width: 2.2vw;
+        height: 4vh;
+      }
+    }
+  }
+
+}

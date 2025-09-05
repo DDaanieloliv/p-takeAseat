@@ -1,0 +1,32 @@
+:host {
+  /*position: relative;*/
+  /* z-index: 10; */
+  /* grid-row: 3 / 4; */
+  /* grid-column: 2 / 3; */
+  grid-row: 10 / 13;      // Linhas 7 a 8
+  grid-column: 2 / 12;   // Colunas 2 a 3
+  background: #f5f0f0;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-top: px solid #A9A9A9;
+  border-right: px solid #A9A9A9;
+}
+
+
+/* Condição	Significa...
+   min-width: 801px	A tela estar mais larga que 800px
+   max-width: 600px	A tela estar mais estreita que 600px
+   min-height: 700px	A tela estar mais alta que 700px
+   max-height: 620px	A tela estar mais baixa que 620px */
+@media (max-width: 901px) and (min-width: 701px){
+
+  :host {
+    grid-row: 10 / 13;      // Linhas 7 a 8
+    grid-column: 2 / 11;   // Colunas 2 a 3
+    /* background: #f5f0f0; */
+    /* border-radius: 1vw; */
+    /**/
+  }
+}

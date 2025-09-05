@@ -1,0 +1,36 @@
+<div class="warning-overlay" [class.warning-overlay-visible]="isVisible">
+  <div class="warning-popup" [class.warning-popup-visible]="isVisible">
+
+    <div class="warning-header">
+      <fa-icon [icon]="faTriangleExclamation" class="warning-icon"></fa-icon>
+      <h3 class="warning-title">{{ title }}</h3>
+    </div>
+
+    <div class="warning-content">
+      <p class="warning-message" [innerHTML]="message"> </p>
+    </div>
+
+    <div class="warning-actions">
+      <button class="warning-btn warning-btn-cancel" (click)="onCancel()">
+        {{ cancelText }}
+      </button>
+      <button class="warning-btn warning-btn-confirm" (click)="onConfirm()">
+        {{ confirmText }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Exemplo de uso do componente :-->
+
+<!-- <app-warning-popup -->
+<!--   #warningPopup -->
+<!--   [title]="'Confirm action'" -->
+<!--   [message]="pickMessageToConfirmation(true)" -->
+<!--   [cancelText]="'Cancel'" -->
+<!--   [confirmText]="pickContentTextToConfirmation(true)" -->
+<!--   (confirm)="onDiscardConfirm()" -->
+<!--   (cancel)="onDiscardCancel()" -->
+<!-- ></app-warning-popup> -->
+

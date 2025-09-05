@@ -1,0 +1,108 @@
+:host {
+  position: absolute;
+  bottom: 0;  // Fixa no rodapé do layout-main
+  left: 0;
+  width: 100%;
+  height: 31vh;  // Mantém a altura fixa
+  z-index: 1;  // Garante que fique abaixo do .rounded-main
+}
+
+.gambiarra1 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 49.4vw;
+  height: 29vh;  // Ocupa toda a altura do host (31vh)
+  background: #A9A9A9;
+  border-top-right-radius: 2vw;
+}
+
+
+// Mantenha seus media queries
+@media (max-width: 750px) {
+  .gambiarra1 {
+    height: 100%;
+    width: 50.8vw;
+  }
+}
+
+@media (min-width: 1400px) {
+  .gambiarra1 {
+    height: 100%;
+    width: 50vw;
+  }
+}
+
+
+@media (min-width: 702px) {
+
+  .gambiarra1 {
+    height: 29vh;
+    width: 48.8vw;
+  }
+}
+
+@media (max-width: 701px), (min-height: 1025px) {
+  .gambiarra1 {
+    display: none !important;
+  }
+}
+
+/**/
+/* :host { */
+/*   position: relative; */
+/*   justfy-content: 'flex-end'; */
+/*   * z-index: 1 já está ótimo * */
+/*   * não usa margin-top aqui * */
+/* } */
+/**/
+/**/
+/* .gambiarra1 { */
+/*   position: absolute; */
+/*   * bottom: 0; * */
+/*   * left: 0; * */
+/*   width: 51.2vw; */
+/*   height: 31vh; */
+/*   background: #A9A9A9; */
+/*   border-top-right-radius: 2vw; */
+/*   margin-bottom: 0; */
+/* } */
+/**/
+/**/
+/**/
+/* Condição	Significa...
+   min-width: 801px	A tela estar mais larga que 800px
+   max-width: 600px	A tela estar mais estreita que 600px
+   min-height: 700px	A tela estar mais alta que 700px
+   max-height: 620px	A tela estar mais baixa que 620px */
+/* @media (max-width: 750px) { */
+/**/
+/*  .gambiarra1 { */
+/*     height: 30.4vh; */
+/*     width: 50.8vw; */
+/*   } */
+/**/
+/* } */
+
+/* @media (max-width: 651px) { */
+/**/
+/*  .gambiarra1 { */
+/*     height: 30vh; */
+/*     width: 50.4vw; */
+/*     } */
+/* } */
+
+/* @media (min-width: 1400px) { */
+/**/
+/*  .gambiarra1 { */
+/*     height: 31.5vh; */
+/*     width: 51.5vw; */
+/*   } */
+/**/
+/* } */
+/* @media (max-width: 701px), (min-height: 1025px) { */
+/*   .gambiarra1 { */
+/*     display: none !important; */
+/*   } */
+/* } */
+

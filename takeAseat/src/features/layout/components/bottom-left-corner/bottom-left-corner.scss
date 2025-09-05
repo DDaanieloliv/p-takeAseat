@@ -1,0 +1,24 @@
+:host {
+  grid-row: 10 / 13;      // Linhas 6 a 8
+  grid-column: 12 / 13;   // Colunas 7 a 8
+  background: #f5f0f0;
+  border-radius: 1vw;
+
+}
+
+
+/* Condição	Significa...
+   min-width: 801px	A tela estar mais larga que 800px
+   max-width: 600px	A tela estar mais estreita que 600px
+   min-height: 700px	A tela estar mais alta que 700px
+   max-height: 620px	A tela estar mais baixa que 620px */
+@media (max-width: 901px) and (min-width: 701px){
+
+  :host {
+    grid-row: 10 / 13;      // Linhas 6 a 8
+    grid-column: 11 / 13;   // Colunas 7 a 8
+    /* background: #f5f0f0; */
+    /* border-radius: 1vw; */
+    /**/
+  }
+}
