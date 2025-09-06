@@ -43,7 +43,7 @@ public class SeatController {
 
 	// Alocando uma poltrona para pessoa
 	@PutMapping("/allocate")
-	public ResponseEntity<?> addPersonToSeat(@RequestBody RequestAllocationDTO dto) {
+	public ResponseEntity<MessageResponseDTO> addPersonToSeat(@RequestBody RequestAllocationDTO dto) {
 		serviceSeat.allocateSeatToPessoa(dto.position(), dto.name(), dto.cpf());
 
 		MessageResponseDTO message = new MessageResponseDTO("Poltrona alocada com sucesso.");
@@ -54,10 +54,13 @@ public class SeatController {
 	// respectiva
 	// pessoa para não ficar acumulando no BD
 	@PutMapping("/remove/{position}")
-	public ResponseEntity<?> removePersonFromSeat(@PathVariable Integer position) {
+	public ResponseEntity<MessageResponseDTO> removePersonFromSeat(@PathVariable Integer position) {
 		servicePessoa.removePessoaFromSeat(position);
 
 		MessageResponseDTO message = new MessageResponseDTO("Pessoa removida da Poltrona.");
 		return ResponseEntity.ok(message);
 	}
+
+
+
 }

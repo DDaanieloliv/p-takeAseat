@@ -32,9 +32,9 @@ public class Seat {
   @Builder.Default
   private Boolean free = true;
 
-  @OneToOne(/* cascade = CascadeType.PERSIST */)
-  @JoinColumn(name = "person_ID", unique = true)
-  @JsonIgnoreProperties({ "seat" }) // Evita loop infinito
+  @JoinColumn(name = "person_ID", unique = true) // <- Chave estrangeira.
+  @OneToOne
+  @JsonIgnoreProperties({ "seat" })
   private Person person;
 
   @Override
@@ -42,37 +42,5 @@ public class Seat {
     return "Seat{id=" + seatID + ", position=" + position + ", free=" + free + "}";
   }
 
-
-  // public UUID getSeatID() {
-  //   return seatID;
-  // }
-  //
-  // public void setSeatID(UUID seatID) {
-  //   this.seatID = seatID;
-  // }
-  //
-  // public Integer getPosition() {
-  //   return position;
-  // }
-  //
-  // public void setPosition(Integer position) {
-  //   this.position = position;
-  // }
-  //
-  // public Boolean getFree() {
-  //   return free;
-  // }
-  //
-  // public void setFree(Boolean free) {
-  //   this.free = free;
-  // }
-  //
-  // public Person getPerson() {
-  //   return person;
-  // }
-  //
-  // public void setPerson(Person person) {
-  //   this.person = person;
-  // }
 
 }
