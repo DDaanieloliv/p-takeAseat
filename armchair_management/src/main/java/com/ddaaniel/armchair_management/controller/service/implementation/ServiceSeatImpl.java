@@ -125,11 +125,16 @@ public class ServiceSeatImpl implements ISeatService {
 
 
   public ResponseEntity<ShartsResponceDTO> sharts () {
+    Integer seatsOccupied = seatRepository.countSeatsOccupied();
+    Integer countAllSeats = seatRepository.countAllSeats();
+    Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied();
+
+    Float percentOccupation = seatsOccupied * 100.0f / countAllSeats;
 
     ShartsResponceDTO dto = new ShartsResponceDTO(
-      seatRepository.countSeatsOccupied()
+      percentOccupation,
+      seatsUnoccupied
     );
-
     return ResponseEntity.ok(dto);
   }
 

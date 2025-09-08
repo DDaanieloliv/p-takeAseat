@@ -5,9 +5,10 @@ import com.ddaaniel.armchair_management.controller.service.implementation.Servic
 import com.ddaaniel.armchair_management.model.record.MessageResponseDTO;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
+import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.aot.PublicMethodReflectiveProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,5 +63,11 @@ public class SeatController {
 	}
 
 
+
+  @GetMapping("/sharts")
+  public ResponseEntity<ShartsResponceDTO> sharts(){
+
+    return serviceSeat.sharts();
+  }
 
 }
