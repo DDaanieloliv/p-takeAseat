@@ -67,7 +67,7 @@ public class SeatController {
   @GetMapping("/sharts")
   public ResponseEntity<ShartsResponceDTO> sharts(){
 
-    return serviceSeat.sharts();
+    return ResponseEntity.ok(serviceSeat.sharts());
   }
 
 }

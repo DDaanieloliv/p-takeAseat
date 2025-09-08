@@ -1,5 +1,6 @@
 package com.ddaaniel.armchair_management.model;
 
+import com.ddaaniel.armchair_management.model.enums.SeatType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,15 +28,29 @@ public class Seat {
   @Column(name = "seatid")
   private UUID seatID;
 
+  @Column(name = "position")
   private Integer position;
 
+  @Column(name = "row")
+  private Integer row;
+
+  @Column(name = "column")
+  private Integer column;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status")
+  private SeatType status;
+
   @Builder.Default
+  @Column(name = "free")
   private Boolean free = true;
 
   @JoinColumn(name = "person_ID", unique = true) // <- Chave estrangeira.
-  @OneToOne
   @JsonIgnoreProperties({ "seat" })
+  @OneToOne
+  @Column(name = "person")
   private Person person;
+
 
   @Override
   public String toString() {

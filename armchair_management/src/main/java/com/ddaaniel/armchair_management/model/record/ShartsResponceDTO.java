@@ -1,7 +1,10 @@
 package com.ddaaniel.armchair_management.model.record;
 
+import java.util.Map;
+
 public record ShartsResponceDTO (
   Float percentOccupiedFloat,
-  Integer seatsUnoccupied) {
+  Integer seatsUnoccupied,
+  Map<String, Long> occupacyByRow) {
 
 }

@@ -14,6 +14,7 @@ import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 
+// import org.hibernate.mapping.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ServiceSeatImpl implements ISeatService {
@@ -69,9 +72,6 @@ public class ServiceSeatImpl implements ISeatService {
       throw new BadRequestException("Poltrona já está ocupada.");
     }
 
-    // Person person = new Person();
-    // person.setName(name);
-    // person.setCpf(cpf);
     Person person = Person.builder()
     .name(name)
     .cpf(cpf)
@@ -124,18 +124,22 @@ public class ServiceSeatImpl implements ISeatService {
 
 
 
-  public ResponseEntity<ShartsResponceDTO> sharts () {
+  @Override
+  public ShartsResponceDTO sharts () {
     Integer seatsOccupied = seatRepository.countSeatsOccupied();
     Integer countAllSeats = seatRepository.countAllSeats();
     Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied();
 
     Float percentOccupation = seatsOccupied * 100.0f / countAllSeats;
 
+    Map<String, Long> occupancyByRow = new HashMap<>()/* seatRepository.countOccupiedByRow() */;
+
     ShartsResponceDTO dto = new ShartsResponceDTO(
       percentOccupation,
-      seatsUnoccupied
+      seatsUnoccupied,
+      occupancyByRow
     );
-    return ResponseEntity.ok(dto);
+    return dto;
   }
 
 
