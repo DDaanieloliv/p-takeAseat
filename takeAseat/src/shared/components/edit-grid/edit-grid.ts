@@ -26,6 +26,7 @@ export interface Seat {
 
 @Component({
   selector: 'app-edit-grid',
+  standalone: true,
   imports: [ CommonModule, FaIconComponent, WarningPopupComponent /* , SeatGridComponent  */],
   templateUrl: './edit-grid.html',
   styleUrl: './edit-grid.scss'

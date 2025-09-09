@@ -2,6 +2,7 @@ package com.ddaaniel.armchair_management.controller;
 
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
+import com.ddaaniel.armchair_management.model.record.GridDTO;
 import com.ddaaniel.armchair_management.model.record.MessageResponseDTO;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
@@ -42,6 +43,12 @@ public class SeatController {
 		return ResponseEntity.ok().body(response);
 	}
 
+
+  @GetMapping("/sharts")
+  public ResponseEntity<ShartsResponceDTO> sharts(){
+    return ResponseEntity.ok(serviceSeat.sharts());
+  }
+
 	// Alocando uma poltrona para pessoa
 	@PutMapping("/allocate")
 	public ResponseEntity<MessageResponseDTO> addPersonToSeat(@RequestBody RequestAllocationDTO dto) {
@@ -64,10 +71,10 @@ public class SeatController {
 
 
 
-  @GetMapping("/sharts")
-  public ResponseEntity<ShartsResponceDTO> sharts(){
-
-    return ResponseEntity.ok(serviceSeat.sharts());
+  @GetMapping("/grid")
+  public ResponseEntity<GridDTO> initialGrid() {
+    return null;
   }
+
 
 }

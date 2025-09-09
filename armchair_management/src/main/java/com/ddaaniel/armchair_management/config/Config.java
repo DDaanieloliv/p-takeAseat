@@ -19,6 +19,9 @@ public class Config implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
+
+
         // // Verifica se a tabela está vazia para evitar duplicações em reinicializações
         // Integer totalSeats = jdbcTemplate.queryForObject(
         //         "SELECT COUNT(*) FROM tb_seats", Integer.class);

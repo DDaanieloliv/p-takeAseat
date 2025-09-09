@@ -38,19 +38,24 @@ public class Seat {
   private Integer column;
 
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   @Column(name = "status")
-  private SeatType status;
+  private SeatType status =  SeatType.AVAILABLE;
 
   @Builder.Default
   @Column(name = "free")
   private Boolean free = true;
 
-  @JoinColumn(name = "person_ID", unique = true) // <- Chave estrangeira.
+  @JoinColumn(name = "person_id", unique = true) // <- Chave estrangeira.
   @JsonIgnoreProperties({ "seat" })
   @OneToOne
   @Column(name = "person")
   private Person person;
 
+  @JoinColumn(name = "grid_id")
+  @ManyToOne
+  @Column(name = "currentgrid")
+  private GridEntity currentGrid;
 
   @Override
   public String toString() {
