@@ -1,9 +1,11 @@
 package com.ddaaniel.armchair_management.controller.service;
 
-import com.ddaaniel.armchair_management.model.record.GridDTO;
+import java.util.ArrayList;
+
+import com.ddaaniel.armchair_management.model.Seat;
 
 public interface IGridService {
 
-  GridDTO currentGrid();
+  ArrayList<ArrayList<Seat>> currentGrid();
 
 }

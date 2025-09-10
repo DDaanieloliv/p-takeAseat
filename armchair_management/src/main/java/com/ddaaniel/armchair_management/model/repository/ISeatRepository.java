@@ -20,8 +20,12 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
 
   void deleteById(UUID seatIdToDelete);
 
-  @Query(value = "SELECT * FORM tb_seats WHERE tb_seats.currentgrid = :gridId;", nativeQuery = true)
-  List<Seat> findByGridId(@Param("gridId") UUID grid_uuid);
+  @Query(value = """
+    SELECT * FROM tb_seats
+    WHERE tb_seats.currentgrid = ?1
+    ORDER BY tb_seats."row" ASC, tb_seats."column" ASC;""",
+    nativeQuery = true)
+  List<Seat> findSeatsByGridId(UUID grid_uuid);
 
 
   @Query(value = "SELECT COUNT(*) FROM tb_seats WHERE tb_seats.free = false;", nativeQuery = true)

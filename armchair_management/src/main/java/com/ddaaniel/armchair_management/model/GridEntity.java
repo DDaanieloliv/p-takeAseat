@@ -29,12 +29,12 @@ public class GridEntity {
   private UUID grid;
 
   @Builder.Default
-  @Column(name = "rows")
-  private Integer rows = 10;
+  @Column(name = "rowNumber")
+  private Integer rowNumber = 10;
 
   @Builder.Default
-  @Column(name = "columns")
-  private Integer columns = 24;
+  @Column(name = "columnNumber")
+  private Integer columnNumber = 24;
 
   @Column(name = "isinitial")
   private Boolean isInitialGrid;
