@@ -6,7 +6,6 @@ import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.github.dockerjava.api.model.SearchItem;
 import com.github.javafaker.Faker;
 
 

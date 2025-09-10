@@ -97,7 +97,7 @@ public class MainLoggingFilter implements Filter {
         return headers;
     }
 
-        // Método para capturar todos os headers da requisição
+    // Método para capturar todos os headers da requisição
     private Map<String, String> getHeaders(HttpServletRequest request) {
         Map<String, String> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();

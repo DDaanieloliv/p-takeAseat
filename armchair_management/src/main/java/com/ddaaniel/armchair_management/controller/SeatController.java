@@ -1,5 +1,8 @@
 package com.ddaaniel.armchair_management.controller;
 
+import com.ddaaniel.armchair_management.controller.service.IGridService;
+import com.ddaaniel.armchair_management.controller.service.IPersonService;
+import com.ddaaniel.armchair_management.controller.service.ISeatService;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
@@ -20,28 +23,30 @@ import java.util.List;
 @RequestMapping("/seats")
 public class SeatController {
 
-	private final ServiceSeatImpl serviceSeat;
-	private final ServicePersonImpl servicePessoa;
+  private final ISeatService serviceSeat;
+  private final IPersonService servicePessoa;
+  private final IGridService gridService;
 
-	@Autowired
-	public SeatController(ServiceSeatImpl serviceSeat, ServicePersonImpl servicePessoa) {
-		this.serviceSeat = serviceSeat;
-		this.servicePessoa = servicePessoa;
-	}
+  @Autowired
+  public SeatController(ServiceSeatImpl serviceSeat, ServicePersonImpl servicePessoa, IGridService gridService) {
+    this.serviceSeat = serviceSeat;
+    this.servicePessoa = servicePessoa;
+    this.gridService = gridService;
+  }
 
-	// buscando os status de cada poltrona pela sua posição
-	@GetMapping
-	public ResponseEntity<List<SeatResponseDTO>> getAllStatusPoltronas() {
-		var response = serviceSeat.listStatusOfAllSeats();
-		return ResponseEntity.ok().body(response);
-	}
+  // buscando os status de cada poltrona pela sua posição
+  @GetMapping
+  public ResponseEntity<List<SeatResponseDTO>> getAllStatusPoltronas() {
+    var response = serviceSeat.listStatusOfAllSeats();
+    return ResponseEntity.ok().body(response);
+  }
 
-	// Buscando detalhes de uma poltrona específica pelo seu número de posição
-	@GetMapping("/{position}")
-	public ResponseEntity<SeatResponseDTO> getBySeat(@PathVariable Integer position) {
-		var response = serviceSeat.detailsFromSpecificSeat(position);
-		return ResponseEntity.ok().body(response);
-	}
+  // Buscando detalhes de uma poltrona específica pelo seu número de posição
+  @GetMapping("/{position}")
+  public ResponseEntity<SeatResponseDTO> getBySeat(@PathVariable Integer position) {
+    var response = serviceSeat.detailsFromSpecificSeat(position);
+    return ResponseEntity.ok().body(response);
+  }
 
 
   @GetMapping("/sharts")
@@ -49,31 +54,31 @@ public class SeatController {
     return ResponseEntity.ok(serviceSeat.sharts());
   }
 
-	// Alocando uma poltrona para pessoa
-	@PutMapping("/allocate")
-	public ResponseEntity<MessageResponseDTO> addPersonToSeat(@RequestBody RequestAllocationDTO dto) {
-		serviceSeat.allocateSeatToPessoa(dto.position(), dto.name(), dto.cpf());
+  // Alocando uma poltrona para pessoa
+  @PutMapping("/allocate")
+  public ResponseEntity<MessageResponseDTO> addPersonToSeat(@RequestBody RequestAllocationDTO dto) {
+    serviceSeat.allocateSeatToPessoa(dto.position(), dto.name(), dto.cpf());
 
-		MessageResponseDTO message = new MessageResponseDTO("Poltrona alocada com sucesso.");
-		return ResponseEntity.ok(message);
-	}
+    MessageResponseDTO message = new MessageResponseDTO("Poltrona alocada com sucesso.");
+    return ResponseEntity.ok(message);
+  }
 
-	// Removendo a relação de pessoa e poltrona e também removendo o registro da
-	// respectiva
-	// pessoa para não ficar acumulando no BD
-	@PutMapping("/remove/{position}")
-	public ResponseEntity<MessageResponseDTO> removePersonFromSeat(@PathVariable Integer position) {
-		servicePessoa.removePessoaFromSeat(position);
+  // Removendo a relação de pessoa e poltrona e também removendo o registro da
+  // respectiva
+  // pessoa para não ficar acumulando no BD
+  @PutMapping("/remove/{position}")
+  public ResponseEntity<MessageResponseDTO> removePersonFromSeat(@PathVariable Integer position) {
+    servicePessoa.removePessoaFromSeat(position);
 
-		MessageResponseDTO message = new MessageResponseDTO("Pessoa removida da Poltrona.");
-		return ResponseEntity.ok(message);
-	}
+    MessageResponseDTO message = new MessageResponseDTO("Pessoa removida da Poltrona.");
+    return ResponseEntity.ok(message);
+  }
 
 
 
   @GetMapping("/grid")
-  public ResponseEntity<GridDTO> initialGrid() {
-    return null;
+  public ResponseEntity<GridDTO> initialGridResponseEntity() {
+    return ResponseEntity.ok(gridService.currentGrid());
   }
 
 

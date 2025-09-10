@@ -16,9 +16,7 @@ import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 import com.ddaaniel.armchair_management.fakerObjects.Utils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.matcher.RestAssuredMatchers;
 
-import org.assertj.core.api.AssertJProxySetup;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;

@@ -1,8 +1,8 @@
 package com.ddaaniel.armchair_management.model.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.ddaaniel.armchair_management.model.Seat;
 
-public record GridDTO( ArrayList<ArrayList<Seat>> grid ) {
+public record GridDTO( List<List<Seat>> grid ) {
 }

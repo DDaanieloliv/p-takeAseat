@@ -1,16 +1,12 @@
 package com.ddaaniel.armchair_management.controller.service.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ddaaniel.armchair_management.controller.service.IGridService;
-import com.ddaaniel.armchair_management.controller.service.ISeatService;
-import com.ddaaniel.armchair_management.model.GridEntity;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
 import com.ddaaniel.armchair_management.model.repository.IGridRepository;
@@ -30,16 +26,46 @@ public class ServiceGridImpl implements IGridService {
 
 
   @Override
-  public ArrayList<ArrayList<Seat>> currentGrid() {
-    return null;
+  public GridDTO currentGrid() {
+    List<List<Seat>> currentGrid = generateGrid();
+    var gridID = gridRepository.initialGrid();
+    var allSeats = seatRepository.findSeatsByGridId(gridID.getGrid());
+
+    for (List<Seat> seatList: currentGrid) {
+      parseSeatList(seatList, allSeats);
+    }
+    return pushToGridDTO(currentGrid);
+  }
+
+
+  private void parseSeatList(List<Seat> seatList, List<Seat> allSeats){
+    for (Seat seat : seatList) {
+      for (Seat mirror: allSeats) {
+        if (
+        seat.getPosition() == mirror.getPosition() &&
+        seat.getRow() == mirror.getRow() &&
+        seat.getColumn() == mirror.getColumn()) {
+
+          // seat.setPosition(mirror.getPosition());
+          // seat.setRow(mirror.getRow());
+          // seat.setColumn(mirror.getColumn());
+          seat.setStatus(mirror.getStatus());
+          seat.setFree(mirror.getFree());
+          seat.setPerson(mirror.getPerson());
+          seat.setCurrentGrid(mirror.getCurrentGrid());
+          break;
+        }
+      }
+    }
+    // return seatList;
   }
 
 
 
-  List<List<Seat>> grid = new ArrayList<>();
-  int position = 0;
+  private List<List<Seat>> generateGrid() {
+    List<List<Seat>> grid = new ArrayList<>();
+    int position = 0;
 
-  public List<List<Seat>> generateGrid() {
     var initialEntity = gridRepository.initialGrid();
     var rows = initialEntity.getRowNumber();
     var columns = initialEntity.getColumnNumber();
@@ -47,14 +73,15 @@ public class ServiceGridImpl implements IGridService {
     for (int rowCount = 1; rowCount <= rows; rowCount++) {
 
       ArrayList<Seat> rowList = new ArrayList<>();
-      grid.add(generateColumns(rowCount, columns, rowList));
+      grid.add(generateColumns(rowCount, columns, rowList, position));
+      position = position + columns;
     }
 
     return grid;
   }
 
-  private List<Seat> generateColumns(int rowCount, int columns, List<Seat> rowList){
-    for (int c = 0; c <= columns; c++) {
+  private List<Seat> generateColumns(int rowCount, int columns, List<Seat> rowList, int position){
+    for (int c = 1; c <= columns; c++) {
 
      rowList.add(Seat.builder()
         .position(position + 1)
@@ -68,8 +95,15 @@ public class ServiceGridImpl implements IGridService {
   }
 
 
-  public GridDTO pushToGridDTO() {
-    return null;
+  public GridDTO pushToGridDTO(List<List<Seat>> grid) {
+    // List<List<Seat>> seatList2D = new ArrayList<>();
+    // for (List<Seat> l : grid) {
+    //   seatList2D.add(l);
+    // }
+    // GridDTO dto = new GridDTO(seatList2D);
+
+    GridDTO dto = new GridDTO(grid);
+    return dto;
   }
 
 }

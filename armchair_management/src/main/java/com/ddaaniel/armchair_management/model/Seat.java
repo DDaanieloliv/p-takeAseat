@@ -1,18 +1,13 @@
 package com.ddaaniel.armchair_management.model;
 
 import com.ddaaniel.armchair_management.model.enums.SeatType;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
 
-import java.util.Random;
 import java.util.UUID;
 
 @Entity

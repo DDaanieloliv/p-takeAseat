@@ -1,6 +1,5 @@
 package com.ddaaniel.armchair_management.controller.service.implementation;
 
-import com.ddaaniel.armchair_management.config.aspects.MainLoggingAspect;
 import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;
 import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
@@ -9,7 +8,6 @@ import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
