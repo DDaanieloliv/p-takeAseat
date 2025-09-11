@@ -29,7 +29,7 @@ public class ServiceGridImpl implements IGridService {
   public GridDTO currentGrid() {
     List<List<Seat>> currentGrid = generateGrid();
     var gridID = gridRepository.initialGrid();
-    var allSeats = seatRepository.findSeatsByGridId(gridID.getGrid());
+    var allSeats = seatRepository.findSeatsByGridId(gridID.get().getGrid());
 
     for (List<Seat> seatList: currentGrid) {
       parseSeatList(seatList, allSeats);
@@ -67,8 +67,8 @@ public class ServiceGridImpl implements IGridService {
     int position = 0;
 
     var initialEntity = gridRepository.initialGrid();
-    var rows = initialEntity.getRowNumber();
-    var columns = initialEntity.getColumnNumber();
+    var rows = initialEntity.get().getRowNumber();
+    var columns = initialEntity.get().getColumnNumber();
 
     for (int rowCount = 1; rowCount <= rows; rowCount++) {
 

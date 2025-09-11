@@ -36,8 +36,9 @@ public class GridEntity {
   @Column(name = "columnNumber")
   private Integer columnNumber = 24;
 
+  @Builder.Default
   @Column(name = "isinitial")
-  private Boolean isInitialGrid;
+  private Boolean isInitialGrid = true;
 
   @OneToMany(mappedBy = "seat")
   private List<Seat> seatList;
