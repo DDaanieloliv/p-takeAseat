@@ -40,7 +40,7 @@ public class GridEntity {
   @Column(name = "isinitial")
   private Boolean isInitialGrid = true;
 
-  @OneToMany(mappedBy = "seat")
+  @OneToMany
   private List<Seat> seatList;
 }
 

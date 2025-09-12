@@ -44,12 +44,12 @@ public class Seat {
   @JoinColumn(name = "person_id", unique = true) // <- Chave estrangeira.
   @JsonIgnoreProperties({ "seat" })
   @OneToOne
-  @Column(name = "person")
+  // @Column(name = "person")
   private Person person;
 
   @JoinColumn(name = "grid_id")
   @ManyToOne
-  @Column(name = "currentgrid")
+  // @Column(name = "currentgrid")
   private GridEntity currentGrid;
 
   @Override
