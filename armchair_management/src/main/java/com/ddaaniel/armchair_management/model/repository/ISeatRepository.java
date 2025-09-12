@@ -21,8 +21,8 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
 
   @Query(value = """
     SELECT * FROM tb_seats
-    WHERE tb_seats.currentgrid = ?1
-    ORDER BY tb_seats."row" ASC, tb_seats."column" ASC;""",
+    WHERE tb_seats.grid_id = ?1
+    ORDER BY tb_seats.seat_row ASC, tb_seats.seat_column ASC;""",
     nativeQuery = true)
   List<Seat> findSeatsByGridId(UUID grid_uuid);
 

@@ -12,6 +12,6 @@ import com.ddaaniel.armchair_management.model.GridEntity;
 @Repository
 public interface IGridRepository extends JpaRepository<GridEntity, UUID> {
 
-  @Query(value = "SELECT * FROM tb_grid WHERE isinitial = true;")
+  @Query(value = "SELECT * FROM tb_grid WHERE is_initial = true;", nativeQuery = true)
   Optional<GridEntity> initialGrid();
 }

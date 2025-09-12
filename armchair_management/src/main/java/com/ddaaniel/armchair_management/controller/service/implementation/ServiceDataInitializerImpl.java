@@ -47,7 +47,7 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
 
     if (gridRepository.initialGrid().isEmpty()) {
       var grid = GridEntity.builder().build();
-      logger.warn("Nenhuma entidade grid com a flag 'initialGrid' foi encontrada. Uma Entidade Grid com a flag 'initialGrid foi persistida!");
+      logger.warn("Nenhuma entidade grid com a flag 'is_itialGrid' foi encontrada. Uma Entidade Grid com a flag 'is_itialGrid foi persistida!");
 
       gridRepository.save(grid);
     }

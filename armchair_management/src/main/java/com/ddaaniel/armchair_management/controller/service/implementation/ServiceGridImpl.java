@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ddaaniel.armchair_management.controller.exception.InitialGridNotFoundException;
 import com.ddaaniel.armchair_management.controller.service.IGridService;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
@@ -28,8 +29,8 @@ public class ServiceGridImpl implements IGridService {
   @Override
   public GridDTO currentGrid() {
     List<List<Seat>> currentGrid = generateGrid();
-    var gridID = gridRepository.initialGrid();
-    var allSeats = seatRepository.findSeatsByGridId(gridID.get().getGrid());
+    var gridID = gridRepository.initialGrid().orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
+    var allSeats = seatRepository.findSeatsByGridId(gridID.getGrid());
 
     for (List<Seat> seatList: currentGrid) {
       parseSeatList(seatList, allSeats);

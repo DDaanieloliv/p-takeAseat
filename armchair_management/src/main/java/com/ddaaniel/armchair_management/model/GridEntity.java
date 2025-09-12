@@ -29,18 +29,18 @@ public class GridEntity {
   private UUID grid;
 
   @Builder.Default
-  @Column(name = "rowNumber")
+  @Column(name = "row_number")
   private Integer rowNumber = 10;
 
   @Builder.Default
-  @Column(name = "columnNumber")
+  @Column(name = "column_number")
   private Integer columnNumber = 24;
 
   @Builder.Default
-  @Column(name = "isinitial")
+  @Column(name = "is_initial")
   private Boolean isInitialGrid = true;
 
-  @OneToMany
+  @OneToMany(mappedBy = "currentGrid") // <- O relacionamento está mapeado pelo campo currentGrid em Seat
   private List<Seat> seatList;
 }
 

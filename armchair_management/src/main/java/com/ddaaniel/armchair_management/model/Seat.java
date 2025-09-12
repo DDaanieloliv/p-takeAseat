@@ -26,10 +26,10 @@ public class Seat {
   @Column(name = "position")
   private Integer position;
 
-  @Column(name = "row")
+  @Column(name = "seat_row")
   private Integer row;
 
-  @Column(name = "column")
+  @Column(name = "seat_column")
   private Integer column;
 
   @Enumerated(EnumType.STRING)
