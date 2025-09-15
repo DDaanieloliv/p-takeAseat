@@ -53,12 +53,12 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
     }
 
 
-    int position = 0;
+    int position = 1;
     for (int countRows = 1; countRows <= appConfig.getRows(); countRows++) {
 
       for (int countColumns = 1; countColumns <= appConfig.getColumns(); countColumns++) {
         var entity =  Seat.builder()
-        .position(position + 1)
+        .position(position)
         .row(countRows)
         .column(countColumns)
         .status(SeatType.AVAILABLE)
@@ -74,6 +74,7 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
         // entity.setFree(true);
 
         seatRepository.save(entity);
+        position++;
       }
     }
   }

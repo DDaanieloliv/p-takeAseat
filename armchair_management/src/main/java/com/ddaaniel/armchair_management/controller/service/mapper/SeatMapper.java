@@ -14,6 +14,8 @@ public class SeatMapper {
         return new SeatResponseDTO(
                 seat.getPosition(),
                 seat.getFree(),
+                seat.getRow(),
+                seat.getColumn(),
                 Optional.ofNullable(seat.getPerson())
                         .map(person -> new SeatResponseDTO.PersonDTO(person.getName(), person.getCpf()))
         );
