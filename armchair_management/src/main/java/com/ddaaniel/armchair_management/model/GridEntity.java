@@ -40,6 +40,10 @@ public class GridEntity {
   @Column(name = "is_initial")
   private Boolean isInitialGrid = true;
 
+  @Builder.Default
+  @Column(name = "is_currentgrid")
+  private Boolean is_currentGrid = true;
+
   @OneToMany(mappedBy = "currentGrid") // <- O relacionamento está mapeado pelo campo currentGrid em Seat
   private List<Seat> seatList;
 }

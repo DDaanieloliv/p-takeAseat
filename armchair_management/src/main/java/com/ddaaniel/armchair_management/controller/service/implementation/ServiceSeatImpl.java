@@ -11,6 +11,7 @@ import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
+import com.ddaaniel.armchair_management.model.repository.IGridRepository;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 
@@ -33,12 +34,14 @@ public class ServiceSeatImpl implements ISeatService {
   private final IPersonRepository personRepository;
   private final ISeatRepository seatRepository;
   private final SeatMapper seatMapper;
+  private final IGridRepository gridRepository;
 
   @Autowired
-  public ServiceSeatImpl(ISeatRepository seatRepository, IPersonRepository personRepository, IPersonRepository personRepository1, SeatMapper seatMapper) {
+  public ServiceSeatImpl(ISeatRepository seatRepository, IPersonRepository personRepository, IPersonRepository personRepository1, SeatMapper seatMapper, IGridRepository gridRepository) {
     this.seatRepository = seatRepository;
     this.personRepository = personRepository1;
     this.seatMapper = seatMapper;
+    this.gridRepository = gridRepository;
   }
 
   // listando status de todas as poltronas
@@ -82,7 +85,10 @@ public class ServiceSeatImpl implements ISeatService {
 
 
   private void positionValidation(Integer position) {
-    if (position <= 0 || position > 15) {   // Verifica se é um parâmetro válido
+    var entity = gridRepository.isCurrentGrid().get();
+    var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
+
+    if (position <= 0 || position > totalSeats) {   // Verifica se é um parâmetro válido
       throw new AssentoInvalidoException("O assento informado é inválido.");
     }
   }
