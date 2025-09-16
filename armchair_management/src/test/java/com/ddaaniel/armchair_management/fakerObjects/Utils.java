@@ -104,6 +104,19 @@ public class Utils {
 		return dto;
 	}
 
+
+// public record SeatResponseDTO(Integer position,
+//                               boolean free,
+//                               Integer row,
+//                               Integer column,
+//                               Optional<PersonDTO> occupant) {
+//
+//     public record PersonDTO(String name,
+//                             String cpf) {
+//     }
+//
+// }
+
 	public static SeatResponseDTO moveToDTO(Optional<Seat> optionalSeat) {
 
 		if (optionalSeat.get().getPerson() != null) {
@@ -114,6 +127,8 @@ public class Utils {
 			SeatResponseDTO dto = new SeatResponseDTO(
 					optionalSeat.get().getPosition(),
 					optionalSeat.get().getFree(),
+          optionalSeat.get().getRow(),
+          optionalSeat.get().getColumn(),
 					personDTO);
 
 			return dto;
@@ -124,6 +139,8 @@ public class Utils {
 			SeatResponseDTO dto = new SeatResponseDTO(
 					optionalSeat.get().getPosition(),
 					optionalSeat.get().getFree(),
+          optionalSeat.get().getRow(),
+          optionalSeat.get().getColumn(),
 					personDTO);
 
 			return dto;
@@ -141,6 +158,8 @@ public class Utils {
 			SeatResponseDTO dto = new SeatResponseDTO(
 					seat.getPosition(),
 					seat.getFree(),
+          seat.getRow(),
+          seat.getColumn(),
 					personDTO);
 
 			return dto;
@@ -151,6 +170,8 @@ public class Utils {
 			SeatResponseDTO dto = new SeatResponseDTO(
 					seat.getPosition(),
 					seat.getFree(),
+          seat.getRow(),
+          seat.getColumn(),
 					personDTO);
 
 			return dto;

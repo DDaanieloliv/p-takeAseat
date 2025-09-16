@@ -3,7 +3,7 @@ package com.ddaaniel.armchair_management.controller.service.implementation;
 import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;
 import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
-import com.ddaaniel.armchair_management.controller.service.IGridService;
+// import com.ddaaniel.armchair_management.controller.service.IGridService;
 import com.ddaaniel.armchair_management.controller.service.IPersonService;
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
