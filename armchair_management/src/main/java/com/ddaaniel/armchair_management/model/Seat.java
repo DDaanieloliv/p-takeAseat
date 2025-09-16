@@ -1,6 +1,7 @@
 package com.ddaaniel.armchair_management.model;
 
 import com.ddaaniel.armchair_management.model.enums.SeatType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -44,12 +45,13 @@ public class Seat {
   @JoinColumn(name = "person_id", unique = true) // <- Chave estrangeira.
   @JsonIgnoreProperties({ "seat" })
   @OneToOne
-  // @Column(name = "person")
+  // @Column(name = "person") // No needed sisnce we already define the db column (That is the foreingn key) with the '@JoinColumn(name = ...)'
   private Person person;
 
   @JoinColumn(name = "grid_id")
   @ManyToOne
-  // @Column(name = "currentgrid")
+  @JsonIgnoreProperties("seatList")
+  // @Column(name = "currentgrid") // No needed sisnce we already define the db column (That is the foreingn key) with the '@JoinColumn(name = ...)'
   private GridEntity currentGrid;
 
   @Override

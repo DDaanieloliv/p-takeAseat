@@ -3,9 +3,11 @@ package com.ddaaniel.armchair_management.controller.service.implementation;
 import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;
 import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
+import com.ddaaniel.armchair_management.controller.service.IGridService;
 import com.ddaaniel.armchair_management.controller.service.IPersonService;
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
+import com.ddaaniel.armchair_management.model.repository.IGridRepository;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
 import org.slf4j.Logger;
@@ -18,59 +20,65 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ServicePersonImpl implements IPersonService {
 
-    private final Logger logger = LoggerFactory.getLogger(ServicePersonImpl.class);
+  private final Logger logger = LoggerFactory.getLogger(ServicePersonImpl.class);
 
-    // Dependências
-    private final IPersonRepository iPersonRepository;
-    private final ISeatRepository iSeatRepository;
+  // Dependências
+  private final IPersonRepository iPersonRepository;
+  private final ISeatRepository iSeatRepository;
+  private final IGridRepository gridRepository;
 
-    @Autowired
-    public ServicePersonImpl(IPersonRepository iPersonRepository, ISeatRepository iSeatRepository) {
-        this.iPersonRepository = iPersonRepository;
-        this.iSeatRepository = iSeatRepository;
+
+  @Autowired
+  public ServicePersonImpl(IPersonRepository iPersonRepository, ISeatRepository iSeatRepository, IGridRepository gridRepository) {
+    this.iPersonRepository = iPersonRepository;
+    this.iSeatRepository = iSeatRepository;
+    this.gridRepository = gridRepository;
+  }
+
+
+  @Override
+  @Transactional
+  public void removePessoaFromSeat(Integer position) {
+    positionIsValid(position);
+    Seat armchair = findSeat(position);
+
+    if (selectedSeatIsFree(armchair)) {
+      throw new BadRequestException("A Poltrona já está desocupada.");
     }
 
+    Person pessoa = armchair.getPerson();
+    removeOccupantFromSeat(armchair);
+    iPersonRepository.delete(pessoa);
+    logger.info("Person deleted from Seat !");
+  }
 
-    @Override
-    @Transactional
-    public void removePessoaFromSeat(Integer position) {
-        positionIsValid(position);
-        Seat armchair = findSeat(position);
 
-        if (selectedSeatIsFree(armchair)) {
-            throw new BadRequestException("A Poltrona já está desocupada.");
-        }
 
-        Person pessoa = armchair.getPerson();
-        removeOccupantFromSeat(armchair);
-        iPersonRepository.delete(pessoa);
-        logger.info("Person deleted from Seat !");
+
+
+  private void positionIsValid(Integer position) {
+    var entity = gridRepository.isCurrentGrid().get();
+    var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
+
+    if (position <= 0 || position > totalSeats) {   // Verifica se é um parâmetro válido
+      throw new AssentoInvalidoException("O assento informado é inválido.");
     }
+  }
 
+  private Seat findSeat(Integer position) {
+    return iSeatRepository.findByPosition(position)
+    .orElseThrow(()-> new NotFoundException("Poltrona não encontrada."));
+  }
 
+  private boolean selectedSeatIsFree(Seat armchair){
+    return armchair.getFree();
+  }
 
-
-
-    private void positionIsValid(Integer position) {
-        if (position <= 0 || position > 15) {   // Verifica se é um parâmetro válido
-            throw new AssentoInvalidoException("O assento informado é inválido.");
-        }
-    }
-
-    private Seat findSeat(Integer position) {
-        return iSeatRepository.findByPosition(position)
-                .orElseThrow(()-> new NotFoundException("Poltrona não encontrada."));
-    }
-
-    private boolean selectedSeatIsFree(Seat armchair){
-        return armchair.getFree();
-    }
-
-    private void removeOccupantFromSeat(Seat armchair) {
-        armchair.setPerson(null);
-        armchair.setFree(true);
-        iSeatRepository.save(armchair);
-        logger.info("Foreign key ( Person - x -> Seat ) successfully unlinked !");
-    }
+  private void removeOccupantFromSeat(Seat armchair) {
+    armchair.setPerson(null);
+    armchair.setFree(true);
+    iSeatRepository.save(armchair);
+    logger.info("Foreign key ( Person - x -> Seat ) successfully unlinked !");
+  }
 
 }

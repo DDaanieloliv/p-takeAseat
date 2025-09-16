@@ -50,6 +50,7 @@ public class ServiceGridImpl implements IGridService {
           // seat.setPosition(mirror.getPosition());
           // seat.setRow(mirror.getRow());
           // seat.setColumn(mirror.getColumn());
+          seat.setSeatID(mirror.getSeatID());
           seat.setStatus(mirror.getStatus());
           seat.setFree(mirror.getFree());
           seat.setPerson(mirror.getPerson());
