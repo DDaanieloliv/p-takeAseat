@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs';
 // import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs/operators';
+import { ApiService } from '../../core/services/api-service';
+
 
 
 export interface Seat {
@@ -25,7 +27,9 @@ export interface Seat {
 })
 export class SeatGridComponent {
 
-  constructor(private gridObservable: GridService_Observable ) {}
+  constructor(
+    private gridObservable: GridService_Observable,
+    private api : ApiService ) {}
 
   private subscription: Subscription = new Subscription();
 
@@ -50,7 +54,7 @@ export class SeatGridComponent {
 
 
 
-  public ngOnInit() {
+  async ngOnInit() {
     this.generateGrid();
 
     // Envia grid inicial para o serviço. (Grid inicial é o grid que é gerado no
@@ -69,6 +73,9 @@ export class SeatGridComponent {
           this.updateDimensions(newGrid);
         })
     );
+
+    const grid = await this.api.fetchAPI();
+    console.log(grid);
   }
 
 

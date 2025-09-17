@@ -1,4 +1,5 @@
 export interface GridDTO {
+  entity: CurrentGrid;
   grid: Seat[][];
 }
 
@@ -7,18 +8,18 @@ export interface CurrentGrid {
   grid: string;
   rowNumber: number;
   columnNumber: number;
-  isInitialGrid: boolean;
+  // isInitialGrid: boolean;
   is_currentGrid: boolean;
 }
 
 
 export interface Seat {
-  seatID: string;
+  // seatID: string;
   position: number;
   row: number;
   column: number;
-  status: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED';
+  type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED';
   free: boolean;
-  person: string | null;
-  currentGrid: CurrentGrid;
+  // person: string | null;
+  // currentGrid: CurrentGrid;
 }

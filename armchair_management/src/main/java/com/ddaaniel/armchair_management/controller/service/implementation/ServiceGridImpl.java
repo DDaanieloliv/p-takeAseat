@@ -8,10 +8,15 @@ import org.springframework.stereotype.Service;
 
 import com.ddaaniel.armchair_management.controller.exception.InitialGridNotFoundException;
 import com.ddaaniel.armchair_management.controller.service.IGridService;
+import com.ddaaniel.armchair_management.model.GridEntity;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
+import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
+import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.repository.IGridRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
+
+import lombok.var;
 
 @Service
 public class ServiceGridImpl implements IGridService {
@@ -28,19 +33,19 @@ public class ServiceGridImpl implements IGridService {
 
   @Override
   public GridDTO currentGrid() {
-    List<List<Seat>> currentGrid = generateGrid();
-    var initialGrid = gridRepository.initialGrid().orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
-    var allSeats = seatRepository.findSeatsByGridId(initialGrid.getGrid());
+    List<List<SeatDTO>> currentGrid = generateGrid();
+    GridEntity initialGrid = gridRepository.initialGrid().orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
+    List<Seat> allSeats = seatRepository.findSeatsByGridId(initialGrid.getGrid());
 
-    for (List<Seat> seatList: currentGrid) {
+    for (List<SeatDTO> seatList: currentGrid) {
       parseSeatList(seatList, allSeats);
     }
-    return pushToGridDTO(currentGrid);
+    return pushToGridDTO(initialGrid, currentGrid);
   }
 
 
-  private void parseSeatList(List<Seat> seatList, List<Seat> allSeats){
-    for (Seat seat : seatList) {
+  private void parseSeatList(List<SeatDTO> seatList, List<Seat> allSeats){
+    for (SeatDTO seat : seatList) {
       for (Seat mirror: allSeats) {
         /*
          * (Autounboxing)
@@ -85,22 +90,24 @@ public class ServiceGridImpl implements IGridService {
          * c == d            // FALSE - Diferent Reference!
          *
          * */
-          seat.setSeatID(mirror.getSeatID());
-          seat.setStatus(mirror.getStatus());
+          // seat.setSeatID(mirror.getSeatID());
+          // seat.setStatus(mirror.getStatus());
+          // seat.setFree(mirror.getFree());
+          // seat.setPerson(mirror.getPerson());
+          // seat.setCurrentGrid(mirror.getCurrentGrid());
+
+          seat.setType(mirror.getStatus());
           seat.setFree(mirror.getFree());
-          seat.setPerson(mirror.getPerson());
-          seat.setCurrentGrid(mirror.getCurrentGrid());
           break;
         }
       }
     }
-    // return seatList;
   }
 
 
 
-  private List<List<Seat>> generateGrid() {
-    List<List<Seat>> grid = new ArrayList<>();
+  private List<List<SeatDTO>> generateGrid() {
+    List<List<SeatDTO>> grid = new ArrayList<>();
     int position = 0;
 
     var initialEntity = gridRepository.initialGrid();
@@ -109,7 +116,7 @@ public class ServiceGridImpl implements IGridService {
 
     for (int rowCount = 1; rowCount <= rows; rowCount++) {
 
-      ArrayList<Seat> rowList = new ArrayList<>();
+      ArrayList<SeatDTO> rowList = new ArrayList<>();
       grid.add(generateColumns(rowCount, columns, rowList, position));
       position = position + columns;
     }
@@ -117,29 +124,36 @@ public class ServiceGridImpl implements IGridService {
     return grid;
   }
 
-  private List<Seat> generateColumns(int rowCount, int columns, List<Seat> rowList, int position){
+  private List<SeatDTO> generateColumns(int rowCount, int columns, List<SeatDTO> rowList, int position){
     for (int c = 1; c <= columns; c++) {
 
-     rowList.add(Seat.builder()
-        .position(position + 1)
-        .row(rowCount)
-        .column(c)
-        .build()
-      );
+      // rowList.add(Seat.builder()
+      //    .position(position + 1)
+      //    .row(rowCount)
+      //    .column(c)
+      //    .build()
+      //  );
+      rowList.add(SeatDTO.builder()
+         .position(position + 1)
+         .row(rowCount)
+         .column(c)
+         .build()
+       );
       position++;
     }
     return rowList;
   }
 
 
-  public GridDTO pushToGridDTO(List<List<Seat>> grid) {
-    // List<List<Seat>> seatList2D = new ArrayList<>();
-    // for (List<Seat> l : grid) {
-    //   seatList2D.add(l);
-    // }
-    // GridDTO dto = new GridDTO(seatList2D);
+  public GridDTO pushToGridDTO(GridEntity gridEntity, List<List<SeatDTO>> grid) {
 
-    GridDTO dto = new GridDTO(grid);
+    GridEntityDTO entityDTO = GridEntityDTO.builder()
+      .grid(gridEntity.getGrid())
+      .rowNumber(gridEntity.getRowNumber())
+      .columnNumber(gridEntity.getColumnNumber())
+      .is_currentGrid(gridEntity.getIs_currentGrid()).build();
+
+    GridDTO dto = new GridDTO(entityDTO, grid);
     return dto;
   }
 
