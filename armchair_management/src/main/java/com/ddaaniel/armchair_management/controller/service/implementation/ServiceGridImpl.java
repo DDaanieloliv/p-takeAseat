@@ -29,8 +29,8 @@ public class ServiceGridImpl implements IGridService {
   @Override
   public GridDTO currentGrid() {
     List<List<Seat>> currentGrid = generateGrid();
-    var gridID = gridRepository.initialGrid().orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
-    var allSeats = seatRepository.findSeatsByGridId(gridID.getGrid());
+    var initialGrid = gridRepository.initialGrid().orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
+    var allSeats = seatRepository.findSeatsByGridId(initialGrid.getGrid());
 
     for (List<Seat> seatList: currentGrid) {
       parseSeatList(seatList, allSeats);

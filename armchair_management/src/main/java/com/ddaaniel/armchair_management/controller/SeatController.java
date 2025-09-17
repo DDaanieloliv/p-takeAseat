@@ -75,9 +75,12 @@ public class SeatController {
   }
 
   @GetMapping("/grid")
-  public ResponseEntity<GridDTO> initialGridResponseEntity() {
+  public ResponseEntity<GridDTO> GridResponseEntity() {
     return ResponseEntity.ok(gridService.currentGrid());
   }
 
-
+  @PutMapping("/grid/update")
+  public ResponseEntity<?> UpdateGrid(){
+    return null;
+  }
 }
