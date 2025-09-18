@@ -15,9 +15,8 @@ export interface Seat {
   column: number;
   selected: boolean;
   reserved: boolean;
-  status: 'available' | 'unavailable' | 'selected';
+  status: 'available' | 'reserved' | 'unavailable' | 'maintenance' | 'disabled' | 'selected';
 }
-
 @Component({
   selector: 'app-seat-grid',
   standalone: true,
@@ -37,10 +36,10 @@ export class SeatGridComponent {
 
 
   @Input()
-  public rows: number = 10;
+  public rows: number = 8;
 
   @Input()
-  public columns: number = 24;
+  public columns: number = 22;
 
   @Input()
   public newGrid: Array<Seat[]> = [];
@@ -55,7 +54,16 @@ export class SeatGridComponent {
 
 
   async ngOnInit() {
-    this.generateGrid();
+    const grid = await this.api.fetchAPI();
+    if (grid == null) {
+      this.generateGrid();
+    }
+    else {
+      this.generateGrid(
+        grid.entity.rowNumber,
+        grid.entity.columnNumber
+      );
+    }
 
     // Envia grid inicial para o serviço. (Grid inicial é o grid que é gerado no
     // componente 'SeatGridComponent' pelos seus valores dfinidos em seu atributos).
@@ -74,7 +82,6 @@ export class SeatGridComponent {
         })
     );
 
-    const grid = await this.api.fetchAPI();
     console.log(grid);
   }
 
@@ -82,6 +89,7 @@ export class SeatGridComponent {
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
+
 
 
   // Método para atualizar rows/columns baseado no grid
@@ -109,28 +117,52 @@ export class SeatGridComponent {
   }
 
 
-  private generateGrid() {
+  private generateGrid(rowDto? : number, columnDto? : number) {
     this.grid = [];
 
-    for (let rowCount = 0; rowCount < this.rows; rowCount++) {
-      const rowArray: Seat[] = [];
+    if (rowDto && columnDto) {
+      for (let rowCount = 0; rowCount < rowDto; rowCount++) {
+        const rowArray: Seat[] = [];
 
-      this.generateColums(rowArray, rowCount);
-      this.grid.push(rowArray);
+        this.generateColums(rowArray, rowCount, columnDto);
+        this.grid.push(rowArray);
+      }
+    }
+    else {
+      for (let rowCount = 0; rowCount < this.rows; rowCount++) {
+        const rowArray: Seat[] = [];
+
+        this.generateColums(rowArray, rowCount);
+        this.grid.push(rowArray);
+      }
     }
   }
 
 
-  private generateColums(row: Seat[], rowCount: number) {
-    for (let c = 0; c < this.columns; c++) {
-      row.push({
-        id: `seat-${rowCount}-${c}`,
-        row: rowCount,
-        column: c,
-        selected: false,
-        reserved: false,
-        status: 'available'
-      });
+  private generateColums(row: Seat[], rowCount: number, columnDto? : number) {
+    if (columnDto) {
+      for (let c = 0; c < columnDto; c++) {
+        row.push({
+          id: `seat-${rowCount}-${c}`,
+          row: rowCount,
+          column: c,
+          selected: false,
+          reserved: false,
+          status: 'available'
+        });
+      }
+    }
+    else {
+      for (let c = 0; c < this.columns; c++) {
+        row.push({
+          id: `seat-${rowCount}-${c}`,
+          row: rowCount,
+          column: c,
+          selected: false,
+          reserved: false,
+          status: 'available'
+        });
+      }
     }
   }
 

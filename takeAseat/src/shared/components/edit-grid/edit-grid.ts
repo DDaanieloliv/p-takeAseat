@@ -21,7 +21,7 @@ export interface Seat {
   column: number;
   selected: boolean;
   reserved: boolean;
-  status: 'available' | 'unavailable' | 'selected';
+  status: 'available' | 'reserved' | 'unavailable' | 'maintenance' | 'disabled' | 'selected';
 }
 
 @Component({

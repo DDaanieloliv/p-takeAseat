@@ -6,9 +6,11 @@ import { GridDTO } from '../model/fetch/grid-dto';
 })
 export class ApiService {
 
+
   public async fetchAPI() : Promise<GridDTO> {
     const res = await fetch('http://localhost:8080/seats/grid');
     const data = await res.json();
-    return data as GridDTO;
+    return data;
   }
+
 }

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Seat } from '../components/edit-grid/edit-grid';
+import { ApiService } from '../../core/services/api-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GridService_Observable {
-
 
   private gridSource = new BehaviorSubject<Array<Seat[]>>([]);
 
