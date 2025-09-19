@@ -9,6 +9,7 @@ import com.ddaaniel.armchair_management.controller.service.mapper.SeatMapper;
 import com.ddaaniel.armchair_management.model.Person;
 
 import com.ddaaniel.armchair_management.model.Seat;
+import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
 import com.ddaaniel.armchair_management.model.repository.IGridRepository;
@@ -80,6 +81,18 @@ public class ServiceSeatImpl implements ISeatService {
     .build();
     allocating(seat, person);
   }
+
+
+
+  @Override
+  public void updateModifiedSeats(List<List<SeatDTO>> SeatListDTO) {
+    for (List<SeatDTO> list : SeatListDTO) {
+      for (SeatDTO seatDTO : list) {
+          seatRepository.save(seatMapper.seatDtoToEntity(seatDTO));
+      }
+    }
+  }
+
 
 
 

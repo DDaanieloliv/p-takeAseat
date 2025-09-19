@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api-service';
+import { GridDTO } from '../../core/model/fetch/grid-dto';
 
 
 
@@ -54,7 +55,9 @@ export class SeatGridComponent {
 
 
   async ngOnInit() {
-    const grid = await this.api.fetchAPI();
+
+    // Obtem o json da api, com formato semelhante a GridDTO
+    const grid : GridDTO = await this.api.fetchAPI();
     if (grid == null) {
       this.generateGrid();
     }

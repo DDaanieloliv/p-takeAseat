@@ -74,7 +74,16 @@ public class SeatController {
   }
 
   @PutMapping("/grid/update")
-  public ResponseEntity<?> UpdateGrid(){
+  public ResponseEntity<?> UpdateGrid(@RequestBody GridDTO gridDTOUpdated){
+    // gridService.updateCurrentGrid();
+    serviceSeat.updateModifiedSeats(gridDTOUpdated.grid());
     return null;
   }
+
+  @PostMapping("/grid/newroom")
+  public ResponseEntity<?> CreateNewRoomWithSeatGrid() {
+    return null;
+  }
+
+
 }

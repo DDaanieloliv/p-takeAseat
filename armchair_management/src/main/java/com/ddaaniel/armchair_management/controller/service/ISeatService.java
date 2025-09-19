@@ -1,5 +1,6 @@
 package com.ddaaniel.armchair_management.controller.service;
 
+import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
 
@@ -14,4 +15,6 @@ public interface ISeatService {
   void allocateSeatToPessoa(Integer position, String name, String cpf);
 
   ShartsResponceDTO sharts();
+
+  void updateModifiedSeats(List<List<SeatDTO>> SeatListDTO);
 }
