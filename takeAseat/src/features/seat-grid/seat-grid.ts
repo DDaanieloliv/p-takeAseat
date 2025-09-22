@@ -69,8 +69,8 @@ export class SeatGridComponent {
     }
 
     // Envia grid inicial para o serviço. (Grid inicial é o grid que é gerado no
-    // componente 'SeatGridComponent' pelos seus valores dfinidos em seu atributos).
-    this.gridObservable.setInitialGrid(this.grid);
+    // componente 'SeatGridComponent' pelos seus valores definidos em seu atributos).
+    // this.gridObservable.setInitialGrid(this.grid);
 
     // Escuta atualizações, mas ignora arrays vazios
     this.subscription.add(
@@ -114,8 +114,13 @@ export class SeatGridComponent {
     if (seat.reserved) return;
 
     seat.selected = !seat.selected;
+		// If 'seat.selected' == true, 'seat.status' = 'selected' other wise 'seat.status' = 'available'
     seat.status = seat.selected ? 'selected' : 'available';
     this.seatSelected.emit(seat);
+    /*
+     * Send the grid modified to a service that shares it with edit-grid
+     *
+     * */
     this.gridObservable.setInitialGrid(this.grid);
   }
 
