@@ -26,12 +26,16 @@
 
   <div class="allocation">
     <div class="cancel">
-      <fa-icon
-        [icon]="faXmark"
-        size="lg"
-        class="xmark"
-      ></fa-icon>
+      <!-- <fa-icon -->
+      <!--   [icon]="faXmark" -->
+      <!--   size="lg" -->
+      <!--   class="xmark" -->
+      <!-- ></fa-icon> -->
+      Uncheck
     </div>
-    <div class="buttom">Confirm</div>
+    <div
+      class="buttom"
+      (click)="confirm()"
+    >Confirm</div>
   </div>
 </div>

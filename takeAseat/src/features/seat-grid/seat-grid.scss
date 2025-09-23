@@ -21,28 +21,39 @@
   .cancel{
     height: 100%;
     background: grey;
-    width: 30px;
-    margin: 0px 0px 0px 5px;
+    border-radius: 1vw;
+    width: 8%;
+    margin: 0px 5px 0px 5px;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
+    cursor: pointer;
 
-    .xmark{
-      font-weight: bold;
-      color: white;
+    &:hover {
+      -webkit-box-shadow: 9px 6px 15px -2px rgba(0,0,0,0.43);
+      box-shadow: 9px 6px 15px -6px rgba(0,0,0,0.43);
+      transition: all 0.2s;
     }
   }
 
   .buttom{
     height: 100%;
     background: grey;
+    cursor: pointer;
     border-radius: 1vw;
     width: 8%;
-    margin: 0px 5px 0px 0px;
+    margin: 0px 5px 0px 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
+
+    &:hover {
+      -webkit-box-shadow: 9px 6px 15px -2px rgba(0,0,0,0.43);
+      box-shadow: 9px 6px 15px -6px rgba(0,0,0,0.43);
+      transition: all 0.2s;
+    }
   }
 
 }
