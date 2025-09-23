@@ -4,6 +4,8 @@ import { GridService_Observable } from '../../shared/services/grid-state';
 import { Subscription } from 'rxjs';
 // import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { filter } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api-service';
 import { GridDTO } from '../../core/model/fetch/grid-dto';
@@ -21,19 +23,19 @@ export interface Seat {
 @Component({
   selector: 'app-seat-grid',
   standalone: true,
-  imports: [CommonModule/* , FaIconComponent */],
+  imports: [CommonModule, FaIconComponent],
   templateUrl: './seat-grid.html',
   styleUrls: ['./seat-grid.scss']
 })
 export class SeatGridComponent {
+
+  faXmark = faXmark;
 
   constructor(
     private gridObservable: GridService_Observable,
     private api : ApiService ) {}
 
   private subscription: Subscription = new Subscription();
-
-
 
 
   @Input()
@@ -52,6 +54,7 @@ export class SeatGridComponent {
   public seatSelected = new EventEmitter<Seat>();
 
 
+  public somethingSelected = false;
 
 
   async ngOnInit() {
@@ -108,6 +111,14 @@ export class SeatGridComponent {
 
 
 
+  /*
+   *
+   * When confirm, update tha backend with a new grid structure
+   *
+   * */
+  public confirm() : void {
+    // this.api.updateGrid();
+  }
 
 
   public toggleSeat(seat: Seat) {
@@ -121,7 +132,7 @@ export class SeatGridComponent {
      * Send the grid modified to a service that shares it with edit-grid
      *
      * */
-    this.gridObservable.setInitialGrid(this.grid);
+    // this.gridObservable.setInitialGrid(this.grid);
   }
 
 

@@ -13,4 +13,24 @@ export class ApiService {
     return data;
   }
 
+  public async updateGrid(dto: GridDTO): Promise<GridDTO> {
+    try {
+      const response = await fetch('https://api.example.com/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dto)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
+  }
 }

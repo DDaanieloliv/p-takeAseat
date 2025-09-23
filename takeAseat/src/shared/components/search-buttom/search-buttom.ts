@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-search-buttom',
+  standalone: true,
   imports: [ CommonModule, FaIconComponent, FormsModule ],
   templateUrl: './search-buttom.html',
   styleUrl: './search-buttom.scss'
