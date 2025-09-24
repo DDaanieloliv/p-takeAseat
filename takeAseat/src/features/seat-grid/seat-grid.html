@@ -15,7 +15,7 @@
           [class.selected]="seat.status === 'selected'"
           [class.reserved]="seat.reserved"
           (click)="toggleSeat(seat)"
-          [title]="'Row ' + (grid.length - r) + ', Seat ' + (c + 1)"
+          [title]="'Row ' + (grid.length - r + 1) + ', Seat ' + (c + 1)"
         >
           {{ grid.length - r }}-{{ c + 1 }}
         </div>
