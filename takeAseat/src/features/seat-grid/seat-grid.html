@@ -24,16 +24,18 @@
     </div>
   </div>
 
-  <div class="allocation">
-    <div class="cancel">
-      <!-- <fa-icon -->
-      <!--   [icon]="faXmark" -->
-      <!--   size="lg" -->
-      <!--   class="xmark" -->
-      <!-- ></fa-icon> -->
-      Uncheck
+  <div
+    class="allocation"
+    [class.handle-selection]="is_visibleHandleSelection"
+  >
+    <div
+      class="popup-container" [class.popup-visible]="isPopupVisible"
+      class="cancel"
+      (click)="cancel()"
+    >Uncheck
     </div>
     <div
+      class="popup-container" [class.popup-visible]="isPopupVisible"
       class="buttom"
       (click)="confirm()"
     >Confirm</div>

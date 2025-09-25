@@ -57,8 +57,26 @@ export class SeatGridComponent {
   @Output()
   public seatSelected = new EventEmitter<Seat>();
 
+  public selectedSeatList : Array<Seat> = [];
 
-  public somethingSelected = false;
+  public is_visibleHandleSelection : boolean = false;
+
+
+
+  isPopupVisible: boolean = false;
+
+  togglePopup(): void {
+    this.isPopupVisible = !this.isPopupVisible;
+  }
+
+  showPopup(): void {
+    this.isPopupVisible = true;
+  }
+
+  hidePopup(): void {
+    this.isPopupVisible = false;
+  }
+
 
 
   async ngOnInit() {
@@ -135,8 +153,11 @@ export class SeatGridComponent {
 
   /*
    *
-   * Cuidado!! Qualquer modificação nos elementos dentro dessa estrutura irá refletir
-   * nos elementos Seat em memória, visto que estamos passando referências para o ARRAY
+   * Verifica se o parâmetro Seat existe em 'selectedSeatList', e o substitui pelo seu
+   * elemento cópia mais recente ou faz um fresh insert.
+   *
+   * Qualquer modificação nos elementos dentro de selectedSeatList repercutirá nos
+   * elementos instanciados.
    *
    * */
   public checkSelections(seat : Seat) : void {
@@ -157,10 +178,19 @@ export class SeatGridComponent {
 
   }
 
+  /*
+   * Toggle de visualização do menu de handle-confirmation.
+   *
+   * */
+  public handleSelection() : void {
+    if (this.selectedSeatList.length > 0) {
+      this.is_visibleHandleSelection = true;
+    }
+  }
 
   /*
    *
-   * When confirm, update tha backend with a new grid structure
+   * Deve atualizar o backend com uma nova estrutura grid.
    *
    * */
   public confirm(): void {
@@ -169,73 +199,93 @@ export class SeatGridComponent {
   }
 
 
-  public selectedSeatList : Array<Seat> = [];
-
-  public toggleSeat(seat: Seat) {
-  if (seat.reserved) return;
-
-  seat.selected = !seat.selected;
-  // If 'seat.selected' == true, 'seat.status' = 'selected' other wise 'seat.status' = 'available'
-  seat.status = seat.selected ? 'selected' : 'available';
-  this.seatSelected.emit(seat);
-
-  this.checkSelections(seat);
-
   /*
-   * Send the grid modified to a service that shares it with edit-grid
+   *
+   * Deve retirar a selection de cada um dos elementos Seat em 'selectedSeatList'.
    *
    * */
-  // this.gridObservable.setInitialGrid(this.grid);
-}
+  public cancel(): void {
+    /*
+     * Se o array muda de tamanho durante a iteração > comportamento imprevisível
+     * Se possível evite alterações na maioria estruturas de dados durante iterações,
+     * adote a programação funcional.
+     * */
+    this.selectedSeatList.forEach
+      ((seat : Seat) => {
+        seat.selected = !seat.selected;
+        seat.status = seat.selected ? 'selected' : 'available';
+      } );
+    this.handleSelection();
+    this.selectedSeatList = [];
+    console.log(this.selectedSeatList);
+  }
+
+
+  public toggleSeat(seat: Seat) {
+    if (seat.reserved) return;
+
+    seat.selected = !seat.selected;
+    // If 'seat.selected' == true, 'seat.status' = 'selected' other wise 'seat.status' = 'available'
+    seat.status = seat.selected ? 'selected' : 'available';
+    // this.seatSelected.emit(seat);
+
+    this.checkSelections(seat);
+    this.handleSelection();
+    /*
+     * Send the grid modified to a service that shares it with edit-grid
+     *
+     * */
+    // this.gridObservable.setInitialGrid(this.grid);
+  }
 
 
   private generateGrid(rowDto ? : number, columnDto ? : number) {
-  this.grid = [];
+    this.grid = [];
 
-  if (rowDto && columnDto) {
-    for (let rowCount = 0; rowCount < rowDto; rowCount++) {
-      const rowArray: Seat[] = [];
+    if (rowDto && columnDto) {
+      for (let rowCount = 0; rowCount < rowDto; rowCount++) {
+        const rowArray: Seat[] = [];
 
-      this.generateColums(rowArray, rowCount, columnDto);
-      this.grid.push(rowArray);
+        this.generateColums(rowArray, rowCount, columnDto);
+        this.grid.push(rowArray);
+      }
+    }
+    else {
+      for (let rowCount = 0; rowCount < this.rows; rowCount++) {
+        const rowArray: Seat[] = [];
+
+        this.generateColums(rowArray, rowCount);
+        this.grid.push(rowArray);
+      }
     }
   }
-  else {
-    for (let rowCount = 0; rowCount < this.rows; rowCount++) {
-      const rowArray: Seat[] = [];
-
-      this.generateColums(rowArray, rowCount);
-      this.grid.push(rowArray);
-    }
-  }
-}
 
 
   private generateColums(row: Seat[], rowCount: number, columnDto ? : number) {
-  if (columnDto) {
-    for (let c = 0; c < columnDto; c++) {
-      row.push({
-        id: `seat-${rowCount + 1}-${c + 1}`,
-        row: rowCount + 1,
-        column: c + 1,
-        selected: false,
-        reserved: false,
-        status: 'available'
-      });
+    if (columnDto) {
+      for (let c = 0; c < columnDto; c++) {
+        row.push({
+          id: `seat-${rowCount + 1}-${c + 1}`,
+          row: rowCount + 1,
+          column: c + 1,
+          selected: false,
+          reserved: false,
+          status: 'available'
+        });
+      }
+    }
+    else {
+      for (let c = 0; c < this.columns; c++) {
+        row.push({
+          id: `seat-${rowCount + 1}-${c + 1}`,
+          row: rowCount + 1,
+          column: c + 1,
+          selected: false,
+          reserved: false,
+          status: 'available'
+        });
+      }
     }
   }
-  else {
-    for (let c = 0; c < this.columns; c++) {
-      row.push({
-        id: `seat-${rowCount + 1}-${c + 1}`,
-        row: rowCount + 1,
-        column: c + 1,
-        selected: false,
-        reserved: false,
-        status: 'available'
-      });
-    }
-  }
-}
 
 }
