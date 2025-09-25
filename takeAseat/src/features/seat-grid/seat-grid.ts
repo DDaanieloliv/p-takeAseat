@@ -216,8 +216,8 @@ export class SeatGridComponent {
     for (let c = 0; c < columnDto; c++) {
       row.push({
         id: `seat-${rowCount + 1}-${c + 1}`,
-        row: rowCount,
-        column: c,
+        row: rowCount + 1,
+        column: c + 1,
         selected: false,
         reserved: false,
         status: 'available'
@@ -228,8 +228,8 @@ export class SeatGridComponent {
     for (let c = 0; c < this.columns; c++) {
       row.push({
         id: `seat-${rowCount + 1}-${c + 1}`,
-        row: rowCount,
-        column: c,
+        row: rowCount + 1,
+        column: c + 1,
         selected: false,
         reserved: false,
         status: 'available'
