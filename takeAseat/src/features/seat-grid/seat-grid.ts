@@ -63,22 +63,6 @@ export class SeatGridComponent {
 
 
 
-  isPopupVisible: boolean = false;
-
-  togglePopup(): void {
-    this.isPopupVisible = !this.isPopupVisible;
-  }
-
-  showPopup(): void {
-    this.isPopupVisible = true;
-  }
-
-  hidePopup(): void {
-    this.isPopupVisible = false;
-  }
-
-
-
   async ngOnInit() {
     // Verificação adicional de segurança
     if (!isPlatformBrowser(this.platformId)) {
@@ -195,6 +179,7 @@ export class SeatGridComponent {
    * */
   public confirm(): void {
     // this.api.updateGrid();
+    this.is_visibleHandleSelection = false;
     console.log(this.selectedSeatList);
   }
 
@@ -215,7 +200,9 @@ export class SeatGridComponent {
         seat.selected = !seat.selected;
         seat.status = seat.selected ? 'selected' : 'available';
       } );
-    this.handleSelection();
+
+    this.is_visibleHandleSelection = false;
+
     this.selectedSeatList = [];
     console.log(this.selectedSeatList);
   }

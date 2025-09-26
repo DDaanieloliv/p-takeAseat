@@ -39,11 +39,11 @@
     align-items: center;
     color: white;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: ease-in 0.2s;
     animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     &:not(.popup-visible) {
-      animation: popOut 0.3s ease-in-out;
+      animation: popOut 0.3s ease-in;
     }
 
     &:hover {
@@ -68,7 +68,7 @@
     animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     &:not(.popup-visible) {
-      animation: popOut 0.3s ease-in-out;
+      animation: popOut 0.3s ease-in;
     }
 
     &:hover {

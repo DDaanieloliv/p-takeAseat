@@ -26,16 +26,16 @@
 
   <div
     class="allocation"
-    [class.handle-selection]="is_visibleHandleSelection"
+    [class.handle-selection]="!is_visibleHandleSelection"
   >
     <div
-      class="popup-container" [class.popup-visible]="isPopupVisible"
+      class="popup-container" [class.popup-visible]="!is_visibleHandleSelection"
       class="cancel"
       (click)="cancel()"
     >Uncheck
     </div>
     <div
-      class="popup-container" [class.popup-visible]="isPopupVisible"
+      class="popup-container" [class.popup-visible]="!is_visibleHandleSelection"
       class="buttom"
       (click)="confirm()"
     >Confirm</div>
