@@ -84,6 +84,7 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
+  width: 100%;
 
   .grid-container {
     display: inline-block;
@@ -152,10 +153,14 @@
   }
 
   .grid-row-container {
-    grid-row: 2 / 12;      // Ocupa da linha 2 até a 12
-    grid-column: 2 / 24;   // Ocupa da coluna 2 até a 12
     max-width: 96vw;
     max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    width: 100%;
+
   }
 
 

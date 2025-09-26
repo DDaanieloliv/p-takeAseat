@@ -28,6 +28,11 @@
   transition: all 0.2s;
   /* background: blue; */
 
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.8) translateY(10px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
   .cancel{
     height: 100%;
     background: grey;
@@ -40,11 +45,6 @@
     color: white;
     cursor: pointer;
     transition: ease-in 0.2s;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-    &:not(.popup-visible) {
-      animation: popOut 0.3s ease-in;
-    }
 
     &:hover {
       -webkit-box-shadow: 9px 6px 15px -2px rgba(0,0,0,0.43);
@@ -65,11 +65,6 @@
     align-items: center;
     transition: all 0.2s;
     color: white;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-    &:not(.popup-visible) {
-      animation: popOut 0.3s ease-in;
-    }
 
     &:hover {
       -webkit-box-shadow: 9px 6px 15px -2px rgba(0,0,0,0.43);
@@ -82,8 +77,11 @@
 }
 
 .handle-selection {
-  visibility: hidden;
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1) translateY(0);
 }
+
 
 .seat-grid {
   font-family: Arial, sans-serif;
@@ -456,32 +454,4 @@
     }
   }
 
-}
-
-
-
-@keyframes popIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.5) translateY(-30px);
-  }
-  70% {
-    transform: scale(1.05) translateY(5px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes popOut {
-  0% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.8) translateY(-20px);
-    visibility: hidden;
-  }
 }

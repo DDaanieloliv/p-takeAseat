@@ -59,17 +59,14 @@ export class SeatGridComponent {
 
   public selectedSeatList : Array<Seat> = [];
 
-  public is_visibleHandleSelection : boolean = false;
+  public is_visibleHandleSelection : boolean = true;
 
 
 
   async ngOnInit() {
-    // Verificação adicional de segurança
-    if (!isPlatformBrowser(this.platformId)) {
-      // Se estiver no servidor, gera grid padrão e retorna
-      this.generateGrid();
-      return;
-    }
+
+    // Configura a subscription
+    this.setupGridSubscription();
 
     try {
       // Obtem o json da api
@@ -87,8 +84,14 @@ export class SeatGridComponent {
         );
       }
 
-      // Configura a subscription
-      this.setupGridSubscription();
+      // Verificação adicional de segurança
+      if (!isPlatformBrowser(this.platformId)) {
+        // Se estiver no servidor, gera grid padrão e retorna
+        this.generateGrid();
+        return;
+      }
+
+
 
       // Recupera do storage para verificação
       const storedGrid = this.safeStorage.getItem<GridDTO>('currentGrid');
@@ -168,7 +171,7 @@ export class SeatGridComponent {
    * */
   public handleSelection() : void {
     if (this.selectedSeatList.length > 0) {
-      this.is_visibleHandleSelection = true;
+      this.is_visibleHandleSelection = false;
     }
   }
 
@@ -179,8 +182,15 @@ export class SeatGridComponent {
    * */
   public confirm(): void {
     // this.api.updateGrid();
-    this.is_visibleHandleSelection = false;
+    this.is_visibleHandleSelection = true;
     console.log(this.selectedSeatList);
+    this.selectedSeatList = [];
+    /*
+     * Send the grid modified to a service that shares it with edit-grid
+     *
+     * */
+    this.gridObservable.setInitialGrid(this.grid);
+
   }
 
 
@@ -201,7 +211,7 @@ export class SeatGridComponent {
         seat.status = seat.selected ? 'selected' : 'available';
       } );
 
-    this.is_visibleHandleSelection = false;
+    this.is_visibleHandleSelection = true;
 
     this.selectedSeatList = [];
     console.log(this.selectedSeatList);
@@ -218,11 +228,6 @@ export class SeatGridComponent {
 
     this.checkSelections(seat);
     this.handleSelection();
-    /*
-     * Send the grid modified to a service that shares it with edit-grid
-     *
-     * */
-    // this.gridObservable.setInitialGrid(this.grid);
   }
 
 

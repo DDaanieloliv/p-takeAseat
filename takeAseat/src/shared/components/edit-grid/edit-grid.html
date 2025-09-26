@@ -62,28 +62,27 @@
 
         <div class="grid-row-container">
 
+          <div class="grid-row-wrapper">
+            <!-- 'grid' é um Array de tipo Seat[] ou seja Array<Seat[]>. -->
+            <!-- Para cada item (Seat[]) iterado no Array<Seat[]> será gerada uma grid-row. -->
+            <div *ngFor="let row of grid.slice().reverse(); let r = index" class="grid-row">
 
-          <!-- 'grid' é um Array de tipo Seat[] ou seja Array<Seat[]>. -->
-          <!-- Para cada item (Seat[]) iterado no Array<Seat[]> será gerada uma grid-row. -->
-          <div *ngFor="let row of grid.slice().reverse(); let r = index" class="grid-row">
-
-          <!-- Iteraremos sobre cada um dos itens (Seat) em grid-row gerando para cada um deles uma "Seat". -->
-            <div *ngFor="let seat of row; let c = index"
-              class="seat"
-              [class.available]="seat.status === 'available'"
-              [class.unavailable]="seat.status === 'unavailable'"
-              [class.selected]="seat.status === 'selected'"
-              [class.reserved]="seat.reserved"
-              (click)="toggleSeat(seat)"
-              [title]="'Row ' + (grid.length - r) + ', Seat ' + (c + 1)"
-            >
-              {{ grid.length - r }}-{{ c + 1 }}
+              <!-- Iteraremos sobre cada um dos itens (Seat) em grid-row gerando para cada um deles uma "Seat". -->
+              <div *ngFor="let seat of row; let c = index"
+                class="seat"
+                [class.available]="seat.status === 'available'"
+                [class.unavailable]="seat.status === 'unavailable'"
+                [class.selected]="seat.status === 'selected'"
+                [class.reserved]="seat.reserved"
+                (click)="toggleSeat(seat)"
+                [title]="'Row ' + (grid.length - r) + ', Seat ' + (c + 1)"
+              >
+                {{ grid.length - r }}-{{ c + 1 }}
+              </div>
             </div>
-
           </div>
 
         </div>
-
       </div>
     </div>
 
