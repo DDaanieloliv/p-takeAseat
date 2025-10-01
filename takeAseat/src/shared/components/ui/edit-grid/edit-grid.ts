@@ -6,13 +6,12 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
 import { WarningPopupComponent } from '../warning-window/warning-window';
-import { GridService_Observable } from '../../services/grid-state';
+import { GridService_Observable } from '../../../services/grid-state';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { take } from 'rxjs/operators';
 // import { SeatGridComponent } from '../../../features/seat-grid/seat-grid';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-
 
 
 export interface Seat {

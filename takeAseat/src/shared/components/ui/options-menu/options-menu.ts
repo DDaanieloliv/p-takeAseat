@@ -5,6 +5,7 @@ import { faTicket , faCirclePlus, faPencil } from '@fortawesome/free-solid-svg-i
 
 @Component({
   selector: 'app-options-menu',
+  standalone: true,
   imports: [ CommonModule, FaIconComponent ],
   templateUrl: './options-menu.html',
   styleUrl: './options-menu.scss'

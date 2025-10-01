@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Seat } from '../components/edit-grid/edit-grid';
+import { Seat } from '../components/ui/edit-grid/edit-grid';
 
 @Injectable({
   providedIn: 'root'

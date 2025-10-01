@@ -1,10 +1,11 @@
 import { Component, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common'; // <-- Adicione esta linha
+import { CommonModule } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-config-buttom',
+  standalone: true,
   imports: [CommonModule, FaIconComponent],
   templateUrl: './config-buttom.html',
   styleUrl: './config-buttom.scss'
