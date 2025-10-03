@@ -61,7 +61,8 @@ export class SeatGridComponent {
 
   public is_visibleHandleSelection : boolean = true;
 
-
+  private pollingInterval: any;
+  private readonly POLLING_INTERVAL = 30000;
 
   async ngOnInit() {
 

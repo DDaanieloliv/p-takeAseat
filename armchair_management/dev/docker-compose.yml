@@ -1,11 +1,11 @@
 
-networks: # Terminada de definir os serviços que serão iniciados nesse docker-compose, usamos essa diretiva para definir quais redes usaremos nesse arquivo docker-compose.yml
-  my_network: # Definimos a criação de uma rede "my_network".
-    driver: bridge  # E "settamos" o drive de rede que ela usará.
-
-volumes:
-  grafana-storage:
-  loki-data:
+# networks: # Terminada de definir os serviços que serão iniciados nesse docker-compose, usamos essa diretiva para definir quais redes usaremos nesse arquivo docker-compose.yml
+#   my_network: # Definimos a criação de uma rede "my_network".
+#     driver: bridge  # E "settamos" o drive de rede que ela usará.
+#
+# volumes:
+#   grafana-storage:
+#   loki-data:
 
 
 services: # Diretiva que indica que sob essa sessão definiremos containers.
@@ -73,8 +73,8 @@ services: # Diretiva que indica que sob essa sessão definiremos containers.
     #env_file: # Como não iremos usar a "file" automáticamente identificada pelo Docker (.env) usamos essa diretiva que nos permite explicitar de onde obteremos essa nova "file".
     #  - ./env/.env  # Definimos a "file" que obteremos no ligar do padrão.
     #command: --skip-name-resolve  # Utilizamos essa diretiva que nos permite comandos personalizados a respeito inicialização do container.
-    networks: # Usamos essa diretiva para associar esse container a uma rede Docker.
-      - my_network  # Explicitamos a qual rede/s esse container será associado.
+    # networks: # Usamos essa diretiva para associar esse container a uma rede Docker.
+    #   - my_network  # Explicitamos a qual rede/s esse container será associado.
     healthcheck: # Definimos uma verificação periódica sobre a saúde do container, a qual ocorrerá mediante tais testes...
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s # Tempo entre cada Verificação
