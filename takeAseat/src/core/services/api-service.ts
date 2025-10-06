@@ -15,7 +15,7 @@ export class ApiService {
 
   public async updateGrid(dto: GridDTO): Promise<GridDTO> {
     try {
-      const response = await fetch('https://api.example.com/users', {
+      const response = await fetch('https://localhost:8080/seats/grid/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

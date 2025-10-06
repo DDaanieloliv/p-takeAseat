@@ -413,13 +413,13 @@
 
 .window-blur {
   z-index: 7;
-  background-color: rgba(240, 231, 236, 0.99);
+  background-color: rgba(240, 231, 236, 0.95);
   /* backdrop-filter: blur(16px); */
   /* -webkit-backdrop-filter: blur(10px); */
   transform: translateY(100%);
   position: absolute;
   opacity: 0.99;
-  transition: all 0.8s ease;
+  transition: all 0.7s ease;
   width: 100vw;
   height: 110vh;
   left: -8px;
@@ -435,7 +435,7 @@
   }
 }
 .window-blur-show {
-  transform: translateY(-72%);
+  transform: translateY(-72.5%);
   pointer-events: auto;
 
   .input-barr {

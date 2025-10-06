@@ -10,9 +10,9 @@
         <!-- Iteraremos sobre cada um dos itens (Seat) em grid-row gerando para cada um deles uma "Seat". -->
         <div *ngFor="let seat of row; let c = index"
           class="seat"
-          [class.available]="seat.status === 'available'"
-          [class.unavailable]="seat.status === 'unavailable'"
-          [class.selected]="seat.status === 'selected'"
+          [class.available]="seat.status === 'AVAILABLE'"
+          [class.unavailable]="seat.status === 'UNAVAILABLE'"
+          [class.selected]="seat.status === 'SELECTED'"
           [class.reserved]="seat.reserved"
           (click)="toggleSeat(seat)"
           [title]="'Row ' + (grid.length - r + 1) + ', Seat ' + (c + 1)"
@@ -38,6 +38,8 @@
       class="popup-container"
       class="buttom"
       (click)="confirm()"
-    >Confirm</div>
+    >Confirm
+
+    </div>
   </div>
 </div>

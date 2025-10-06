@@ -20,7 +20,7 @@ export interface Seat {
   column: number;
   selected: boolean;
   reserved: boolean;
-  status: 'available' | 'reserved' | 'unavailable' | 'maintenance' | 'disabled' | 'selected';
+  status: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
 }
 
 @Component({
@@ -169,7 +169,7 @@ export class EditGrid {
     if (seat.reserved) return;
 
     seat.selected = !seat.selected;
-    seat.status = seat.selected ? 'selected' : 'available';
+    seat.status = seat.selected ? 'SELECTED' : 'AVAILABLE';
     this.seatSelected.emit(seat);
   }
 
@@ -241,7 +241,7 @@ export class EditGrid {
         column : c,
         selected : false,
         reserved : false,
-        status : 'available'
+        status : 'AVAILABLE'
       });
     }
   }

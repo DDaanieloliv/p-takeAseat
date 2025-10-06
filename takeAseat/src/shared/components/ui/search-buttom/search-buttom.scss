@@ -71,9 +71,9 @@
 
 .window-blur {
   z-index: 7;
-  background-color: rgba(240, 231, 236, 0.3); /* Cor com transparência */
-  backdrop-filter: blur(160px); /* Efeito de desfoque */
-  -webkit-backdrop-filter: blur(40px); /* Para compatibilidade com Safari *
+  background-color: rgba(240, 231, 236, 0.95); /* Cor com transparência */
+  /* backdrop-filter: blur(160px); */
+  /* -webkit-backdrop-filter: blur(40px); */
   /* background-color: grey; */
   transform: translateY(100%);
   position: absolute;

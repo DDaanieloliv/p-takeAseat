@@ -1,6 +1,6 @@
-export interface GridDTO {
+export interface GridUpdatedDTO {
   entity: CurrentGrid;
-  grid: Seat[][];
+  grid: Seat[];
 }
 
 
@@ -18,7 +18,7 @@ export interface Seat {
   position: number;
   row: number;
   column: number;
-  type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
+  type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED';
   free: boolean;
   // person: string | null;
   // currentGrid: CurrentGrid;
