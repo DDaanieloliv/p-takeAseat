@@ -1,3 +1,5 @@
+import { Seat } from "../Seat";
+
 export interface GridDTO {
   entity: CurrentGrid;
   grid: Seat[][];
@@ -10,16 +12,4 @@ export interface CurrentGrid {
   columnNumber: number;
   // isInitialGrid: boolean;
   is_currentGrid: boolean;
-}
-
-
-export interface Seat {
-  // seatID: string;
-  position: number;
-  row: number;
-  column: number;
-  type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
-  free: boolean;
-  // person: string | null;
-  // currentGrid: CurrentGrid;
 }

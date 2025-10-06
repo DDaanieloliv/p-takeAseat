@@ -1,3 +1,14 @@
+import { Seat } from "../Seat";
+//
+// export interface Seat {
+//   position: string
+//   row: number;
+//   column: number;
+//   selected: boolean;
+//   free: boolean;
+//   status: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
+// }
+
 export interface GridUpdatedDTO {
   entity: CurrentGrid;
   grid: Seat[];
@@ -8,18 +19,5 @@ export interface CurrentGrid {
   grid: string;
   rowNumber: number;
   columnNumber: number;
-  // isInitialGrid: boolean;
   is_currentGrid: boolean;
-}
-
-
-export interface Seat {
-  // seatID: string;
-  position: number;
-  row: number;
-  column: number;
-  type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED';
-  free: boolean;
-  // person: string | null;
-  // currentGrid: CurrentGrid;
 }

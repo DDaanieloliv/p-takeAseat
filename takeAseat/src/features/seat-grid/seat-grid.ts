@@ -10,6 +10,7 @@ import { ApiService } from '../../core/services/api-service';
 import { GridDTO } from '../../core/model/fetch/grid-dto';
 import { SafeStorageService } from '../../core/services/localStorageService/storage-service';
 import { GridUpdatedDTO } from '../../core/model/fetch/seatsUpdated-dto';
+import { Seat } from '../../core/model/Seat';
 
 
 export interface ApiSeat {
@@ -23,15 +24,15 @@ export interface ApiSeat {
   // currentGrid: CurrentGrid;
 }
 
-export interface LocalSeat {
-  id: string;
-  position: number;
-  row: number;
-  column: number;
-  selected: boolean;
-  free: boolean;
-  type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
-}
+// export interface Seat {
+//   // id: string;
+//   position: string
+//   row: number;
+//   column: number;
+//   selected: boolean;
+//   free: boolean;
+//   status: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
+// }
 @Component({
   selector: 'app-seat-grid',
   standalone: true,
@@ -61,15 +62,15 @@ export class SeatGridComponent {
   public columns: number = 22;
 
   @Input()
-  public newGrid: Array<LocalSeat[]> = [];
+  public newGrid: Array<Seat[]> = [];
 
   @Output()
-  public grid: Array<LocalSeat[]> = [];
+  public grid: Array<Seat[]> = [];
 
   @Output()
-  public seatSelected = new EventEmitter<LocalSeat>();
+  public seatSelected = new EventEmitter<Seat>();
 
-  public selectedSeatList : Array<LocalSeat> = [];
+  public selectedSeatList : Array<Seat> = [];
 
   public is_visibleHandleSelection : boolean = true;
 
@@ -129,7 +130,7 @@ export class SeatGridComponent {
         .pipe(
           filter(newGrid => newGrid && newGrid.length > 0) // ← Só emite se não for vazio
         )
-        .subscribe((newGrid: Array<LocalSeat[]>) => {
+        .subscribe((newGrid: Array<Seat[]>) => {
           this.grid = newGrid;
           // Atualiza dimensões
           this.updateDimensions(newGrid);
@@ -140,7 +141,7 @@ export class SeatGridComponent {
 
 
   // Método para atualizar rows/columns baseado no grid
-  private updateDimensions(grid: Array<LocalSeat[]>) {
+  private updateDimensions(grid: Array<Seat[]>) {
     if (grid && grid.length > 0) {
       this.rows = grid.length;
       this.columns = grid[0]?.length || 0;
@@ -151,16 +152,16 @@ export class SeatGridComponent {
 
   /*
    *
-   * Verifica se o parâmetro LocalSeat existe em 'selectedSeatList', e o substitui pelo seu
+   * Verifica se o parâmetro Seat existe em 'selectedSeatList', e o substitui pelo seu
    * elemento cópia mais recente ou faz um fresh insert.
    *
    * Qualquer modificação nos elementos dentro de selectedSeatList repercutirá nos
    * elementos instanciados.
    *
    * */
-  public checkSelections(seat : LocalSeat) : void {
+  public checkSelections(seat : Seat) : void {
 
-    const existingIndex = this.selectedSeatList.findIndex(s => s.id === seat.id);
+    const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
 
     if (existingIndex !== -1) {
       if (!seat.selected) {
@@ -195,7 +196,6 @@ export class SeatGridComponent {
     // this.api.updateGrid();
     this.is_visibleHandleSelection = true;
     console.log(this.selectedSeatList);
-    this.selectedSeatList = [];
     /*
      * Send the grid modified to a service that shares it with edit-grid
      *
@@ -215,25 +215,29 @@ export class SeatGridComponent {
         },
         grid: this.selectedSeatList
       }
-    }
-  }
-
-  private mapLocalSeatToSeatDTO( array : Array<LocalSeat>) : ApiSeat[] {
-    const dtoArray : Array<ApiSeat> = []
-    for (let index = 0; index < array.length; index++) {
-      const seat : LocalSeat = array[index];
-      const apiSeat : ApiSeat = {
-        position: 0,
-        row: seat.row,
-        column: seat.column,
-        type: seat.status,
-        free: seat.reserved
-      }
-      dtoArray.push(apiSeat)
+      this.api.updateGrid(dto);
+      console.log(dto);
     }
 
-    return dtoArray
+    this.selectedSeatList = [];
   }
+
+  // private mapLocalSeatToSeatDTO( array : Array<Seat>) : ApiSeat[] {
+  //   const dtoArray : Array<ApiSeat> = []
+  //   for (let index = 0; index < array.length; index++) {
+  //     const seat : Seat = array[index];
+  //     const apiSeat : ApiSeat = {
+  //       position: 0,
+  //       row: seat.row,
+  //       column: seat.column,
+  //       type: seat.status,
+  //       free: seat.free
+  //     }
+  //     dtoArray.push(apiSeat)
+  //   }
+  //
+  //   return dtoArray
+  // }
 
 
   /*
@@ -248,7 +252,7 @@ export class SeatGridComponent {
      * adote a programação funcional.
      * */
     this.selectedSeatList.forEach
-      ((seat : LocalSeat) => {
+      ((seat : Seat) => {
         seat.selected = !seat.selected;
         seat.status = seat.selected ? 'SELECTED' : 'AVAILABLE';
       } );
@@ -260,8 +264,8 @@ export class SeatGridComponent {
   }
 
 
-  public toggleSeat(seat: LocalSeat) {
-    if (seat.reserved) return;
+  public toggleSeat(seat: Seat) {
+    if (!seat.free) return;
 
     seat.selected = !seat.selected;
     // If 'seat.selected' == true, 'seat.status' = 'selected' other wise 'seat.status' = 'available'
@@ -278,7 +282,7 @@ export class SeatGridComponent {
 
     if (rowDto && columnDto) {
       for (let rowCount = 0; rowCount < rowDto; rowCount++) {
-        const rowArray: LocalSeat[] = [];
+        const rowArray: Seat[] = [];
 
         this.generateColums(rowArray, rowCount, columnDto);
         this.grid.push(rowArray);
@@ -286,7 +290,7 @@ export class SeatGridComponent {
     }
     else {
       for (let rowCount = 0; rowCount < this.rows; rowCount++) {
-        const rowArray: LocalSeat[] = [];
+        const rowArray: Seat[] = [];
 
         this.generateColums(rowArray, rowCount);
         this.grid.push(rowArray);
@@ -295,15 +299,15 @@ export class SeatGridComponent {
   }
 
 
-  private generateColums(row: LocalSeat[], rowCount: number, columnDto ? : number) {
+  private generateColums(row: Seat[], rowCount: number, columnDto ? : number) {
     if (columnDto) {
       for (let c = 0; c < columnDto; c++) {
         row.push({
-          id: `seat-${rowCount + 1}-${c + 1}`,
+          position: `seat-${rowCount + 1}-${c + 1}`,
           row: rowCount + 1,
           column: c + 1,
           selected: false,
-          reserved: false,
+          free: true,
           status: 'AVAILABLE'
         });
       }
@@ -311,11 +315,11 @@ export class SeatGridComponent {
     else {
       for (let c = 0; c < this.columns; c++) {
         row.push({
-          id: `seat-${rowCount + 1}-${c + 1}`,
+          position: `seat-${rowCount + 1}-${c + 1}`,
           row: rowCount + 1,
           column: c + 1,
           selected: false,
-          reserved: false,
+          free: true,
           status: 'AVAILABLE'
         });
       }

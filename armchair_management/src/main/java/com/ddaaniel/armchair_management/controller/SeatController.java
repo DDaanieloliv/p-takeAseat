@@ -9,6 +9,7 @@ import com.ddaaniel.armchair_management.model.record.GridDTO;
 import com.ddaaniel.armchair_management.model.record.MessageResponseDTO;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
+import com.ddaaniel.armchair_management.model.record.SeatsUpdatedDTO;
 import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -74,10 +75,10 @@ public class SeatController {
   }
 
   @PutMapping("/grid/update")
-  public ResponseEntity<?> UpdateGrid(@RequestBody GridDTO gridDTOUpdated){
+  public ResponseEntity<?> UpdateGrid(@RequestBody SeatsUpdatedDTO gridUpdatedDTO){
     // gridService.updateCurrentGrid();
-    serviceSeat.updateModifiedSeats(gridDTOUpdated.grid());
-    return null;
+    // serviceSeat.updateModifiedSeats(gridDTOUpdated.grid());
+    return ResponseEntity.ok(gridUpdatedDTO);
   }
 
   @PostMapping("/grid/newroom")

@@ -15,11 +15,11 @@ import { take } from 'rxjs/operators';
 
 
 export interface Seat {
-  id: string;
+  position: string;
   row: number;
   column: number;
   selected: boolean;
-  reserved: boolean;
+  free: boolean;
   status: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
 }
 
@@ -166,7 +166,7 @@ export class EditGrid {
 
 
   public toggleSeat(seat: Seat) : void {
-    if (seat.reserved) return;
+    if (!seat.free) return;
 
     seat.selected = !seat.selected;
     seat.status = seat.selected ? 'SELECTED' : 'AVAILABLE';
@@ -201,7 +201,7 @@ export class EditGrid {
 
           // Preserva o estado do assento
           this.grid[row][column].selected = oldGrid[row][column].selected;
-          this.grid[row][column].reserved = oldGrid[row][column].reserved;
+          this.grid[row][column].free = oldGrid[row][column].free;
           this.grid[row][column].status = oldGrid[row][column].status;
         }
       }
@@ -236,11 +236,11 @@ export class EditGrid {
   private generateColums(row : Seat[], rowCount : number) {
     for (let c = 0; c < this.columns; c++) {
       row.push({
-        id : `seat-${rowCount}-${c}`,
+        position : `seat-${rowCount}-${c}`,
         row : rowCount,
         column : c,
         selected : false,
-        reserved : false,
+        free : false,
         status : 'AVAILABLE'
       });
     }

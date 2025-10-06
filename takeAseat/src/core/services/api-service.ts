@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GridDTO } from '../model/fetch/grid-dto';
+import { GridUpdatedDTO } from '../model/fetch/seatsUpdated-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,9 @@ export class ApiService {
     return data;
   }
 
-  public async updateGrid(dto: GridDTO): Promise<GridDTO> {
+  public async updateGrid(dto: GridUpdatedDTO): Promise<GridUpdatedDTO> {
     try {
-      const response = await fetch('https://localhost:8080/seats/grid/update', {
+      const response = await fetch('http://localhost:8080/seats/grid/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
