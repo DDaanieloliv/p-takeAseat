@@ -24,7 +24,7 @@ public class Seat {
   private UUID seatID;
 
   @Column(name = "position")
-  private Integer position;
+  private String position;
 
   @Column(name = "seat_row")
   private Integer row;

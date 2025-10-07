@@ -57,7 +57,7 @@ public class ServiceSeatImpl implements ISeatService {
   @Override
   public SeatResponseDTO detailsFromSpecificSeat (Integer position){
     positionValidation(position);
-    Seat seat = seatRepository.findByPosition(position)
+    Seat seat = seatRepository.findByPosition(String.valueOf(position))
     .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
 
     return seatMapper.toDTO(seat);
@@ -107,7 +107,7 @@ public class ServiceSeatImpl implements ISeatService {
   }
 
   private Seat getSeatFromPosition(Integer position) {
-    return seatRepository.findByPosition(position)
+    return seatRepository.findByPosition(String.valueOf(position))
     .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
   }
 

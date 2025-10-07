@@ -13,26 +13,7 @@ import { GridUpdatedDTO } from '../../core/model/fetch/seatsUpdated-dto';
 import { Seat } from '../../core/model/Seat';
 
 
-export interface ApiSeat {
-  // seatID: string;
-  position: number;
-  row: number;
-  column: number;
-  type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
-  free: boolean;
-  // person: string | null;
-  // currentGrid: CurrentGrid;
-}
 
-// export interface Seat {
-//   // id: string;
-//   position: string
-//   row: number;
-//   column: number;
-//   selected: boolean;
-//   free: boolean;
-//   status: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
-// }
 @Component({
   selector: 'app-seat-grid',
   standalone: true,
@@ -77,8 +58,23 @@ export class SeatGridComponent {
 
   async ngOnInit() {
 
+    // this.is_visibleHandleSelection = true;
+
     // Configura a subscription
     this.setupGridSubscription();
+
+    const savedState = this.safeStorage.getItem<any>('gridState');
+    console.log('savedState do localStorage:', savedState);
+    console.log('isValidGridState:', this.isValidGridState(savedState));
+
+    if (savedState && this.isValidGridState(savedState)) {
+      console.log('Carregando grid salvo do localStorage');
+      this.grid = savedState.grid;
+      this.rows = savedState.dimensions.rows;
+      this.columns = savedState.dimensions.columns;
+      this.gridObservable.setInitialGrid(this.grid);
+      return;
+    }
 
     try {
       // Obtem o json da api
@@ -118,6 +114,14 @@ export class SeatGridComponent {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  private isValidGridState(state: any): boolean {
+    return state &&
+      state.grid &&
+      Array.isArray(state.grid) &&
+      state.dimensions &&
+      state.timestamp;
   }
 
 
@@ -219,25 +223,30 @@ export class SeatGridComponent {
       console.log(dto);
     }
 
+    this.selectedSeatList.forEach
+      ((seat : Seat) => {
+        if (seat.status === 'SELECTED') {
+          seat.status = 'OCCUPIED';
+          seat.free = false;
+        }
+      } );
+
+    // this.safeStorage.setItem('gridState', this.grid);
+    const gridState = {
+      grid: this.grid,
+      dimensions: {
+        rows: this.rows,
+        columns: this.columns
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    this.safeStorage.setItem('gridState', gridState);
+
+    console.log('GridState salvo:', gridState);
     this.selectedSeatList = [];
   }
 
-  // private mapLocalSeatToSeatDTO( array : Array<Seat>) : ApiSeat[] {
-  //   const dtoArray : Array<ApiSeat> = []
-  //   for (let index = 0; index < array.length; index++) {
-  //     const seat : Seat = array[index];
-  //     const apiSeat : ApiSeat = {
-  //       position: 0,
-  //       row: seat.row,
-  //       column: seat.column,
-  //       type: seat.status,
-  //       free: seat.free
-  //     }
-  //     dtoArray.push(apiSeat)
-  //   }
-  //
-  //   return dtoArray
-  // }
 
 
   /*

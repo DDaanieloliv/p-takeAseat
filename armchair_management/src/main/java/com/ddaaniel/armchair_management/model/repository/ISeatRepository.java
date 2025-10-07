@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface ISeatRepository extends JpaRepository<Seat, UUID> {
 
 
-  Optional<Seat> findByPosition(Integer position);
+  Optional<Seat> findByPosition(String position);
 
 
   void deleteById(UUID seatIdToDelete);

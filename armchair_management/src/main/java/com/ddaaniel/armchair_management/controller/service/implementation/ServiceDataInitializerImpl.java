@@ -58,7 +58,7 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
 
       for (int countColumns = 1; countColumns <= appConfig.getColumns(); countColumns++) {
         var entity =  Seat.builder()
-        .position(position)
+        .position(String.valueOf(position))
         .row(countRows)
         .column(countColumns)
         .status(SeatType.AVAILABLE)

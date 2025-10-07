@@ -64,7 +64,7 @@ public class ServiceGridImpl implements IGridService {
          *
          * */
 
-         if ( seat.getPosition().intValue() == mirror.getPosition().intValue() &&
+         if ( /* seat.getPosition().intValue() == mirror.getPosition().intValue() && */
               seat.getRow().intValue() == mirror.getRow().intValue() &&
               seat.getColumn().intValue() == mirror.getColumn().intValue() ){
         /* HOT-FIX
@@ -134,7 +134,7 @@ public class ServiceGridImpl implements IGridService {
       //    .build()
       //  );
       rowList.add(SeatDTO.builder()
-         .position(position + 1)
+         .position(String.valueOf(Integer.valueOf(position) + 1))
          .row(rowCount)
          .column(c)
          .build()

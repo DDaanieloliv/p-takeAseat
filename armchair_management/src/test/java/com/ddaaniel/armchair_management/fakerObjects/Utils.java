@@ -27,7 +27,7 @@ public class Utils {
 
 		Seat.builder()
 				.seatID(UUID.randomUUID())
-				.position(position)
+				.position(String.valueOf(position))
 				.free(true)
 				.build();
 
@@ -52,7 +52,7 @@ public class Utils {
 
 		Seat.builder()
 		.seatID(usedSeatId)
-		.position(position)
+		.position(String.valueOf(position))
 		.free(false)
 		.person(
 		Person.builder()
@@ -81,7 +81,7 @@ public class Utils {
 
 		Seat.builder()
 		.seatID(usedSeatId)
-		.position(position)
+		.position(String.valueOf(position))
 		.free(false)
 		.person(
 		Person.builder()
@@ -195,7 +195,7 @@ public class Utils {
 		Seat seat = new Seat();
 
 		seat.setSeatID(UUID.randomUUID());
-		seat.setPosition(position);
+		seat.setPosition(String.valueOf(position));
 		seat.setFree(randomGenerator.nextBoolean());
 
 		if (!seat.getFree()) {
@@ -257,7 +257,7 @@ public class Utils {
 
 		Seat.builder()
 		.seatID(UUID.randomUUID())
-		.position(position)
+		.position(String.valueOf(position))
 		.free(false)
 		.person(Utils.buildPerson())
 		.build();

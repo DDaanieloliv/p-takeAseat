@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class SeatDTO {
 
-    private Integer position;
+    private String position;
     private Integer row;
     @Builder.Default
     private Boolean selected = false;

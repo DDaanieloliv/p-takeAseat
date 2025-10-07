@@ -4,7 +4,7 @@ import java.util.List;
 
 
 public record SeatsUpdatedDTO(
-  GridEntityDTO gridEntity,
-  List<SeatDTO> seatsUpdated
+  GridEntityDTO entity,
+  List<SeatDTO> grid
 ) {
 }
