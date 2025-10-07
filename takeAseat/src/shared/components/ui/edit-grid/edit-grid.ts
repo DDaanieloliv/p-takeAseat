@@ -10,18 +10,12 @@ import { GridService_Observable } from '../../../services/grid-state';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { take } from 'rxjs/operators';
+import { Seat } from '../../../../core/model/Seat';
+import { SafeStorageService } from '../../../../core/services/localStorageService/storage-service';
 // import { SeatGridComponent } from '../../../features/seat-grid/seat-grid';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 
-export interface Seat {
-  position: string;
-  row: number;
-  column: number;
-  selected: boolean;
-  free: boolean;
-  status: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
-}
 
 @Component({
   selector: 'app-edit-grid',
@@ -32,7 +26,10 @@ export interface Seat {
 })
 export class EditGrid {
 
-  constructor(private gridObservable: GridService_Observable) {}
+  constructor(
+    private gridObservable: GridService_Observable,
+    private safeStorage: SafeStorageService
+  ) {}
 
   private subscription: Subscription = new Subscription();
 
@@ -64,13 +61,14 @@ export class EditGrid {
 
   public flagConfirmation : boolean = true;
 
-  private currentFlag: boolean = true;
+  // private currentFlag: boolean = true;
 
   public faPencil = faPencil;
   public faXmark = faXmark;
   public faFloppyDisk = faFloppyDisk;
   public faReply = faReply;
 
+  public selectedSeatList : Array<Seat> = [];
 
 
 
@@ -80,9 +78,9 @@ export class EditGrid {
 
     // Escuta o grid inicial do SeatGrid
     this.subscription.add(
-      this.gridObservable.initialGrid$
+      this.gridObservable.current_grid$
         .pipe(
-          filter(initialGrid => initialGrid && initialGrid.length > 0)
+          filter(current_grid => current_grid && current_grid.length > 0)
         )
         .subscribe(initialGrid => {
           setTimeout(() => {
@@ -111,23 +109,41 @@ export class EditGrid {
   }
 
 
-  // Memory leak spoted !!!
+
+  public checkSelections(seat : Seat) : void {
+
+    const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
+
+    if (existingIndex !== -1) {
+      if (!seat.selected) {
+        this.selectedSeatList.splice(existingIndex, 1);
+      } else {
+        this.selectedSeatList[existingIndex] = seat;
+      }
+    } else {
+      if (seat.selected) {
+        this.selectedSeatList.push(seat);
+      }
+    }
+
+  }
+
   public showBlurWindow() : void {
     this.showWindow = !this.showWindow;
     console.log("fuck");
 
     if (this.showWindow) {
       this.subscription.add(
-        this.gridObservable.initialGrid$
+        this.gridObservable.current_grid$
           .pipe(
-            filter(initialGrid => initialGrid && initialGrid.length > 0),
+            filter(current_grid => current_grid && current_grid.length > 0),
             take(1)
           )
-          .subscribe(initialGrid => {
+          .subscribe(current_grid => {
             setTimeout(() => {
-              this.grid = initialGrid;
-              this.rows = initialGrid.length;
-              this.columns = initialGrid[0]?.length || 0;
+              this.grid = current_grid;
+              this.rows = current_grid.length;
+              this.columns = current_grid[0]?.length || 0;
 
               this.updateGrid();
 
@@ -166,11 +182,14 @@ export class EditGrid {
 
 
   public toggleSeat(seat: Seat) : void {
-    if (!seat.free) return;
+    // if (!seat.free) return;
 
     seat.selected = !seat.selected;
     seat.status = seat.selected ? 'SELECTED' : 'AVAILABLE';
+    // seat.free = false;
     this.seatSelected.emit(seat);
+
+    this.checkSelections(seat);
   }
 
   public updateGrid() : void {
@@ -252,7 +271,7 @@ export class EditGrid {
     this.warningPopup.message = this.pickMessageToConfirmation(flagConfirmation);
     this.warningPopup.confirmText = this.pickContentTextToConfirmation(flagConfirmation);
 
-    this.currentFlag = flagConfirmation;
+    // this.currentFlag = flagConfirmation;
 
     this.warningPopup.show();
   }
@@ -263,21 +282,41 @@ export class EditGrid {
 
 
   public handleConfirm() {
-    if (!this.currentFlag) {
-      this.showBlurWindow();
-    }
-    else {
-      console.log("Should Emmit the new Grid format.");
+    // if (!this.currentFlag) {
+    //   this.showBlurWindow();
+    // }
+    // else {
+    console.log("Should Emmit the new Grid format.");
 
-      this.gridObservable.updateGrid(this.grid);
-      // Emite the updated grid
-      this.gridUpdated.emit(this.grid);
-      this.showBlurWindow();
+    this.gridObservable.updateGrid(this.grid);
+    // Emite the updated grid
+    this.gridUpdated.emit(this.grid);
+    this.showBlurWindow();
 
-    }
+    this.selectedSeatList.forEach
+      ((seat : Seat) => {
+        if (seat.status === 'SELECTED') {
+          seat.status = 'UNAVAILABLE';
+          seat.free = false;
+        }
+      } );
+    // }
+
+    const gridState = {
+      grid: this.grid,
+      dimensions: {
+        rows: this.rows,
+        columns: this.columns
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    this.safeStorage.setItem('gridState', gridState);
+
   }
 
   public handleCancel() {
+    this.showBlurWindow();
   }
 
 
@@ -293,12 +332,12 @@ export class EditGrid {
   private pickContentTextToConfirmation( IsSavedAction : boolean ) : string {
     let message = '';
 
-    if (IsSavedAction) {
-      return message = 'Save';
-    }
-    else {
-      return message = 'Discard';
-    }
+    // if (IsSavedAction) {
+    return message = 'Save';
+    // }
+    // else {
+    // return message = 'Discard';
+    // }
   }
 
 

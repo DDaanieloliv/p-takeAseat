@@ -10,6 +10,5 @@ export interface CurrentGrid {
   grid: string;
   rowNumber: number;
   columnNumber: number;
-  // isInitialGrid: boolean;
   is_currentGrid: boolean;
 }

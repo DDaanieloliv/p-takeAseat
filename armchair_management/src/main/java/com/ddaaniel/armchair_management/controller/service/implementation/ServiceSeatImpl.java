@@ -85,11 +85,10 @@ public class ServiceSeatImpl implements ISeatService {
 
 
   @Override
-  public void updateModifiedSeats(List<List<SeatDTO>> SeatListDTO) {
-    for (List<SeatDTO> list : SeatListDTO) {
-      for (SeatDTO seatDTO : list) {
-          seatRepository.save(seatMapper.seatDtoToEntity(seatDTO));
-      }
+  public void updateModifiedSeats(List<SeatDTO> seatListDTO) {
+    logger.warn("Desserializando seatDto...");
+    for (SeatDTO seat : seatListDTO) {
+      seatRepository.save(seatMapper.seatDtoToEntity(seat));
     }
   }
 

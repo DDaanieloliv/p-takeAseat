@@ -66,7 +66,7 @@ public class ServicePersonImpl implements IPersonService {
   }
 
   private Seat findSeat(Integer position) {
-    return iSeatRepository.findByPosition(position)
+    return iSeatRepository.findByPosition(String.valueOf(position))
     .orElseThrow(()-> new NotFoundException("Poltrona não encontrada."));
   }
 

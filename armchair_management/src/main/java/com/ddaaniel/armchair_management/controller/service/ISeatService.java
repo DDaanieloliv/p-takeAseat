@@ -16,5 +16,5 @@ public interface ISeatService {
 
   ShartsResponceDTO sharts();
 
-  void updateModifiedSeats(List<List<SeatDTO>> SeatListDTO);
+  void updateModifiedSeats(List<SeatDTO> seatListDTO);
 }

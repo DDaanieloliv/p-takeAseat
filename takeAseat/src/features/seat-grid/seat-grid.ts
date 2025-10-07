@@ -55,6 +55,10 @@ export class SeatGridComponent {
 
   public is_visibleHandleSelection : boolean = true;
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
 
   async ngOnInit() {
 
@@ -64,15 +68,14 @@ export class SeatGridComponent {
     this.setupGridSubscription();
 
     const savedState = this.safeStorage.getItem<any>('gridState');
-    console.log('savedState do localStorage:', savedState);
-    console.log('isValidGridState:', this.isValidGridState(savedState));
 
     if (savedState && this.isValidGridState(savedState)) {
       console.log('Carregando grid salvo do localStorage');
       this.grid = savedState.grid;
       this.rows = savedState.dimensions.rows;
       this.columns = savedState.dimensions.columns;
-      this.gridObservable.setInitialGrid(this.grid);
+      this.gridObservable.updateGrid(this.grid);
+      console.log("Number column: " + this.columns + "\nNumber row: " + this.rows)
       return;
     }
 
@@ -90,17 +93,16 @@ export class SeatGridComponent {
           grid.entity.rowNumber,
           grid.entity.columnNumber
         );
+        this.rows = grid.entity.rowNumber;
+        this.columns = grid.entity.columnNumber;
+        console.log("column number from api: " + this.columns + "\nrow number from api: " + this.rows)
       }
-
       // Verificação adicional de segurança
       if (!isPlatformBrowser(this.platformId)) {
         // Se estiver no servidor, gera grid padrão e retorna
         this.generateGrid();
         return;
       }
-
-
-
       // Recupera do storage para verificação
       const storedGrid = this.safeStorage.getItem<GridDTO>('currentGrid');
       console.log('Grid from storage:', storedGrid);
@@ -111,85 +113,6 @@ export class SeatGridComponent {
     }
   }
 
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-
-  private isValidGridState(state: any): boolean {
-    return state &&
-      state.grid &&
-      Array.isArray(state.grid) &&
-      state.dimensions &&
-      state.timestamp;
-  }
-
-
-  private setupGridSubscription() :void {
-    // Envia grid inicial para o serviço. (Grid inicial é o grid que é gerado no
-    // componente 'SeatGridComponent' pelos seus valores definidos em seu atributos).
-    // this.gridObservable.setInitialGrid(this.grid);
-    this.subscription.add(
-      this.gridObservable.currentGrid$
-        .pipe(
-          filter(newGrid => newGrid && newGrid.length > 0) // ← Só emite se não for vazio
-        )
-        .subscribe((newGrid: Array<Seat[]>) => {
-          this.grid = newGrid;
-          // Atualiza dimensões
-          this.updateDimensions(newGrid);
-        })
-    );
-
-  }
-
-
-  // Método para atualizar rows/columns baseado no grid
-  private updateDimensions(grid: Array<Seat[]>) {
-    if (grid && grid.length > 0) {
-      this.rows = grid.length;
-      this.columns = grid[0]?.length || 0;
-    }
-  }
-
-
-
-  /*
-   *
-   * Verifica se o parâmetro Seat existe em 'selectedSeatList', e o substitui pelo seu
-   * elemento cópia mais recente ou faz um fresh insert.
-   *
-   * Qualquer modificação nos elementos dentro de selectedSeatList repercutirá nos
-   * elementos instanciados.
-   *
-   * */
-  public checkSelections(seat : Seat) : void {
-
-    const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
-
-    if (existingIndex !== -1) {
-      if (!seat.selected) {
-        this.selectedSeatList.splice(existingIndex, 1);
-      } else {
-        this.selectedSeatList[existingIndex] = seat;
-      }
-    } else {
-      if (seat.selected) {
-        this.selectedSeatList.push(seat);
-      }
-    }
-
-  }
-
-  /*
-   * Toggle de visualização do menu de handle-confirmation.
-   *
-   * */
-  public handleSelection() : void {
-    if (this.selectedSeatList.length > 0) {
-      this.is_visibleHandleSelection = false;
-    }
-  }
 
   /*
    *
@@ -204,7 +127,7 @@ export class SeatGridComponent {
      * Send the grid modified to a service that shares it with edit-grid
      *
      * */
-    this.gridObservable.setInitialGrid(this.grid);
+    this.gridObservable.updateGrid(this.grid);
 
     const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
@@ -271,6 +194,84 @@ export class SeatGridComponent {
     this.selectedSeatList = [];
     console.log(this.selectedSeatList);
   }
+
+
+
+  private isValidGridState(state: any): boolean {
+    return state &&
+      state.grid &&
+      Array.isArray(state.grid) &&
+      state.dimensions &&
+      state.timestamp;
+  }
+
+
+  private setupGridSubscription() :void {
+    // Envia grid inicial para o serviço. (Grid inicial é o grid que é gerado no
+    // componente 'SeatGridComponent' pelos seus valores definidos em seu atributos).
+    // this.gridObservable.setInitialGrid(this.grid);
+    this.subscription.add(
+      this.gridObservable.current_grid$
+        .pipe(
+          filter(newGrid => newGrid && newGrid.length > 0) // ← Só emite se não for vazio
+        )
+        .subscribe((newGrid: Array<Seat[]>) => {
+          this.grid = newGrid;
+          // Atualiza dimensões
+          this.updateDimensions(newGrid);
+        })
+    );
+
+  }
+
+
+  // Método para atualizar rows/columns baseado no grid
+  private updateDimensions(grid: Array<Seat[]>) {
+    if (grid && grid.length > 0) {
+      this.rows = grid.length;
+      this.columns = grid[0]?.length || 0;
+    }
+  }
+
+
+
+  /*
+   *
+   * Verifica se o parâmetro Seat existe em 'selectedSeatList', e o substitui pelo seu
+   * elemento cópia mais recente ou faz um fresh insert.
+   *
+   * Qualquer modificação nos elementos dentro de selectedSeatList repercutirá nos
+   * elementos instanciados.
+   *
+   * */
+  public checkSelections(seat : Seat) : void {
+
+    const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
+
+    if (existingIndex !== -1) {
+      if (!seat.selected) {
+        this.selectedSeatList.splice(existingIndex, 1);
+      } else {
+        this.selectedSeatList[existingIndex] = seat;
+      }
+    } else {
+      if (seat.selected) {
+        this.selectedSeatList.push(seat);
+      }
+    }
+
+  }
+
+  /*
+   * Toggle de visualização do menu de handle-confirmation.
+   *
+   * */
+  public handleSelection() : void {
+    if (this.selectedSeatList.length > 0) {
+      this.is_visibleHandleSelection = false;
+    }
+  }
+
 
 
   public toggleSeat(seat: Seat) {
