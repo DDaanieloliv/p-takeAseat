@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GridDTO } from '../model/fetch/grid-dto';
 import { GridUpdatedDTO } from '../model/fetch/seatsUpdated-dto';
+import { CurrentGrid } from '../model/fetch/grid-entity-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,27 @@ export class ApiService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(dto)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
+  }
+
+  public async eraseGrid(entityGrid : CurrentGrid) : Promise<CurrentGrid> {
+    try {
+      const response = await fetch('http://localhost:8080/seats/grid/erase', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(entityGrid)
       });
 
       if (!response.ok) {

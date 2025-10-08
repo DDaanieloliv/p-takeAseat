@@ -8,7 +8,7 @@ import { faReply } from '@fortawesome/free-solid-svg-icons';
 import { WarningPopupComponent } from '../warning-window/warning-window';
 import { GridService_Observable } from '../../../services/grid-state';
 import { Subscription } from 'rxjs';
-import { filter, switchAll } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { take } from 'rxjs/operators';
 import { Seat } from '../../../../core/model/Seat';
 import { SafeStorageService } from '../../../../core/services/localStorageService/storage-service';
@@ -16,6 +16,7 @@ import { GridDTO } from '../../../../core/model/fetch/grid-dto';
 import { GridUpdatedDTO } from '../../../../core/model/fetch/seatsUpdated-dto';
 import { ApiService } from '../../../../core/services/api-service';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { CurrentGrid } from '../../../../core/model/fetch/grid-entity-dto';
 // import { SeatGridComponent } from '../../../features/seat-grid/seat-grid';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
@@ -66,7 +67,7 @@ export class EditGrid {
 
   public flagConfirmation : boolean = true;
 
-  // private currentFlag: boolean = true;
+  private should_erase_seat_state: boolean = false;
 
   public faPencil = faPencil;
   public faXmark = faXmark;
@@ -114,58 +115,64 @@ export class EditGrid {
 
 
   public handleConfirm() {
-    // if (!this.currentFlag) {
-    //   this.showBlurWindow();
-    // }
-    // else {
-    console.log("Should Emmit the new Grid format.");
-
-    this.gridObservable.updateGrid(this.grid);
-    // Emite the updated grid
-    this.gridUpdated.emit(this.grid);
-    this.showBlurWindow();
-
-    this.selectedSeatList.forEach
-      ((seat : Seat) => {
-        if (seat.status === 'SELECTED') {
-          seat.status = 'UNAVAILABLE';
-          seat.free = false;
-        }
-      } );
-    // }
-
-    const gridState = {
-      grid: this.grid,
-      dimensions: {
-        rows: this.rows,
-        columns: this.columns
-      },
-      timestamp: new Date().toISOString()
-    };
-
-    this.safeStorage.setItem('gridState', gridState);
-
-    const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
-
-    if (saved_dto) {
-      const dto : GridUpdatedDTO = {
-        entity: {
-          grid : saved_dto.entity.grid,
-          rowNumber : saved_dto.entity.rowNumber,
-          columnNumber : saved_dto.entity.columnNumber,
-          is_currentGrid : true
-        },
-        grid: this.selectedSeatList
-      }
-      console.log("Enviando assentos modificados no componente de edição para a API...");
-      console.log(dto);
-      this.api.updateGrid(dto);
+    if (this.should_erase_seat_state) {
+      this.erase_seat_state();
     }
+    else if (this.should_erase_seat_state === false) {
+      console.log("Should Emmit the new Grid format.");
 
+      this.gridObservable.updateGrid(this.grid);
+      // Emite the updated grid
+      this.gridUpdated.emit(this.grid);
+      this.showBlurWindow();
+
+      this.selectedSeatList.forEach
+        ((seat : Seat) => {
+          if (seat.status === 'SELECTED') {
+            seat.status = 'UNAVAILABLE';
+            seat.free = false;
+          }
+        } );
+      // }
+
+      const gridState = {
+        grid: this.grid,
+        dimensions: {
+          rows: this.rows,
+          columns: this.columns
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      this.safeStorage.setItem('gridState', gridState);
+
+      const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+
+      if (saved_dto) {
+        const dto : GridUpdatedDTO = {
+          entity: {
+            grid : saved_dto.entity.grid,
+            rowNumber : saved_dto.entity.rowNumber,
+            columnNumber : saved_dto.entity.columnNumber,
+            is_currentGrid : true
+          },
+          grid: this.selectedSeatList
+        }
+        console.log("Enviando assentos modificados no componente de edição para a API...");
+        console.log(dto);
+        this.api.updateGrid(dto);
+      }
+    }
   }
 
   public handleCancel() {
-    this.showBlurWindow();
+    if (this.should_erase_seat_state) {
+      this.warningPopup.hide();
+      // console.log("ok")
+    }
+    else if (this.should_erase_seat_state === false) {
+      this.showBlurWindow();
+    }
   }
 
 
@@ -194,7 +201,41 @@ export class EditGrid {
 
 
   public erase_seat_state() : void {
+    this.grid.forEach((seatList : Array<Seat>) => {
+      seatList.forEach(
+        (seat : Seat) => {
+          seat.selected = false;
+          seat.status = 'AVAILABLE';
+          seat.free = true;
+        }
+      )
+    });
+    const gridState = {
+      grid: this.grid,
+      dimensions: {
+        rows: this.rows,
+        columns: this.columns
+      },
+      timestamp: new Date().toISOString()
+    };
 
+    this.safeStorage.setItem('gridState', gridState);
+
+    const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+
+    if (saved_dto) {
+      const dto : CurrentGrid = {
+          grid : saved_dto.entity.grid,
+          rowNumber : saved_dto.entity.rowNumber,
+          columnNumber : saved_dto.entity.columnNumber,
+          is_currentGrid : true
+      }
+      console.log("Enviando assentos modificados no componente de edição para a API...");
+      console.log(dto);
+      this.api.eraseGrid(dto);
+    }
+
+    console.log("Apagando essa porra");
   }
 
 
@@ -250,37 +291,17 @@ export class EditGrid {
 
 
 
-  private count_toggle : number = 1;
+  // private count_toggle : number = 1;
 
   public toggleSeat(seat: Seat) : void {
     // if (!seat.free) return;
-
     seat.selected = !seat.selected;
-    // seat.status = seat.status !== undefined ? 'SELECTED' : 'AVAILABLE';
-    switch (this.count_toggle) {
-      case 1:
-        seat.status = 'SELECTED';
-        this.count_toggle = this.count_toggle + 1;
-        break;
-
-      case 2:
-        seat.status = 'UNAVAILABLE';
-        this.count_toggle = this.count_toggle + 1;
-        break;
-
-      case 3:
-        seat.status = 'AVAILABLE';
-        this.count_toggle = 1;
-        break;
-
-      default:
-        break;
-    }
-    // seat.free = false;
-    this.seatSelected.emit(seat);
-
+    seat.status = seat.selected ? 'UNAVAILABLE' : 'AVAILABLE';
+    // this.seatSelected.emit(seat);
     this.checkSelections(seat);
   }
+
+
 
   public updateGrid() : void {
     const oldGrid = this.grid;
@@ -361,7 +382,7 @@ export class EditGrid {
     this.warningPopup.message = this.pickMessageToConfirmation(flagConfirmation);
     this.warningPopup.confirmText = this.pickContentTextToConfirmation(flagConfirmation);
 
-    // this.currentFlag = flagConfirmation;
+    this.should_erase_seat_state = flagConfirmation;
 
     this.warningPopup.show();
   }

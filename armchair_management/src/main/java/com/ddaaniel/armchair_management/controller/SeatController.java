@@ -6,6 +6,7 @@ import com.ddaaniel.armchair_management.controller.service.ISeatService;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
+import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
 import com.ddaaniel.armchair_management.model.record.MessageResponseDTO;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
@@ -14,6 +15,7 @@ import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +81,16 @@ public class SeatController {
     // gridService.updateCurrentGrid();
     serviceSeat.updateModifiedSeats(gridUpdatedDTO.grid());
     return ResponseEntity.ok(gridUpdatedDTO);
+  }
+
+  @PutMapping
+  public ResponseEntity<?> EraseGridState(@RequestBody GridEntityDTO entityGrid) {
+    var gridOpt = gridService.findGridEntityById(entityGrid.getGrid());
+    if (gridOpt.isPresent()) {
+      // Erase all grid seats state
+      return ResponseEntity.ok("Estados dos assentos foram limpos...");
+    }
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma Entidade Grid relacionada foi encontrada...");
   }
 
   @PostMapping("/grid/newroom")

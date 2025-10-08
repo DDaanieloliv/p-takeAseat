@@ -1,4 +1,5 @@
 import { Seat } from "../Seat";
+import { CurrentGrid } from "./grid-entity-dto";
 //
 // export interface Seat {
 //   position: string
@@ -15,9 +16,9 @@ export interface GridUpdatedDTO {
 }
 
 
-export interface CurrentGrid {
-  grid: string;
-  rowNumber: number;
-  columnNumber: number;
-  is_currentGrid: boolean;
-}
+// export interface CurrentGrid {
+//   grid: string;
+//   rowNumber: number;
+//   columnNumber: number;
+//   is_currentGrid: boolean;
+// }

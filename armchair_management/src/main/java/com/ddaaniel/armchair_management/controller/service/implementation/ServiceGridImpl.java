@@ -2,6 +2,8 @@ package com.ddaaniel.armchair_management.controller.service.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,11 @@ public class ServiceGridImpl implements IGridService {
     this.seatRepository = seatRepository;
   }
 
+
+  @Override
+  public Optional<GridEntity> findGridEntityById(UUID uuid){
+    return gridRepository.findGridEntityById(uuid);
+  }
 
   @Override
   public GridDTO currentGrid() {

@@ -18,4 +18,6 @@ public interface IGridRepository extends JpaRepository<GridEntity, UUID> {
   @Query(value = "SELECT * FROM tb_grid WHERE is_currentgrid = true;", nativeQuery = true)
   Optional<GridEntity> isCurrentGrid();
 
+  @Query(value = "SELECT * FROM tb_grid WHERE gridid = ?1;", nativeQuery = true)
+  Optional<GridEntity> findGridEntityById(UUID uuid);
 }
