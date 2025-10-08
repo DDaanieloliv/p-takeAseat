@@ -123,7 +123,7 @@
     &.unavailable {
       background-color: #f44336;
       color: white;
-      cursor: not-allowed;
+      /* cursor: not-allowed; */
     }
 
     &.selected {
@@ -133,7 +133,7 @@
 
     &.reserved {
       background-color: #9E9E9E;
-      cursor: not-allowed;
+      /* cursor: not-allowed; */
     }
 
     &:hover:not(.unavailable):not(.reserved) {
@@ -634,6 +634,20 @@
   justify-content: center;
   width: 35%;
   height: 100%;
+}
+
+
+.trash-icon-container {
+  display: flex;
+  position: fixed;
+  bottom: 55px;
+  left: 34px;
+  cursor: pointer;
+  transition: 0.2s all;
+
+  &:hover {
+    transform: scale(1.5);
+  }
 }
 
 

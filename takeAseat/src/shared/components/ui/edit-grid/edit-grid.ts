@@ -8,10 +8,14 @@ import { faReply } from '@fortawesome/free-solid-svg-icons';
 import { WarningPopupComponent } from '../warning-window/warning-window';
 import { GridService_Observable } from '../../../services/grid-state';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, switchAll } from 'rxjs/operators';
 import { take } from 'rxjs/operators';
 import { Seat } from '../../../../core/model/Seat';
 import { SafeStorageService } from '../../../../core/services/localStorageService/storage-service';
+import { GridDTO } from '../../../../core/model/fetch/grid-dto';
+import { GridUpdatedDTO } from '../../../../core/model/fetch/seatsUpdated-dto';
+import { ApiService } from '../../../../core/services/api-service';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 // import { SeatGridComponent } from '../../../features/seat-grid/seat-grid';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
@@ -28,7 +32,8 @@ export class EditGrid {
 
   constructor(
     private gridObservable: GridService_Observable,
-    private safeStorage: SafeStorageService
+    private safeStorage: SafeStorageService,
+    private api: ApiService
   ) {}
 
   private subscription: Subscription = new Subscription();
@@ -67,15 +72,20 @@ export class EditGrid {
   public faXmark = faXmark;
   public faFloppyDisk = faFloppyDisk;
   public faReply = faReply;
+  public faTrash = faTrash;
 
   public selectedSeatList : Array<Seat> = [];
 
 
 
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+
   public ngOnInit() : void {
     // this.generateGrid();
-
     // Escuta o grid inicial do SeatGrid
     this.subscription.add(
       this.gridObservable.current_grid$
@@ -93,8 +103,6 @@ export class EditGrid {
           });
         })
     );
-
-
     // Se não receber grid inicial, gera um
     setTimeout(() => {
       if (!this.grid || this.grid.length === 0) {
@@ -104,10 +112,66 @@ export class EditGrid {
 
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+
+  public handleConfirm() {
+    // if (!this.currentFlag) {
+    //   this.showBlurWindow();
+    // }
+    // else {
+    console.log("Should Emmit the new Grid format.");
+
+    this.gridObservable.updateGrid(this.grid);
+    // Emite the updated grid
+    this.gridUpdated.emit(this.grid);
+    this.showBlurWindow();
+
+    this.selectedSeatList.forEach
+      ((seat : Seat) => {
+        if (seat.status === 'SELECTED') {
+          seat.status = 'UNAVAILABLE';
+          seat.free = false;
+        }
+      } );
+    // }
+
+    const gridState = {
+      grid: this.grid,
+      dimensions: {
+        rows: this.rows,
+        columns: this.columns
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    this.safeStorage.setItem('gridState', gridState);
+
+    const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+
+    if (saved_dto) {
+      const dto : GridUpdatedDTO = {
+        entity: {
+          grid : saved_dto.entity.grid,
+          rowNumber : saved_dto.entity.rowNumber,
+          columnNumber : saved_dto.entity.columnNumber,
+          is_currentGrid : true
+        },
+        grid: this.selectedSeatList
+      }
+      console.log("Enviando assentos modificados no componente de edição para a API...");
+      console.log(dto);
+      this.api.updateGrid(dto);
+    }
+
   }
 
+  public handleCancel() {
+    this.showBlurWindow();
+  }
+
+
+  public closeWarning() {
+    this.warningPopup.hide();
+  }
 
 
   public checkSelections(seat : Seat) : void {
@@ -127,6 +191,12 @@ export class EditGrid {
     }
 
   }
+
+
+  public erase_seat_state() : void {
+
+  }
+
 
   public showBlurWindow() : void {
     this.showWindow = !this.showWindow;
@@ -180,12 +250,32 @@ export class EditGrid {
 
 
 
+  private count_toggle : number = 1;
 
   public toggleSeat(seat: Seat) : void {
     // if (!seat.free) return;
 
     seat.selected = !seat.selected;
-    seat.status = seat.selected ? 'SELECTED' : 'AVAILABLE';
+    // seat.status = seat.status !== undefined ? 'SELECTED' : 'AVAILABLE';
+    switch (this.count_toggle) {
+      case 1:
+        seat.status = 'SELECTED';
+        this.count_toggle = this.count_toggle + 1;
+        break;
+
+      case 2:
+        seat.status = 'UNAVAILABLE';
+        this.count_toggle = this.count_toggle + 1;
+        break;
+
+      case 3:
+        seat.status = 'AVAILABLE';
+        this.count_toggle = 1;
+        break;
+
+      default:
+        break;
+    }
     // seat.free = false;
     this.seatSelected.emit(seat);
 
@@ -255,9 +345,9 @@ export class EditGrid {
   private generateColums(row : Seat[], rowCount : number) {
     for (let c = 0; c < this.columns; c++) {
       row.push({
-        position : `seat-${rowCount}-${c}`,
-        row : rowCount,
-        column : c,
+        position : `seat-${rowCount + 1}-${c + 1}`,
+        row : rowCount + 1,
+        column : c + 1,
         selected : false,
         free : false,
         status : 'AVAILABLE'
@@ -276,48 +366,6 @@ export class EditGrid {
     this.warningPopup.show();
   }
 
-  public closeWarning() {
-    this.warningPopup.hide();
-  }
-
-
-  public handleConfirm() {
-    // if (!this.currentFlag) {
-    //   this.showBlurWindow();
-    // }
-    // else {
-    console.log("Should Emmit the new Grid format.");
-
-    this.gridObservable.updateGrid(this.grid);
-    // Emite the updated grid
-    this.gridUpdated.emit(this.grid);
-    this.showBlurWindow();
-
-    this.selectedSeatList.forEach
-      ((seat : Seat) => {
-        if (seat.status === 'SELECTED') {
-          seat.status = 'UNAVAILABLE';
-          seat.free = false;
-        }
-      } );
-    // }
-
-    const gridState = {
-      grid: this.grid,
-      dimensions: {
-        rows: this.rows,
-        columns: this.columns
-      },
-      timestamp: new Date().toISOString()
-    };
-
-    this.safeStorage.setItem('gridState', gridState);
-
-  }
-
-  public handleCancel() {
-    this.showBlurWindow();
-  }
 
 
   private pickMessageToConfirmation( IsSavedAction : boolean ) : string {

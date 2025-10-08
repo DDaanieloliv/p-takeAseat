@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ServiceSeatImpl implements ISeatService {
@@ -88,7 +89,21 @@ public class ServiceSeatImpl implements ISeatService {
   public void updateModifiedSeats(List<SeatDTO> seatListDTO) {
     logger.warn("Desserializando seatDto...");
     for (SeatDTO seat : seatListDTO) {
-      seatRepository.save(seatMapper.seatDtoToEntity(seat));
+      Integer column = seat.getColumn();
+      Integer row = seat.getRow();
+      Optional<Seat> entity = seatRepository.getSeatByColumnAndRow(column, row);
+
+      entity.get().setRow(seat.getRow());
+      entity.get().setColumn(seat.getColumn());
+      entity.get().setPosition(seat.getPosition());
+      entity.get().setFree(seat.getFree());
+      entity.get().setStatus(seat.getType());
+      // if (seat.getPerson != null) {
+      //   entity.get().setPerson(seat.getPerson());
+      // }
+      // seatRepository.save(seatMapper.seatDtoToEntity(seat));
+
+      seatRepository.save(entity.get());
     }
   }
 
