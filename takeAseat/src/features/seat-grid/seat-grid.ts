@@ -131,20 +131,6 @@ export class SeatGridComponent {
 
     const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
-    if (saved_dto) {
-
-      const dto : GridUpdatedDTO = {
-        entity: {
-          grid : saved_dto.entity.grid,
-          rowNumber : saved_dto.entity.rowNumber,
-          columnNumber : saved_dto.entity.columnNumber,
-          is_currentGrid : true
-        },
-        grid: this.selectedSeatList
-      }
-      this.api.updateGrid(dto);
-      console.log(dto);
-    }
 
     this.selectedSeatList.forEach
       ((seat : Seat) => {
@@ -165,6 +151,21 @@ export class SeatGridComponent {
     };
 
     this.safeStorage.setItem('gridState', gridState);
+
+    if (saved_dto) {
+
+      const dto : GridUpdatedDTO = {
+        entity: {
+          grid : saved_dto.entity.grid,
+          rowNumber : saved_dto.entity.rowNumber,
+          columnNumber : saved_dto.entity.columnNumber,
+          is_currentGrid : true
+        },
+        grid: this.selectedSeatList
+      }
+      this.api.updateGrid(dto);
+      console.log(dto);
+    }
 
     console.log('GridState salvo:', gridState);
     this.selectedSeatList = [];

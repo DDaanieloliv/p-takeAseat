@@ -38,9 +38,9 @@ public class ServicePersonImpl implements IPersonService {
 
   @Override
   @Transactional
-  public void removePessoaFromSeat(Integer position) {
-    positionIsValid(position);
-    Seat armchair = findSeat(position);
+  public void removePessoaFromSeat(Integer row, Integer column) {
+    // positionIsValid(position);
+    Seat armchair = findSeat(row, column);
 
     if (selectedSeatIsFree(armchair)) {
       throw new BadRequestException("A Poltrona já está desocupada.");
@@ -65,8 +65,8 @@ public class ServicePersonImpl implements IPersonService {
     }
   }
 
-  private Seat findSeat(Integer position) {
-    return iSeatRepository.findByPosition(String.valueOf(position))
+  private Seat findSeat(Integer row, Integer column) {
+    return iSeatRepository.findByPosition(row, column)
     .orElseThrow(()-> new NotFoundException("Poltrona não encontrada."));
   }
 

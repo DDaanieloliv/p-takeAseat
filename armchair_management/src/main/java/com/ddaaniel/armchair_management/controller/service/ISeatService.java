@@ -5,16 +5,19 @@ import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ISeatService {
 
   List<SeatResponseDTO> listStatusOfAllSeats();
 
-  SeatResponseDTO detailsFromSpecificSeat (Integer position);
+  SeatResponseDTO detailsFromSpecificSeat (Integer row, Integer column);
 
-  void allocateSeatToPessoa(Integer position, String name, String cpf);
+  void allocateSeatToPessoa(Integer row, Integer column, String name, String cpf);
 
   ShartsResponceDTO sharts();
 
   void updateModifiedSeats(List<SeatDTO> seatListDTO);
+
+  void eraseAllSeatsState(UUID uuid);
 }

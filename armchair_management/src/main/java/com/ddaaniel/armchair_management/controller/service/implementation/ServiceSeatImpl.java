@@ -9,6 +9,7 @@ import com.ddaaniel.armchair_management.controller.service.mapper.SeatMapper;
 import com.ddaaniel.armchair_management.model.Person;
 
 import com.ddaaniel.armchair_management.model.Seat;
+import com.ddaaniel.armchair_management.model.enums.SeatType;
 import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ServiceSeatImpl implements ISeatService {
@@ -46,6 +48,33 @@ public class ServiceSeatImpl implements ISeatService {
     this.gridRepository = gridRepository;
   }
 
+
+  @Override
+  public void eraseAllSeatsState(UUID uuid) {
+    List<Seat> seatList = seatRepository.findSeatsByGridId(uuid);
+    for (Seat seat : seatList) {
+      seat.setFree(true);
+      seat.setStatus(SeatType.AVAILABLE);
+      seat.setPerson(null);
+    }
+    seatRepository.saveAll(seatList);
+
+    // Caso queria para maior performace com grade volume dedos:
+    //
+    // // No repository
+    // @Modifying
+    // @Query("UPDATE Seat s SET s.free = true, s.status = 'AVAILABLE', s.person = null WHERE s.currentGrid.grid = :gridId")
+    // void eraseAllSeatsStateByGridId(@Param("gridId") UUID gridId);
+    //
+    // // No service
+    // @Override
+    // public void eraseAllSeatsState(UUID uuid) {
+    //   seatRepository.eraseAllSeatsStateByGridId(uuid);
+    // }
+  }
+
+
+
   // listando status de todas as poltronas
   @Override
   public List<SeatResponseDTO> listStatusOfAllSeats(){
@@ -54,11 +83,12 @@ public class ServiceSeatImpl implements ISeatService {
     return seatMapper.toDTOList(list);
   }
 
+
   // listando detalhes de uma poltrona específica
   @Override
-  public SeatResponseDTO detailsFromSpecificSeat (Integer position){
-    positionValidation(position);
-    Seat seat = seatRepository.findByPosition(String.valueOf(position))
+  public SeatResponseDTO detailsFromSpecificSeat (Integer row, Integer column){
+    // positionValidation(row, column);
+    Seat seat = seatRepository.findByPosition(row, column)
     .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
 
     return seatMapper.toDTO(seat);
@@ -66,11 +96,11 @@ public class ServiceSeatImpl implements ISeatService {
 
   @Transactional
   @Override
-  public void allocateSeatToPessoa(Integer position, String name, String cpf) {
+  public void allocateSeatToPessoa(Integer row, Integer column, String name, String cpf) {
     lenghtNameValidation(name);
     cpfValidation(cpf);
-    positionValidation(position);
-    Seat seat = getSeatFromPosition(position);
+    // positionValidation(position);
+    Seat seat = getSeatFromPosition(row, column);
 
     if (!seat.getFree()) {
       throw new BadRequestException("Poltrona já está ocupada.");
@@ -111,17 +141,17 @@ public class ServiceSeatImpl implements ISeatService {
 
 
 
-  private void positionValidation(Integer position) {
-    var entity = gridRepository.isCurrentGrid().get();
-    var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
+  // private void positionValidation(Integer position) {
+  //   var entity = gridRepository.isCurrentGrid().get();
+  //   var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
+  //
+  //   if (position <= 0 || position > totalSeats) {   // Verifica se é um parâmetro válido
+  //     throw new AssentoInvalidoException("O assento informado é inválido.");
+  //   }
+  // }
 
-    if (position <= 0 || position > totalSeats) {   // Verifica se é um parâmetro válido
-      throw new AssentoInvalidoException("O assento informado é inválido.");
-    }
-  }
-
-  private Seat getSeatFromPosition(Integer position) {
-    return seatRepository.findByPosition(String.valueOf(position))
+  private Seat getSeatFromPosition(Integer row, Integer column) {
+    return seatRepository.findByPosition(row, column)
     .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
   }
 

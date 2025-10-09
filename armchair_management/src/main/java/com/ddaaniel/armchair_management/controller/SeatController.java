@@ -43,31 +43,30 @@ public class SeatController {
     return ResponseEntity.ok().body(response);
   }
 
-  @GetMapping("/{position}")
-  public ResponseEntity<SeatResponseDTO> getBySeat(@PathVariable Integer position) {
-    var response = serviceSeat.detailsFromSpecificSeat(position);
+  @GetMapping("/{row}-{column}")
+  public ResponseEntity<SeatResponseDTO> getBySeat(@PathVariable Integer row, @PathVariable Integer column) {
+    var response = serviceSeat.detailsFromSpecificSeat(row, column);
     return ResponseEntity.ok().body(response);
   }
 
   @PutMapping("/allocate")
   public ResponseEntity<MessageResponseDTO> addPersonToSeat(@RequestBody RequestAllocationDTO dto) {
-    serviceSeat.allocateSeatToPessoa(dto.position(), dto.name(), dto.cpf());
+    serviceSeat.allocateSeatToPessoa(dto.row(), dto.column(), dto.name(), dto.cpf());
 
     MessageResponseDTO message = new MessageResponseDTO("Poltrona alocada com sucesso.");
     return ResponseEntity.ok(message);
   }
 
-  @PutMapping("/remove/{position}")
-  public ResponseEntity<MessageResponseDTO> removePersonFromSeat(@PathVariable Integer position) {
-    servicePessoa.removePessoaFromSeat(position);
+  @PutMapping("/remove/{row}-{column}")
+  public ResponseEntity<MessageResponseDTO> removePersonFromSeat(@PathVariable Integer row, @PathVariable Integer column) {
+    servicePessoa.removePessoaFromSeat(row, column);
 
     MessageResponseDTO message = new MessageResponseDTO("Pessoa removida da Poltrona.");
     return ResponseEntity.ok(message);
   }
 
-
   @GetMapping("/sharts")
-  public ResponseEntity<ShartsResponceDTO> sharts(){
+  public ResponseEntity<ShartsResponceDTO> sharts() {
     return ResponseEntity.ok(serviceSeat.sharts());
   }
 
@@ -77,7 +76,7 @@ public class SeatController {
   }
 
   @PutMapping("/grid/update")
-  public ResponseEntity<?> UpdateGrid(@RequestBody SeatsUpdatedDTO gridUpdatedDTO){
+  public ResponseEntity<?> UpdateGrid(@RequestBody SeatsUpdatedDTO gridUpdatedDTO) {
     // gridService.updateCurrentGrid();
     serviceSeat.updateModifiedSeats(gridUpdatedDTO.grid());
     return ResponseEntity.ok(gridUpdatedDTO);
@@ -87,7 +86,7 @@ public class SeatController {
   public ResponseEntity<?> EraseGridState(@RequestBody GridEntityDTO entityGrid) {
     var gridOpt = gridService.findGridEntityById(entityGrid.getGrid());
     if (gridOpt.isPresent()) {
-      // Erase all grid seats state
+      serviceSeat.eraseAllSeatsState(entityGrid.getGrid());
       return ResponseEntity.ok("Estados dos assentos foram limpos...");
     }
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma Entidade Grid relacionada foi encontrada...");
@@ -97,6 +96,5 @@ public class SeatController {
   public ResponseEntity<?> CreateNewRoomWithSeatGrid() {
     return null;
   }
-
 
 }

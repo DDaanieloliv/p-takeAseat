@@ -114,6 +114,15 @@ export class EditGrid {
   }
 
 
+  public toggleSeat(seat: Seat) : void {
+    // if (!seat.free) return;
+    seat.selected = !seat.selected;
+    seat.status = seat.selected ? 'UNAVAILABLE' : 'AVAILABLE';
+    // this.seatSelected.emit(seat);
+    this.checkSelections(seat);
+  }
+
+
   public handleConfirm() {
     if (this.should_erase_seat_state) {
       this.erase_seat_state();
@@ -121,19 +130,17 @@ export class EditGrid {
     else if (this.should_erase_seat_state === false) {
       console.log("Should Emmit the new Grid format.");
 
-      this.gridObservable.updateGrid(this.grid);
-      // Emite the updated grid
-      this.gridUpdated.emit(this.grid);
-      this.showBlurWindow();
-
       this.selectedSeatList.forEach
         ((seat : Seat) => {
           if (seat.status === 'SELECTED') {
-            seat.status = 'UNAVAILABLE';
             seat.free = false;
+            seat.status = 'UNAVAILABLE';
           }
         } );
-      // }
+
+      this.gridObservable.updateGrid(this.grid);
+      this.gridUpdated.emit(this.grid);
+      this.showBlurWindow();
 
       const gridState = {
         grid: this.grid,
@@ -162,6 +169,7 @@ export class EditGrid {
         console.log(dto);
         this.api.updateGrid(dto);
       }
+      this.selectedSeatList = [];
     }
   }
 
@@ -176,28 +184,15 @@ export class EditGrid {
   }
 
 
-  public closeWarning() {
-    this.warningPopup.hide();
+  public openWarning( flagConfirmation : boolean ) {
+    this.warningPopup.message = this.pickMessageToConfirmation(flagConfirmation);
+    this.warningPopup.confirmText = this.pickContentTextToConfirmation();
+
+    this.should_erase_seat_state = flagConfirmation;
+
+    this.warningPopup.show();
   }
 
-
-  public checkSelections(seat : Seat) : void {
-
-    const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
-
-    if (existingIndex !== -1) {
-      if (!seat.selected) {
-        this.selectedSeatList.splice(existingIndex, 1);
-      } else {
-        this.selectedSeatList[existingIndex] = seat;
-      }
-    } else {
-      if (seat.selected) {
-        this.selectedSeatList.push(seat);
-      }
-    }
-
-  }
 
 
   public erase_seat_state() : void {
@@ -236,6 +231,25 @@ export class EditGrid {
     }
 
     console.log("Apagando essa porra");
+  }
+
+
+  public checkSelections(seat : Seat) : void {
+
+    const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
+
+    if (existingIndex !== -1) {
+      if (!seat.selected) {
+        this.selectedSeatList.splice(existingIndex, 1);
+      } else {
+        this.selectedSeatList[existingIndex] = seat;
+      }
+    } else {
+      if (seat.selected) {
+        this.selectedSeatList.push(seat);
+      }
+    }
+
   }
 
 
@@ -291,15 +305,7 @@ export class EditGrid {
 
 
 
-  // private count_toggle : number = 1;
 
-  public toggleSeat(seat: Seat) : void {
-    // if (!seat.free) return;
-    seat.selected = !seat.selected;
-    seat.status = seat.selected ? 'UNAVAILABLE' : 'AVAILABLE';
-    // this.seatSelected.emit(seat);
-    this.checkSelections(seat);
-  }
 
 
 
@@ -378,16 +384,6 @@ export class EditGrid {
 
 
 
-  public openWarning( flagConfirmation : boolean ) {
-    this.warningPopup.message = this.pickMessageToConfirmation(flagConfirmation);
-    this.warningPopup.confirmText = this.pickContentTextToConfirmation(flagConfirmation);
-
-    this.should_erase_seat_state = flagConfirmation;
-
-    this.warningPopup.show();
-  }
-
-
 
   private pickMessageToConfirmation( IsSavedAction : boolean ) : string {
     let message = '';
@@ -398,15 +394,10 @@ export class EditGrid {
   }
 
 
-  private pickContentTextToConfirmation( IsSavedAction : boolean ) : string {
+  private pickContentTextToConfirmation() : string {
     let message = '';
 
-    // if (IsSavedAction) {
     return message = 'Save';
-    // }
-    // else {
-    // return message = 'Discard';
-    // }
   }
 
 

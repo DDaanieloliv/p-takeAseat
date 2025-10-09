@@ -14,9 +14,6 @@ import java.util.UUID;
 public interface ISeatRepository extends JpaRepository<Seat, UUID> {
 
 
-  Optional<Seat> findByPosition(String position);
-
-
   void deleteById(UUID seatIdToDelete);
 
   @Query(value = """
@@ -26,6 +23,9 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
     nativeQuery = true)
   List<Seat> findSeatsByGridId(UUID grid_uuid);
 
+
+  @Query(value = "SELECT * FROM tb_seats WHERE tb_seats.seat_row = ?1 AND tb_seats.seat_column = ?2;", nativeQuery = true)
+  Optional<Seat> findByPosition(Integer row, Integer column);
 
   @Query(value = "SELECT COUNT(*) FROM tb_seats WHERE tb_seats.free = false;", nativeQuery = true)
   Integer countSeatsOccupied();
@@ -38,4 +38,8 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
 
   @Query(value = "SELECT * FROM tb_seats WHERE seat_column = ?1 AND seat_row = ?2;", nativeQuery = true)
   Optional<Seat> getSeatByColumnAndRow(Integer column, Integer row);
+
+
+  @Query(value = "SELECT * FROM tb_seats WHERE grid_id = ?1;", nativeQuery = true)
+  List<Seat> findSeatsByGrid(UUID uuid);
 }
