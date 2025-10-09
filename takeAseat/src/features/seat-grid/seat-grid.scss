@@ -148,6 +148,17 @@
     }
 
 
+    &.unavailable {
+      background-color: transparent;
+      color: transparent;
+      cursor: not-allowed;
+    }
+
+    &.occupied {
+      background-color: #dcc337;
+      color: black;
+      cursor: pointer;
+    }
 
     .column-control-container {
       position: relative;

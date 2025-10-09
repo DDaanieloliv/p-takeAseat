@@ -19,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -82,14 +84,24 @@ public class SeatController {
     return ResponseEntity.ok(gridUpdatedDTO);
   }
 
-  @PutMapping
+  @PutMapping("/grid/erase")
   public ResponseEntity<?> EraseGridState(@RequestBody GridEntityDTO entityGrid) {
     var gridOpt = gridService.findGridEntityById(entityGrid.getGrid());
     if (gridOpt.isPresent()) {
-      serviceSeat.eraseAllSeatsState(entityGrid.getGrid());
-      return ResponseEntity.ok("Estados dos assentos foram limpos...");
+        serviceSeat.eraseAllSeatsState(entityGrid.getGrid());
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Estados dos assentos foram limpos...");
+        response.put("status", "SUCCESS");
+
+        return ResponseEntity.ok(response);
     }
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma Entidade Grid relacionada foi encontrada...");
+
+    Map<String, String> errorResponse = new HashMap<>();
+    errorResponse.put("message", "Nenhuma Entidade Grid relacionada foi encontrada...");
+    errorResponse.put("status", "NOT_FOUND");
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
 
   @PostMapping("/grid/newroom")

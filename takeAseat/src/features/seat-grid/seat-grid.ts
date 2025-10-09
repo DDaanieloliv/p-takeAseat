@@ -61,7 +61,6 @@ export class SeatGridComponent {
 
 
   async ngOnInit() {
-
     // this.is_visibleHandleSelection = true;
 
     // Configura a subscription

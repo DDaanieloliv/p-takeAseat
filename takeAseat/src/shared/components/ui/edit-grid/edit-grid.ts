@@ -116,10 +116,13 @@ export class EditGrid {
 
   public toggleSeat(seat: Seat) : void {
     // if (!seat.free) return;
+    console.log("Toggle Seat to UNAVAILABLE or AVAILABLE...")
+    // seat.free = seat.free ? false : true;
     seat.selected = !seat.selected;
     seat.status = seat.selected ? 'UNAVAILABLE' : 'AVAILABLE';
     // this.seatSelected.emit(seat);
     this.checkSelections(seat);
+    console.log(seat);
   }
 
 
@@ -132,15 +135,16 @@ export class EditGrid {
 
       this.selectedSeatList.forEach
         ((seat : Seat) => {
-          if (seat.status === 'SELECTED') {
-            seat.free = false;
-            seat.status = 'UNAVAILABLE';
-          }
+            console.log("Iterando sobre cada assento selecionado...")
+            seat.free = !seat.free;
+            // seat.status = seat.status === 'UNAVAILABLE' ? 'AVAILABLE' : 'UNAVAILABLE';
         } );
+      console.log("Assentos modificados pela iteração...");
+      console.log(this.selectedSeatList);
+
 
       this.gridObservable.updateGrid(this.grid);
-      this.gridUpdated.emit(this.grid);
-      this.showBlurWindow();
+      // this.gridUpdated.emit(this.grid);
 
       const gridState = {
         grid: this.grid,
@@ -170,6 +174,7 @@ export class EditGrid {
         this.api.updateGrid(dto);
       }
       this.selectedSeatList = [];
+      this.showBlurWindow();
     }
   }
 
@@ -196,6 +201,10 @@ export class EditGrid {
 
 
   public erase_seat_state() : void {
+    this.safeStorage.removeItem('gridState');
+
+    console.log("Apagando essa porra");
+
     this.grid.forEach((seatList : Array<Seat>) => {
       seatList.forEach(
         (seat : Seat) => {
@@ -205,16 +214,15 @@ export class EditGrid {
         }
       )
     });
-    const gridState = {
-      grid: this.grid,
-      dimensions: {
-        rows: this.rows,
-        columns: this.columns
-      },
-      timestamp: new Date().toISOString()
-    };
+    // const gridState = {
+    //   grid: this.grid,
+    //   dimensions: {
+    //     rows: this.rows,
+    //     columns: this.columns
+    //   },
+    //   timestamp: new Date().toISOString()
+    // };
 
-    this.safeStorage.setItem('gridState', gridState);
 
     const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
@@ -229,8 +237,6 @@ export class EditGrid {
       console.log(dto);
       this.api.eraseGrid(dto);
     }
-
-    console.log("Apagando essa porra");
   }
 
 
@@ -239,15 +245,9 @@ export class EditGrid {
     const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
 
     if (existingIndex !== -1) {
-      if (!seat.selected) {
-        this.selectedSeatList.splice(existingIndex, 1);
-      } else {
         this.selectedSeatList[existingIndex] = seat;
-      }
     } else {
-      if (seat.selected) {
         this.selectedSeatList.push(seat);
-      }
     }
 
   }

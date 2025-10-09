@@ -73,7 +73,6 @@
                 [class.available]="seat.status === 'AVAILABLE'"
                 [class.unavailable]="seat.status === 'UNAVAILABLE'"
                 [class.selected]="seat.status === 'SELECTED'"
-                [class.reserved]="!seat.free"
                 (click)="toggleSeat(seat)"
                 [title]="'Row ' + (grid.length - r) + ', Seat ' + (c + 1)"
               >
