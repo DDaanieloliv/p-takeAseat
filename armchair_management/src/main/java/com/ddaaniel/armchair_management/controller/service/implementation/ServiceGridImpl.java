@@ -103,7 +103,7 @@ public class ServiceGridImpl implements IGridService {
           // seat.setPerson(mirror.getPerson());
           // seat.setCurrentGrid(mirror.getCurrentGrid());
 
-          seat.setType(mirror.getStatus());
+          seat.setStatus(mirror.getStatus());
           seat.setFree(mirror.getFree());
           break;
         }

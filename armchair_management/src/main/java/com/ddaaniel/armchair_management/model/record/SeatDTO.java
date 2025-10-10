@@ -16,7 +16,7 @@ public class SeatDTO {
     @Builder.Default
     private Boolean selected = false;
     private Integer column;
-    private SeatType type;
+    private SeatType status;
     private Boolean free;
 
 

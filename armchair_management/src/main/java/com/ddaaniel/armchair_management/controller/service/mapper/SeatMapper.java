@@ -35,7 +35,7 @@ public class SeatMapper {
     .position(dto.getPosition())
     .row(dto.getRow())
     .column(dto.getColumn())
-    .status(dto.getType())
+    .status(dto.getStatus())
     .free(dto.getFree())
     // .currentGrid(dto.getGrid())
     // .person(dto.getPerson()) Should be a Optional maybe(because we don't have sure that response come with the 'person' propertie not null)

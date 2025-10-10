@@ -129,7 +129,7 @@ public class ServiceSeatImpl implements ISeatService {
         entity.get().setColumn(seat.getColumn());
         entity.get().setPosition(seat.getPosition());
         entity.get().setFree(seat.getFree());
-        entity.get().setStatus(seat.getType());
+        entity.get().setStatus(seat.getStatus());
         // if (seat.getPerson != null) {
         //   entity.get().setPerson(seat.getPerson());
         // }
