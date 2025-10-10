@@ -59,6 +59,20 @@ export class SeatGridComponent {
     this.subscription.unsubscribe();
   }
 
+  // async ngOnIniti() {
+  //   // Cache First + Background Sync
+  //   await this.initializeGrid();
+  // }
+  //
+  //
+  // private async initializeGrid() : Promise<void> {
+  //
+  //   const cachedGrid = this.safeStorage.getItem<any>('gridState');
+  //
+  //   if (cachedGrid && this.isValidGridState(cachedGrid)) {
+  //     const apiGrid = this.api.fetchAPI();
+  //   }
+  // }
 
   async ngOnInit() {
     // this.is_visibleHandleSelection = true;
@@ -77,39 +91,42 @@ export class SeatGridComponent {
       console.log("Number column: " + this.columns + "\nNumber row: " + this.rows)
       return;
     }
+    else {
 
-    try {
-      // Obtem o json da api
-      const grid: GridDTO = await this.api.fetchAPI();
+      try {
+        // Obtem o json da api
+        const grid: GridDTO = await this.api.fetchAPI();
 
-      if (grid == null) {
-        this.generateGrid();
-      } else {
-        // USA O SERVIÇO SEGURO
-        this.safeStorage.setItem('currentGrid', grid);
+        if (grid == null) {
+          this.generateGrid();
+        } else {
+          // USA O SERVIÇO SEGURO
+          this.safeStorage.setItem('currentGrid', grid);
 
-        this.generateGrid(
-          grid.entity.rowNumber,
-          grid.entity.columnNumber
-        );
-        this.rows = grid.entity.rowNumber;
-        this.columns = grid.entity.columnNumber;
-        console.log("column number from api: " + this.columns + "\nrow number from api: " + this.rows)
+          this.generateGrid(
+            grid.entity.rowNumber,
+            grid.entity.columnNumber
+          );
+          this.rows = grid.entity.rowNumber;
+          this.columns = grid.entity.columnNumber;
+          console.log("column number from api: " + this.columns + "\nrow number from api: " + this.rows)
+        }
+        // Verificação adicional de segurança
+        if (!isPlatformBrowser(this.platformId)) {
+          // Se estiver no servidor, gera grid padrão e retorna
+          this.generateGrid();
+          return;
+        }
+        // Recupera do storage para verificação
+        const storedGrid = this.safeStorage.getItem<GridDTO>('currentGrid');
+        console.log('Grid from storage:', storedGrid);
+
+      } catch (error) {
+        console.error('Error in ngOnInit:', error);
+        this.generateGrid(); // Fallback
       }
-      // Verificação adicional de segurança
-      if (!isPlatformBrowser(this.platformId)) {
-        // Se estiver no servidor, gera grid padrão e retorna
-        this.generateGrid();
-        return;
-      }
-      // Recupera do storage para verificação
-      const storedGrid = this.safeStorage.getItem<GridDTO>('currentGrid');
-      console.log('Grid from storage:', storedGrid);
-
-    } catch (error) {
-      console.error('Error in ngOnInit:', error);
-      this.generateGrid(); // Fallback
     }
+
   }
 
 
@@ -153,14 +170,14 @@ export class SeatGridComponent {
 
     if (saved_dto) {
 
-      const dto : GridUpdatedDTO = {
+      const dto : GridDTO = {
         entity: {
           grid : saved_dto.entity.grid,
           rowNumber : saved_dto.entity.rowNumber,
           columnNumber : saved_dto.entity.columnNumber,
           is_currentGrid : true
         },
-        grid: this.selectedSeatList
+        grid: this.grid
       }
       this.api.updateGrid(dto);
       console.log(dto);

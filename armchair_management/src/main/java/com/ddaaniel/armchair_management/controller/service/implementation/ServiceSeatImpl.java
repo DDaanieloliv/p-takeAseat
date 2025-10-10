@@ -116,24 +116,27 @@ public class ServiceSeatImpl implements ISeatService {
 
 
   @Override
-  public void updateModifiedSeats(List<SeatDTO> seatListDTO) {
+  public void updateModifiedSeats(List<List<SeatDTO>> seatListDTO) {
     logger.warn("Desserializando seatDto...");
-    for (SeatDTO seat : seatListDTO) {
-      Integer column = seat.getColumn();
-      Integer row = seat.getRow();
-      Optional<Seat> entity = seatRepository.getSeatByColumnAndRow(column, row);
+    for (List<SeatDTO> list : seatListDTO) {
+      for(SeatDTO seat : list) {
 
-      entity.get().setRow(seat.getRow());
-      entity.get().setColumn(seat.getColumn());
-      entity.get().setPosition(seat.getPosition());
-      entity.get().setFree(seat.getFree());
-      entity.get().setStatus(seat.getType());
-      // if (seat.getPerson != null) {
-      //   entity.get().setPerson(seat.getPerson());
-      // }
-      // seatRepository.save(seatMapper.seatDtoToEntity(seat));
+        Integer column = seat.getColumn();
+        Integer row = seat.getRow();
+        Optional<Seat> entity = seatRepository.getSeatByColumnAndRow(column, row);
 
-      seatRepository.save(entity.get());
+        entity.get().setRow(seat.getRow());
+        entity.get().setColumn(seat.getColumn());
+        entity.get().setPosition(seat.getPosition());
+        entity.get().setFree(seat.getFree());
+        entity.get().setStatus(seat.getType());
+        // if (seat.getPerson != null) {
+        //   entity.get().setPerson(seat.getPerson());
+        // }
+        // seatRepository.save(seatMapper.seatDtoToEntity(seat));
+
+        seatRepository.save(entity.get());
+      }
     }
   }
 

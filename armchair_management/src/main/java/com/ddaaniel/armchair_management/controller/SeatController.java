@@ -78,7 +78,7 @@ public class SeatController {
   }
 
   @PutMapping("/grid/update")
-  public ResponseEntity<?> UpdateGrid(@RequestBody SeatsUpdatedDTO gridUpdatedDTO) {
+  public ResponseEntity<GridDTO> UpdateGrid(@RequestBody GridDTO gridUpdatedDTO) {
     // gridService.updateCurrentGrid();
     serviceSeat.updateModifiedSeats(gridUpdatedDTO.grid());
     return ResponseEntity.ok(gridUpdatedDTO);

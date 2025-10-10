@@ -15,7 +15,7 @@ export class ApiService {
     return data;
   }
 
-  public async updateGrid(dto: GridUpdatedDTO): Promise<GridUpdatedDTO> {
+  public async updateGrid(dto: GridDTO): Promise<GridUpdatedDTO> {
     try {
       const response = await fetch('http://localhost:8080/seats/grid/update', {
         method: 'PUT',

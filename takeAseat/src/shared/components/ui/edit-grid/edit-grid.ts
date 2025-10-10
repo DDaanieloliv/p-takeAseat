@@ -160,14 +160,14 @@ export class EditGrid {
       const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
       if (saved_dto) {
-        const dto : GridUpdatedDTO = {
+        const dto : GridDTO = {
           entity: {
             grid : saved_dto.entity.grid,
             rowNumber : saved_dto.entity.rowNumber,
             columnNumber : saved_dto.entity.columnNumber,
             is_currentGrid : true
           },
-          grid: this.selectedSeatList
+          grid: this.grid
         }
         console.log("Enviando assentos modificados no componente de edição para a API...");
         console.log(dto);
@@ -202,6 +202,7 @@ export class EditGrid {
 
   public erase_seat_state() : void {
     this.safeStorage.removeItem('gridState');
+    // this.safeStorage.removeItem('currentGrid');
 
     console.log("Apagando essa porra");
 
