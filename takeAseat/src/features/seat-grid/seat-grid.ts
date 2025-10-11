@@ -11,6 +11,8 @@ import { GridDTO } from '../../core/model/fetch/grid-dto';
 import { SafeStorageService } from '../../core/services/localStorageService/storage-service';
 import { GridUpdatedDTO } from '../../core/model/fetch/seatsUpdated-dto';
 import { Seat } from '../../core/model/Seat';
+import { Console } from 'node:console';
+import { GridState } from '../../core/model/fetch/GridState';
 
 
 
@@ -55,124 +57,274 @@ export class SeatGridComponent {
 
   public is_visibleHandleSelection : boolean = true;
 
+
+  // public selectedSeatList_isEmpty = true;
+  //
+  // public shouldShowButtom() : boolean {
+  //   return this.selectedSeatList_isEmpty;
+  // }
+  //
+  // public checkList() : boolean {
+  //   if (this.selectedSeatList.length < 1) {
+  //    return false;
+  //   }
+  //   return true;
+  // }
+
+
+
+
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
 
-  async ngOnInit() {
-    // this.is_visibleHandleSelection = true;
+  // async ngOnInit() {
+  //   // this.is_visibleHandleSelection = true;
+  //
+  //   // Configura a subscription
+  //   this.setupGridSubscription();
+  //   console.log('Esse é o grid armazenado no localStorege...');
+  //   console.log(this.safeStorage.getItem<GridDTO>('gridState'));
+  //
+  //
+  //   const savedState = this.safeStorage.getItem<GridDTO>('gridState');
+  //   let grid: GridDTO | null = null;
+  //
+  //   try {
+  //       grid = await this.api.fetchAPI();
+  //       console.log('Grid da API:', grid);
+  //   } catch (error) {
+  //       console.warn('API não disponível, usando fallback:', error);
+  //       grid = null;
+  //   }
+  //
+  //
+  //   if (savedState && grid && this.isSameGridWithStates(savedState, grid)) {
+  //     console.log('Carregando grid salvo do localStorage');
+  //     this.safeStorage.setItem('gridState', grid);
+  //     this.grid = savedState.grid;
+  //     this.rows = savedState.entity.rowNumber;
+  //     this.columns = savedState.entity.columnNumber;
+  //     this.gridObservable.updateGrid(this.grid);
+  //     console.log("Number column: " + this.columns + "\nNumber row: " + this.rows)
+  //     return;
+  //
+  //   }else if (!savedState || !grid) {
+  //     console.log("Gerando grid sem api...")
+  //     try {
+  //       if (grid == null) {
+  //         this.generateGrid();
+  //         const new_grid : GridDTO = {
+  //           entity : {
+  //             grid : "",
+  //             rowNumber : this.rows,
+  //             columnNumber : this.columns,
+  //             is_currentGrid : true
+  //           },
+  //           grid : this.grid
+  //         }
+  //         console.log("Aaaaaa!")
+  //         this.grid = new_grid.grid;
+  //         console.log(this.grid)
+  //         this.safeStorage.setItem('gridState', new_grid);
+  //       } else {
+  //         // USA O SERVIÇO SEGURO
+  //
+  //         this.generateGrid(
+  //           grid.entity.rowNumber,
+  //           grid.entity.columnNumber
+  //         );
+  //         this.rows = grid.entity.rowNumber;
+  //         this.columns = grid.entity.columnNumber;
+  //         console.log("column number from api: " + this.columns + "\nrow number from api: " + this.rows)
+  //
+  //         this.safeStorage.setItem('gridState', grid);
+  //       }
+  //       // Verificação adicional de segurança
+  //       if (!isPlatformBrowser(this.platformId)) {
+  //         // Se estiver no servidor, gera grid padrão e retorna
+  //         this.generateGrid();
+  //         return;
+  //       }
+  //       // Recupera do storage para verificação
+  //       const storedGrid = this.safeStorage.getItem<GridDTO>('gridState');
+  //       console.log('Grid from storage:', storedGrid);
+  //
+  //     } catch (error) {
+  //       console.error('Error in ngOnInit:', error);
+  //       this.generateGrid(); // Fallback
+  //     }
+  //   }
+  //
+  // }
 
-    // Configura a subscription
+  async ngOnInit() {
     this.setupGridSubscription();
 
-    const savedState = this.safeStorage.getItem<GridDTO>('gridState');
-    const grid: GridDTO | null = await this.api.fetchAPI();
+    // Use GridState para o localStorage
+    const savedState = this.safeStorage.getItem<GridState>('gridState');
+    console.log('Esse é o grid armazenado no localStorage...', savedState);
 
+    let grid: GridDTO | null = null;
 
-    if (savedState && grid && this.isSameGridWithStates(savedState, grid)) {
+    try {
+      grid = await this.api.fetchAPI();
+      console.log('Grid da API:', grid);
+    } catch (error) {
+      console.warn('API não disponível, usando fallback:', error);
+      grid = null;
+    }
+
+    // PRIMEIRO: Se tem estado salvo, usa ele
+    if (savedState && this.isValidGridState(savedState)) {
       console.log('Carregando grid salvo do localStorage');
-      this.safeStorage.setItem('currentGrid', grid);
       this.grid = savedState.grid;
-      this.rows = savedState.entity.rowNumber;
-      this.columns = savedState.entity.columnNumber;
+      this.rows = savedState.dimensions.rows;
+      this.columns = savedState.dimensions.columns;
       this.gridObservable.updateGrid(this.grid);
-      console.log("Number column: " + this.columns + "\nNumber row: " + this.rows)
+      console.log("Number column: " + this.columns + "\nNumber row: " + this.rows);
       return;
     }
-    else {
 
-      try {
-        if (grid == null) {
-          this.generateGrid();
-        } else {
-          // USA O SERVIÇO SEGURO
-          this.safeStorage.setItem('currentGrid', grid);
+    // SEGUNDO: Se não tem estado salvo, usa API ou gera padrão
+    console.log("Gerando grid sem estado salvo...");
 
-          this.generateGrid(
-            grid.entity.rowNumber,
-            grid.entity.columnNumber
-          );
-          this.rows = grid.entity.rowNumber;
-          this.columns = grid.entity.columnNumber;
-          console.log("column number from api: " + this.columns + "\nrow number from api: " + this.rows)
-        }
-        // Verificação adicional de segurança
-        if (!isPlatformBrowser(this.platformId)) {
-          // Se estiver no servidor, gera grid padrão e retorna
-          this.generateGrid();
-          return;
-        }
-        // Recupera do storage para verificação
-        const storedGrid = this.safeStorage.getItem<GridDTO>('currentGrid');
-        console.log('Grid from storage:', storedGrid);
+    if (grid) {
+      // Tem API
+      console.log("Usando dados da API");
+      this.safeStorage.setItem('currentGrid', grid); // Salva GridDTO completo
 
-      } catch (error) {
-        console.error('Error in ngOnInit:', error);
-        this.generateGrid(); // Fallback
-      }
+      this.generateGrid(grid.entity.rowNumber, grid.entity.columnNumber);
+      this.rows = grid.entity.rowNumber;
+      this.columns = grid.entity.columnNumber;
+    } else {
+      // Sem API - gera padrão
+      console.log("Gerando grid padrão");
+      this.generateGrid();
     }
 
-  }
-
-
-  /*
-   *
-   * Deve atualizar o backend com uma nova estrutura grid.
-   *
-   * */
-  public confirm(): void {
-    // this.api.updateGrid();
-    this.is_visibleHandleSelection = true;
-    console.log(this.selectedSeatList);
-    /*
-     * Send the grid modified to a service that shares it with edit-grid
-     *
-     * */
-    this.gridObservable.updateGrid(this.grid);
-
-    const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
-
-
-    this.selectedSeatList.forEach
-      ((seat : Seat) => {
-        if (seat.status === 'SELECTED') {
-          seat.status = 'OCCUPIED';
-          seat.free = false;
-        }
-      } );
-
-    // this.safeStorage.setItem('gridState', this.grid);
-    const gridState = {
+    // Salva o estado inicial
+    const gridState: GridState = {
       grid: this.grid,
-      dimensions: {
-        rows: this.rows,
-        columns: this.columns
-      },
+      dimensions: { rows: this.rows, columns: this.columns },
       timestamp: new Date().toISOString()
     };
-
     this.safeStorage.setItem('gridState', gridState);
 
-    if (saved_dto) {
-
-      const dto : GridDTO = {
-        entity: {
-          grid : saved_dto.entity.grid,
-          rowNumber : saved_dto.entity.rowNumber,
-          columnNumber : saved_dto.entity.columnNumber,
-          is_currentGrid : true
-        },
-        grid: this.grid
-      }
-      this.api.updateGrid(dto);
-      console.log(dto);
-    }
-
-    console.log('GridState salvo:', gridState);
-    this.selectedSeatList = [];
+    console.log('Grid inicial salvo:', gridState);
   }
 
+  private isValidGridState(state: any): state is GridState {
+    return state &&
+      state.grid &&
+      Array.isArray(state.grid) &&
+      state.dimensions &&
+      typeof state.dimensions.rows === 'number' &&
+      typeof state.dimensions.columns === 'number';
+  }
+
+
+
+  // /*
+  //  *
+  //  * Deve atualizar o backend com uma nova estrutura grid.
+  //  *
+  //  * */
+  // public confirm(): void {
+  //   // this.api.updateGrid();
+  //   this.is_visibleHandleSelection = true;
+  //   console.log(this.selectedSeatList);
+  //   /*
+  //    * Send the grid modified to a service that shares it with edit-grid
+  //    *
+  //    * */
+  //   this.gridObservable.updateGrid(this.grid);
+  //
+  //   const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('gridState');
+  //
+  //
+  //   this.selectedSeatList.forEach
+  //     ((seat : Seat) => {
+  //       if (seat.status === 'SELECTED') {
+  //         seat.status = 'OCCUPIED';
+  //         seat.free = false;
+  //       }
+  //     } );
+  //
+  //   // this.safeStorage.setItem('gridState', this.grid);
+  //   const gridState = {
+  //     grid: this.grid,
+  //     dimensions: {
+  //       rows: this.rows,
+  //       columns: this.columns
+  //     },
+  //     timestamp: new Date().toISOString()
+  //   };
+  //
+  //   this.safeStorage.setItem('gridState', gridState);
+  //
+  //   if (saved_dto) {
+  //
+  //     const dto : GridDTO = {
+  //       entity: {
+  //         grid : saved_dto.entity.grid,
+  //         rowNumber : saved_dto.entity.rowNumber,
+  //         columnNumber : saved_dto.entity.columnNumber,
+  //         is_currentGrid : true
+  //       },
+  //       grid: this.grid
+  //     }
+  //     this.api.updateGrid(dto);
+  //     console.log(dto);
+  //   }
+  //
+  //   console.log('GridState salvo:', gridState);
+  //   this.selectedSeatList = [];
+  // }
+
+  public confirm(): void {
+    this.is_visibleHandleSelection = true;
+
+    // Atualiza os assentos selecionados
+    this.selectedSeatList.forEach((seat: Seat) => {
+      if (seat.status === 'SELECTED') {
+        seat.status = 'OCCUPIED';
+        seat.free = false;
+      }
+    });
+
+    // Atualiza o observable
+    this.gridObservable.updateGrid(this.grid);
+
+    // Salva o ESTADO LOCAL
+    const gridState: GridState = {
+      grid: this.grid,
+      dimensions: { rows: this.rows, columns: this.columns },
+      timestamp: new Date().toISOString()
+    };
+    this.safeStorage.setItem('gridState', gridState);
+
+    // Envia para API (se disponível)
+    const saved_dto: GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+    if (saved_dto) {
+      const dto: GridUpdatedDTO = {
+        entity: {
+          grid: saved_dto.entity.grid,
+          rowNumber: saved_dto.entity.rowNumber,
+          columnNumber: saved_dto.entity.columnNumber,
+          is_currentGrid: true
+        },
+        grid: this.selectedSeatList // Apenas os modificados
+      };
+      this.api.updateGrid(dto);
+      console.log('Enviado para API:', dto);
+    }
+
+    console.log('GridState salvo localmente:', gridState);
+    this.selectedSeatList = [];
+  }
 
 
   /*
@@ -285,6 +437,7 @@ export class SeatGridComponent {
   public toggleSeat(seat: Seat) {
     if (!seat.free) return;
 
+    // this.checkList()
     seat.selected = !seat.selected;
     // If 'seat.selected' == true, 'seat.status' = 'selected' other wise 'seat.status' = 'available'
     seat.status = seat.selected ? 'SELECTED' : 'AVAILABLE';

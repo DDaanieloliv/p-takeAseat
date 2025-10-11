@@ -164,14 +164,14 @@ export class EditGrid {
 
 
       if (saved_dto) {
-        const dto : GridDTO = {
+        const dto : GridUpdatedDTO = {
           entity: {
             grid : saved_dto.entity.grid,
             rowNumber : saved_dto.entity.rowNumber,
             columnNumber : saved_dto.entity.columnNumber,
             is_currentGrid : true
           },
-          grid: this.grid
+          grid: this.selectedSeatList
         }
         console.log("Enviando assentos modificados no componente de edição para a API...");
         console.log(dto);
