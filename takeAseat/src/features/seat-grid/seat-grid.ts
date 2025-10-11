@@ -59,20 +59,6 @@ export class SeatGridComponent {
     this.subscription.unsubscribe();
   }
 
-  // async ngOnIniti() {
-  //   // Cache First + Background Sync
-  //   await this.initializeGrid();
-  // }
-  //
-  //
-  // private async initializeGrid() : Promise<void> {
-  //
-  //   const cachedGrid = this.safeStorage.getItem<any>('gridState');
-  //
-  //   if (cachedGrid && this.isValidGridState(cachedGrid)) {
-  //     const apiGrid = this.api.fetchAPI();
-  //   }
-  // }
 
   async ngOnInit() {
     // this.is_visibleHandleSelection = true;
@@ -80,13 +66,16 @@ export class SeatGridComponent {
     // Configura a subscription
     this.setupGridSubscription();
 
-    const savedState = this.safeStorage.getItem<any>('gridState');
+    const savedState = this.safeStorage.getItem<GridDTO>('gridState');
+    const grid: GridDTO | null = await this.api.fetchAPI();
 
-    if (savedState && this.isValidGridState(savedState)) {
+
+    if (savedState && grid && this.isSameGridWithStates(savedState, grid)) {
       console.log('Carregando grid salvo do localStorage');
+      this.safeStorage.setItem('currentGrid', grid);
       this.grid = savedState.grid;
-      this.rows = savedState.dimensions.rows;
-      this.columns = savedState.dimensions.columns;
+      this.rows = savedState.entity.rowNumber;
+      this.columns = savedState.entity.columnNumber;
       this.gridObservable.updateGrid(this.grid);
       console.log("Number column: " + this.columns + "\nNumber row: " + this.rows)
       return;
@@ -94,9 +83,6 @@ export class SeatGridComponent {
     else {
 
       try {
-        // Obtem o json da api
-        const grid: GridDTO = await this.api.fetchAPI();
-
         if (grid == null) {
           this.generateGrid();
         } else {
@@ -212,15 +198,20 @@ export class SeatGridComponent {
     console.log(this.selectedSeatList);
   }
 
+  private isSameGridWithStates(savedState: GridDTO, grid: GridDTO): boolean {
+    const sameEntity = savedState &&
+      savedState.entity &&
+      savedState.entity.grid === grid.entity.grid;
 
+    if (!sameEntity) return false;
 
-  private isValidGridState(state: any): boolean {
-    return state &&
-      state.grid &&
-      Array.isArray(state.grid) &&
-      state.dimensions &&
-      state.timestamp;
+    const compatibleDimensions =
+      savedState.entity.rowNumber === grid.entity.rowNumber &&
+        savedState.entity.columnNumber === grid.entity.columnNumber;
+
+    return compatibleDimensions;
   }
+
 
 
   private setupGridSubscription() :void {

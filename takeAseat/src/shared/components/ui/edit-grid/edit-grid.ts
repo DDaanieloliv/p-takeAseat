@@ -146,18 +146,22 @@ export class EditGrid {
       this.gridObservable.updateGrid(this.grid);
       // this.gridUpdated.emit(this.grid);
 
-      const gridState = {
-        grid: this.grid,
-        dimensions: {
-          rows: this.rows,
-          columns: this.columns
-        },
-        timestamp: new Date().toISOString()
-      };
-
-      this.safeStorage.setItem('gridState', gridState);
-
       const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+
+      if (saved_dto) {
+        const gridState : GridDTO = {
+          entity : {
+            grid : saved_dto?.entity.grid,
+            rowNumber : saved_dto?.entity.rowNumber,
+            columnNumber : saved_dto?.entity.columnNumber,
+            is_currentGrid : true
+          },
+          grid: this.grid
+        };
+        this.safeStorage.setItem('gridState', gridState);
+      }
+
+
 
       if (saved_dto) {
         const dto : GridDTO = {
