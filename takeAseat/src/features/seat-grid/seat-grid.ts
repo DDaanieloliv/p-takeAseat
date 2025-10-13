@@ -162,58 +162,73 @@ export class SeatGridComponent {
 
   async ngOnInit() {
     this.setupGridSubscription();
+    console.log('Esse é o grid armazenado no localStorage...');
 
-    // Use GridState para o localStorage
-    const savedState = this.safeStorage.getItem<GridState>('gridState');
-    console.log('Esse é o grid armazenado no localStorage...', savedState);
+    const savedState = this.safeStorage.getItem<GridDTO>('currentGrid');
+    console.log('Saved: ', savedState);
 
-    let grid: GridDTO | null = null;
+    let apiGrid: GridDTO | null = null;
 
     try {
-      grid = await this.api.fetchAPI();
-      console.log('Grid da API:', grid);
+        apiGrid = await this.api.fetchAPI();
+        console.log('Grid da API:', apiGrid);
     } catch (error) {
-      console.warn('API não disponível, usando fallback:', error);
-      grid = null;
+        console.warn('API não disponível, usando fallback:', error);
+        apiGrid = null;
     }
 
-    // PRIMEIRO: Se tem estado salvo, usa ele
-    if (savedState && this.isValidGridState(savedState)) {
-      console.log('Carregando grid salvo do localStorage');
-      this.grid = savedState.grid;
-      this.rows = savedState.dimensions.rows;
-      this.columns = savedState.dimensions.columns;
-      this.gridObservable.updateGrid(this.grid);
-      console.log("Number column: " + this.columns + "\nNumber row: " + this.rows);
-      return;
+    // LÓGICA DE DECISÃO:
+    if (savedState && apiGrid && this.isSameGridWithStates(savedState, apiGrid)) {
+        // 1. Temos savedState E API respondeu E são compatíveis
+        console.log('Carregando grid salvo do localStorage (compatível com API)');
+        this.loadGridFromDTO(savedState);
+        return;
     }
-
-    // SEGUNDO: Se não tem estado salvo, usa API ou gera padrão
-    console.log("Gerando grid sem estado salvo...");
-
-    if (grid) {
-      // Tem API
-      console.log("Usando dados da API");
-      this.safeStorage.setItem('currentGrid', grid); // Salva GridDTO completo
-
-      this.generateGrid(grid.entity.rowNumber, grid.entity.columnNumber);
-      this.rows = grid.entity.rowNumber;
-      this.columns = grid.entity.columnNumber;
-    } else {
-      // Sem API - gera padrão
-      console.log("Gerando grid padrão");
-      this.generateGrid();
+    else if (savedState && !apiGrid) {
+        // 2. Temos savedState mas API não respondeu
+        console.log('API indisponível, carregando grid do localStorage');
+        this.loadGridFromDTO(savedState);
+        return;
     }
+    else if (apiGrid) {
+        // 3. API respondeu (com ou sem savedState incompatível)
+        console.log('Carregando grid da API');
+        this.safeStorage.setItem('currentGrid', apiGrid);
+        this.loadGridFromDTO(apiGrid);
 
-    // Salva o estado inicial
-    const gridState: GridState = {
-      grid: this.grid,
-      dimensions: { rows: this.rows, columns: this.columns },
-      timestamp: new Date().toISOString()
-    };
-    this.safeStorage.setItem('gridState', gridState);
+        // Se tinha savedState mas era incompatível, substitui
+        if (savedState) {
+            console.log('Substituindo grid salvo incompatível');
+            this.safeStorage.setItem('currentGrid', apiGrid);
+        }
+        return;
+    }
+    else {
+        // 4. Nem savedState nem API - gera padrão
+        console.log('Gerando grid padrão (sem savedState e sem API)');
+        this.generateGrid();
 
-    console.log('Grid inicial salvo:', gridState);
+        // Cria um GridDTO com o grid padrão
+        const defaultGridDTO: GridDTO = {
+            entity: {
+                grid: "default-grid",
+                rowNumber: this.rows,
+                columnNumber: this.columns,
+                is_currentGrid: true
+            },
+            grid: this.grid
+        };
+        // this.safeStorage.setItem('gridState', defaultGridDTO);
+        this.safeStorage.setItem('currentGrid', defaultGridDTO);
+    }
+}
+
+  private loadGridFromDTO(dto: GridDTO) {
+    this.grid = dto.grid;
+    this.rows = dto.entity.rowNumber;
+    this.columns = dto.entity.columnNumber;
+    this.gridObservable.updateGrid(this.grid);
+    console.log("Number column: " + this.columns + "\nNumber row: " + this.rows);
   }
 
   private isValidGridState(state: any): state is GridState {
@@ -223,6 +238,18 @@ export class SeatGridComponent {
       state.dimensions &&
       typeof state.dimensions.rows === 'number' &&
       typeof state.dimensions.columns === 'number';
+  }
+
+  private isSameGridWithStates(savedState: GridDTO, apiGrid: GridDTO): boolean {
+    // Verifica se são a mesma entidade (mesmo UUID)
+    const sameEntity = savedState.entity.grid === apiGrid.entity.grid;
+
+    // Verifica se têm as mesmas dimensões
+    const sameDimensions =
+      savedState.entity.rowNumber === apiGrid.entity.rowNumber &&
+        savedState.entity.columnNumber === apiGrid.entity.columnNumber;
+
+    return sameEntity && sameDimensions;
   }
 
 
@@ -298,31 +325,32 @@ export class SeatGridComponent {
     // Atualiza o observable
     this.gridObservable.updateGrid(this.grid);
 
-    // Salva o ESTADO LOCAL
-    const gridState: GridState = {
-      grid: this.grid,
-      dimensions: { rows: this.rows, columns: this.columns },
-      timestamp: new Date().toISOString()
-    };
-    this.safeStorage.setItem('gridState', gridState);
+    const currentGrid: GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
-    // Envia para API (se disponível)
-    const saved_dto: GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
-    if (saved_dto) {
-      const dto: GridUpdatedDTO = {
-        entity: {
-          grid: saved_dto.entity.grid,
-          rowNumber: saved_dto.entity.rowNumber,
-          columnNumber: saved_dto.entity.columnNumber,
-          is_currentGrid: true
-        },
-        grid: this.selectedSeatList // Apenas os modificados
+    if (currentGrid) {
+      // Atualiza APENAS o grid (assentos) mantendo a entity
+      const updatedGridDTO: GridDTO = {
+        entity: currentGrid.entity, // Mantém a entity original
+        grid: this.grid // Atualiza com as modificações
+      };
+
+      // Salva de volta na MESMA chave
+      this.safeStorage.setItem('currentGrid', updatedGridDTO);
+
+      // Envia para API (apenas os assentos modificados)
+      const dto: GridDTO = {
+        entity: currentGrid.entity,
+        // grid: this.selectedSeatList
+        grid: this.grid
       };
       this.api.updateGrid(dto);
       console.log('Enviado para API:', dto);
+    } else {
+      console.warn('currentGrid não encontrado');
     }
 
-    console.log('GridState salvo localmente:', gridState);
+    const savedGrid = this.safeStorage.getItem<GridDTO>('currentGrid');
+    console.log('Grid salvo localmente:', savedGrid);
     this.selectedSeatList = [];
   }
 
@@ -350,19 +378,6 @@ export class SeatGridComponent {
     console.log(this.selectedSeatList);
   }
 
-  private isSameGridWithStates(savedState: GridDTO, grid: GridDTO): boolean {
-    const sameEntity = savedState &&
-      savedState.entity &&
-      savedState.entity.grid === grid.entity.grid;
-
-    if (!sameEntity) return false;
-
-    const compatibleDimensions =
-      savedState.entity.rowNumber === grid.entity.rowNumber &&
-        savedState.entity.columnNumber === grid.entity.columnNumber;
-
-    return compatibleDimensions;
-  }
 
 
 

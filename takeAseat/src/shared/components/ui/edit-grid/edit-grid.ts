@@ -146,32 +146,32 @@ export class EditGrid {
       this.gridObservable.updateGrid(this.grid);
       // this.gridUpdated.emit(this.grid);
 
-      const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+      const currentGrid : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
-      if (saved_dto) {
+      if (currentGrid) {
         const gridState : GridDTO = {
           entity : {
-            grid : saved_dto?.entity.grid,
-            rowNumber : saved_dto?.entity.rowNumber,
-            columnNumber : saved_dto?.entity.columnNumber,
+            grid : currentGrid?.entity.grid,
+            rowNumber : currentGrid?.entity.rowNumber,
+            columnNumber : currentGrid?.entity.columnNumber,
             is_currentGrid : true
           },
           grid: this.grid
         };
-        this.safeStorage.setItem('gridState', gridState);
+        this.safeStorage.setItem('currentGrid', gridState);
       }
 
 
 
-      if (saved_dto) {
-        const dto : GridUpdatedDTO = {
+      if (currentGrid) {
+        const dto : GridDTO = {
           entity: {
-            grid : saved_dto.entity.grid,
-            rowNumber : saved_dto.entity.rowNumber,
-            columnNumber : saved_dto.entity.columnNumber,
+            grid : currentGrid.entity.grid,
+            rowNumber : currentGrid.entity.rowNumber,
+            columnNumber : currentGrid.entity.columnNumber,
             is_currentGrid : true
           },
-          grid: this.selectedSeatList
+          grid: this.grid
         }
         console.log("Enviando assentos modificados no componente de edição para a API...");
         console.log(dto);
@@ -205,7 +205,7 @@ export class EditGrid {
 
 
   public erase_seat_state() : void {
-    this.safeStorage.removeItem('gridState');
+    this.safeStorage.removeItem('currentGrid');
     // this.safeStorage.removeItem('currentGrid');
 
     console.log("Apagando essa porra");
