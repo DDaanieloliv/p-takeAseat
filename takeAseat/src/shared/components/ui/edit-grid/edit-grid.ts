@@ -152,8 +152,8 @@ export class EditGrid {
         const gridState : GridDTO = {
           entity : {
             grid : currentGrid?.entity.grid,
-            rowNumber : currentGrid?.entity.rowNumber,
-            columnNumber : currentGrid?.entity.columnNumber,
+            rowNumber : this.rows,
+            columnNumber : this.columns,
             is_currentGrid : true
           },
           grid: this.grid
@@ -167,8 +167,8 @@ export class EditGrid {
         const dto : GridDTO = {
           entity: {
             grid : currentGrid.entity.grid,
-            rowNumber : currentGrid.entity.rowNumber,
-            columnNumber : currentGrid.entity.columnNumber,
+            rowNumber : this.rows,
+            columnNumber : this.columns,
             is_currentGrid : true
           },
           grid: this.grid
@@ -205,6 +205,8 @@ export class EditGrid {
 
 
   public erase_seat_state() : void {
+    const currentGrid : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+
     this.safeStorage.removeItem('currentGrid');
     // this.safeStorage.removeItem('currentGrid');
 
@@ -229,13 +231,12 @@ export class EditGrid {
     // };
 
 
-    const saved_dto : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
-    if (saved_dto) {
+    if (currentGrid) {
       const dto : CurrentGrid = {
-          grid : saved_dto.entity.grid,
-          rowNumber : saved_dto.entity.rowNumber,
-          columnNumber : saved_dto.entity.columnNumber,
+          grid : currentGrid.entity.grid,
+          rowNumber : currentGrid.entity.rowNumber,
+          columnNumber : currentGrid.entity.columnNumber,
           is_currentGrid : true
       }
       console.log("Enviando assentos modificados no componente de edição para a API...");

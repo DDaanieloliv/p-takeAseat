@@ -79,10 +79,11 @@ public class SeatController {
 
   @PutMapping("/grid/update")
   public ResponseEntity<GridDTO> UpdateGrid(@RequestBody GridDTO gridUpdatedDTO) {
-    // gridService.updateCurrentGrid();
-    serviceSeat.updateModifiedSeats(gridUpdatedDTO.grid());
+    gridService.updateCurrentGrid(gridUpdatedDTO.entity());
+    serviceSeat.updateModifiedSeats(gridUpdatedDTO.grid(), gridUpdatedDTO.entity().getGrid());
     return ResponseEntity.ok(gridUpdatedDTO);
   }
+
 
   @PutMapping("/grid/erase")
   public ResponseEntity<?> EraseGridState(@RequestBody GridEntityDTO entityGrid) {

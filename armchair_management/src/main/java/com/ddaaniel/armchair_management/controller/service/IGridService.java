@@ -5,10 +5,13 @@ import java.util.UUID;
 
 import com.ddaaniel.armchair_management.model.GridEntity;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
+import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
 
 public interface IGridService {
 
   GridDTO currentGrid();
 
   Optional<GridEntity> findGridEntityById(UUID uuid);
+
+  void updateCurrentGrid(GridEntityDTO entity);
 }

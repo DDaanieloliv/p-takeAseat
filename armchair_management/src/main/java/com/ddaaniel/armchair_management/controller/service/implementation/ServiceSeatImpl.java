@@ -6,10 +6,12 @@ import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
 import com.ddaaniel.armchair_management.controller.exception.ValidationException;
 import com.ddaaniel.armchair_management.controller.service.ISeatService;
 import com.ddaaniel.armchair_management.controller.service.mapper.SeatMapper;
+import com.ddaaniel.armchair_management.model.GridEntity;
 import com.ddaaniel.armchair_management.model.Person;
 
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.enums.SeatType;
+import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
 import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
@@ -24,10 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -41,13 +46,13 @@ public class ServiceSeatImpl implements ISeatService {
   private final IGridRepository gridRepository;
 
   @Autowired
-  public ServiceSeatImpl(ISeatRepository seatRepository, IPersonRepository personRepository, IPersonRepository personRepository1, SeatMapper seatMapper, IGridRepository gridRepository) {
+  public ServiceSeatImpl(ISeatRepository seatRepository, IPersonRepository personRepository,
+      IPersonRepository personRepository1, SeatMapper seatMapper, IGridRepository gridRepository) {
     this.seatRepository = seatRepository;
     this.personRepository = personRepository1;
     this.seatMapper = seatMapper;
     this.gridRepository = gridRepository;
   }
-
 
   @Override
   public void eraseAllSeatsState(UUID uuid) {
@@ -63,33 +68,31 @@ public class ServiceSeatImpl implements ISeatService {
     //
     // // No repository
     // @Modifying
-    // @Query("UPDATE Seat s SET s.free = true, s.status = 'AVAILABLE', s.person = null WHERE s.currentGrid.grid = :gridId")
+    // @Query("UPDATE Seat s SET s.free = true, s.status = 'AVAILABLE', s.person =
+    // null WHERE s.currentGrid.grid = :gridId")
     // void eraseAllSeatsStateByGridId(@Param("gridId") UUID gridId);
     //
     // // No service
     // @Override
     // public void eraseAllSeatsState(UUID uuid) {
-    //   seatRepository.eraseAllSeatsStateByGridId(uuid);
+    // seatRepository.eraseAllSeatsStateByGridId(uuid);
     // }
   }
 
-
-
   // listando status de todas as poltronas
   @Override
-  public List<SeatResponseDTO> listStatusOfAllSeats(){
+  public List<SeatResponseDTO> listStatusOfAllSeats() {
     List<Seat> list = seatRepository.findAll();
 
     return seatMapper.toDTOList(list);
   }
 
-
   // listando detalhes de uma poltrona específica
   @Override
-  public SeatResponseDTO detailsFromSpecificSeat (Integer row, Integer column){
+  public SeatResponseDTO detailsFromSpecificSeat(Integer row, Integer column) {
     // positionValidation(row, column);
     Seat seat = seatRepository.findByPosition(row, column)
-    .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
+        .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
 
     return seatMapper.toDTO(seat);
   }
@@ -105,59 +108,89 @@ public class ServiceSeatImpl implements ISeatService {
     if (!seat.getFree()) {
       throw new BadRequestException("Poltrona já está ocupada.");
     }
-
     Person person = Person.builder()
-    .name(name)
-    .cpf(cpf)
-    .build();
+        .name(name)
+        .cpf(cpf)
+        .build();
     allocating(seat, person);
   }
 
-
-
   @Override
-  public void updateModifiedSeats(List<List<SeatDTO>> seatListDTO) {
-    logger.warn("Desserializando seatDto...");
-    for (List<SeatDTO> list : seatListDTO) {
-      for(SeatDTO seat : list) {
+  @Transactional
+  public void updateModifiedSeats(List<List<SeatDTO>> seatGridDTO, UUID gridId) {
+    // Busca o grid entity uma vez
+    GridEntity gridEntity = gridRepository.findById(gridId)
+        .orElseThrow(() -> new NotFoundException("Grid não encontrado"));
 
-        Integer column = seat.getColumn();
-        Integer row = seat.getRow();
-        Optional<Seat> entity = seatRepository.getSeatByColumnAndRow(column, row);
+    List<Seat> seatsToSave = new ArrayList<>();
 
-        entity.get().setRow(seat.getRow());
-        entity.get().setColumn(seat.getColumn());
-        entity.get().setPosition(seat.getPosition());
-        entity.get().setFree(seat.getFree());
-        entity.get().setStatus(seat.getStatus());
-        // if (seat.getPerson != null) {
-        //   entity.get().setPerson(seat.getPerson());
-        // }
-        // seatRepository.save(seatMapper.seatDtoToEntity(seat));
+    for (List<SeatDTO> row : seatGridDTO) {
+      for (SeatDTO seatDTO : row) {
+        Optional<Seat> seatOpt = seatRepository.getSeatByColumnAndRow(
+            seatDTO.getColumn(), seatDTO.getRow());
 
-        seatRepository.save(entity.get());
+        if (seatOpt.isPresent()) {
+          // Atualiza assento existente
+          Seat seat = seatOpt.get();
+          seat.setFree(seatDTO.getFree());
+          seat.setStatus(seatDTO.getStatus());
+          seatsToSave.add(seat);
+        } else {
+          // Cria novo assento com currentGrid
+          Seat newSeat = Seat.builder()
+              .position(seatDTO.getPosition())
+              .row(seatDTO.getRow())
+              .column(seatDTO.getColumn())
+              .free(seatDTO.getFree())
+              .status(seatDTO.getStatus())
+              .currentGrid(gridEntity) // ← IMPORTANTE!
+              .build();
+          seatsToSave.add(newSeat);
+        }
+      }
+    }
+
+    // Salva todos de uma vez (mais eficiente)
+    seatRepository.saveAll(seatsToSave);
+
+    // Remove assentos que não estão mais no grid
+    cleanupOrphanedSeats(gridId, seatGridDTO);
+  }
+
+  private void cleanupOrphanedSeats(UUID gridId, List<List<SeatDTO>> newGrid) {
+    List<Seat> existingSeats = seatRepository.findSeatsByGridId(gridId);
+
+    // Cria conjunto das posições que devem existir
+    Set<String> validPositions = new HashSet<>();
+    for (List<SeatDTO> row : newGrid) {
+      for (SeatDTO seat : row) {
+        validPositions.add(seat.getRow() + "-" + seat.getColumn());
+      }
+    }
+
+    // Remove assentos que não estão mais no grid
+    for (Seat seat : existingSeats) {
+      String positionKey = seat.getRow() + "-" + seat.getColumn();
+      if (!validPositions.contains(positionKey)) {
+        seatRepository.delete(seat);
       }
     }
   }
 
-
-
-
-
   // private void positionValidation(Integer position) {
-  //   var entity = gridRepository.isCurrentGrid().get();
-  //   var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
+  // var entity = gridRepository.isCurrentGrid().get();
+  // var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
   //
-  //   if (position <= 0 || position > totalSeats) {   // Verifica se é um parâmetro válido
-  //     throw new AssentoInvalidoException("O assento informado é inválido.");
-  //   }
+  // if (position <= 0 || position > totalSeats) { // Verifica se é um parâmetro
+  // válido
+  // throw new AssentoInvalidoException("O assento informado é inválido.");
+  // }
   // }
 
   private Seat getSeatFromPosition(Integer row, Integer column) {
     return seatRepository.findByPosition(row, column)
-    .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
+        .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
   }
-
 
   private void cpfValidation(String cpf) {
     if (cpf == null || cpf.length() != 11 || !cpf.matches("\\d{11}")) {
@@ -174,23 +207,18 @@ public class ServiceSeatImpl implements ISeatService {
   private void allocating(Seat seat, Person pessoa) {
     seat.setPerson(pessoa);
     seat.setFree(false);
-    //seat.setFree(false);
-    //seat.setPerson(pessoa);
+    // seat.setFree(false);
+    // seat.setPerson(pessoa);
     personRepository.save(pessoa);
     logger.info("Foreign key ( Person --> Seat ) successfully linked !");
 
     seatRepository.save(seat);
     logger.info("Entity Seat, successfully saved !");
-    //seatRepository.save(seat);
+    // seatRepository.save(seat);
   }
 
-
-
-
-
-
   @Override
-  public ShartsResponceDTO sharts () {
+  public ShartsResponceDTO sharts() {
     Integer seatsOccupied = seatRepository.countSeatsOccupied();
     Integer countAllSeats = seatRepository.countAllSeats();
     Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied();
@@ -200,12 +228,10 @@ public class ServiceSeatImpl implements ISeatService {
     Map<String, Long> occupancyByRow = new HashMap<>()/* seatRepository.countOccupiedByRow() */;
 
     ShartsResponceDTO dto = new ShartsResponceDTO(
-      percentOccupation,
-      seatsUnoccupied,
-      occupancyByRow
-    );
+        percentOccupation,
+        seatsUnoccupied,
+        occupancyByRow);
     return dto;
   }
-
 
 }

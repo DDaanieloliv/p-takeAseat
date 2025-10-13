@@ -51,6 +51,19 @@ public class ServiceGridImpl implements IGridService {
   }
 
 
+  @Override
+  public void updateCurrentGrid(GridEntityDTO entity) {
+    Optional<GridEntity> gridEntity = gridRepository.findById(entity.getGrid());
+
+    if (gridEntity.get().getGrid().equals(entity.getGrid())) {
+      gridEntity.get().setRowNumber(entity.getRowNumber());
+      gridEntity.get().setColumnNumber(entity.getColumnNumber());
+      gridEntity.get().setIs_currentGrid(entity.getIs_currentGrid());
+    }
+  }
+
+
+
   private void parseSeatList(List<SeatDTO> seatList, List<Seat> allSeats){
     for (SeatDTO seat : seatList) {
       for (Seat mirror: allSeats) {
