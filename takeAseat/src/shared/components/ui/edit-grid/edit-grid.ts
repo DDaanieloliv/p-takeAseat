@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faPencil } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
@@ -39,6 +39,11 @@ export class EditGrid {
 
   private subscription: Subscription = new Subscription();
 
+  public faPencil : IconDefinition = faPencil;
+  public faXmark : IconDefinition  = faXmark;
+  public faFloppyDisk : IconDefinition  = faFloppyDisk;
+  public faReply : IconDefinition  = faReply;
+  public faTrash : IconDefinition  = faTrash;
 
 
   // Estabelecendo cominicação Imperativa, ou seja sem ser apenas pelo template.
@@ -57,10 +62,12 @@ export class EditGrid {
   @Input() grid: Array<Seat[]> = [];
 
   @Output()
-  public seatSelected = new EventEmitter<Seat>();
+  public seatSelected : EventEmitter<Seat> = new EventEmitter<Seat>();
 
   @Output()
-  public gridUpdated = new EventEmitter<Array<Seat[]>>();
+  public gridUpdated : EventEmitter<Array<Seat[]>> = new EventEmitter<Array<Seat[]>>();
+
+
 
 
   public showWindow : boolean = false
@@ -69,25 +76,30 @@ export class EditGrid {
 
   private should_erase_seat_state: boolean = false;
 
-  public faPencil = faPencil;
-  public faXmark = faXmark;
-  public faFloppyDisk = faFloppyDisk;
-  public faReply = faReply;
-  public faTrash = faTrash;
-
   public selectedSeatList : Array<Seat> = [];
 
 
 
 
-  ngOnDestroy() {
+  ngOnDestroy() : void {
     this.subscription.unsubscribe();
   }
-
 
   public ngOnInit() : void {
     // this.generateGrid();
     // Escuta o grid inicial do SeatGrid
+
+    this.setupGridSubscription();
+
+  }
+
+  /*
+   *
+   * Defini o subscriber que para receber/obter o Grid
+   * enviado pelo 'SeatGridComponent' para o observable
+   *
+   * */
+  private setupGridSubscription() : void {
     this.subscription.add(
       this.gridObservable.current_grid$
         .pipe(
@@ -110,22 +122,42 @@ export class EditGrid {
         this.generateGrid();
       }
     }, 100);
-
   }
 
 
+  /*
+   *
+   * Alterna o status do elemento 'Seat' no Grid
+   *
+   * */
   public toggleSeat(seat: Seat) : void {
     // if (!seat.free) return;
     console.log("Toggle Seat to UNAVAILABLE or AVAILABLE...")
-    // seat.free = seat.free ? false : true;
     seat.selected = !seat.selected;
     seat.status = seat.selected ? 'UNAVAILABLE' : 'AVAILABLE';
-    // this.seatSelected.emit(seat);
     this.checkSelections(seat);
     console.log(seat);
   }
 
 
+  /*
+   *
+   * Compartilha o Grid atualizado com o Observable para o compartilhar com outro subscriber
+   *
+   * */
+  private shareGridWithSubscribers(grid : Array<Seat[]>) {
+    this.gridObservable.updateGrid(grid);
+  }
+
+  /*
+   *
+   * Se a propriedade 'this.should_erase_seat_state' estiver como true
+   * restaura o status inicial de cada elemento 'Seat' do grid, do contrário
+   * define para falso o atributo 'free' de cada elemento 'Seat' na lista
+   * 'this.selectedSeatList', envia o 'this.grid' atualizado para o observable,
+   * para o localStorage e para a API
+   *
+   * */
   public handleConfirm() {
     if (this.should_erase_seat_state) {
       this.erase_seat_state();
@@ -142,8 +174,9 @@ export class EditGrid {
       console.log("Assentos modificados pela iteração...");
       console.log(this.selectedSeatList);
 
+      this.shareGridWithSubscribers(this.grid);
 
-      this.gridObservable.updateGrid(this.grid);
+      // this.gridObservable.updateGrid(this.grid);
       // this.gridUpdated.emit(this.grid);
 
       const currentGrid : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
@@ -182,6 +215,13 @@ export class EditGrid {
     }
   }
 
+
+  /*
+   *
+   * Caso o atributo 'this.should_erase_seat_state' seja true fechamos
+   * o popup de Warning e caso contrário chamamos a função 'this.showBlurWindow()'
+   *
+   * */
   public handleCancel() {
     if (this.should_erase_seat_state) {
       this.warningPopup.hide();
@@ -193,6 +233,13 @@ export class EditGrid {
   }
 
 
+  /*
+   *
+   * Definimos a menssagem e o texto de confirmação que o popup
+   * terá e sua respectiva flag para para indicar o texto e ação de confirmação que ele terá
+   * e por fim abrindo o PopUp
+   *
+   * */
   public openWarning( flagConfirmation : boolean ) {
     this.warningPopup.message = this.pickMessageToConfirmation(flagConfirmation);
     this.warningPopup.confirmText = this.pickContentTextToConfirmation();
@@ -203,7 +250,14 @@ export class EditGrid {
   }
 
 
-
+  /*
+   *
+   * Restauramos ao estado padrão cada elemento 'Seat' do Grid atual 'this.grid' e
+   * o removemos do localStorage e obtido os valores da entidade Grid que guardavamos
+   * no localStorage fazemos uma requisição para API passando o Grid ao qual iremos
+   * restaurar o status padrão
+   *
+   * */
   public erase_seat_state() : void {
     const currentGrid : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
@@ -230,8 +284,6 @@ export class EditGrid {
     //   timestamp: new Date().toISOString()
     // };
 
-
-
     if (currentGrid) {
       const dto : CurrentGrid = {
           grid : currentGrid.entity.grid,
@@ -246,8 +298,13 @@ export class EditGrid {
   }
 
 
+  /*
+   *
+   * Lida a inserção de elementos 'Seat' para ser
+   * inseridos na lista 'this.selectedSeatList'
+   *
+   * */
   public checkSelections(seat : Seat) : void {
-
     const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
 
     if (existingIndex !== -1) {
@@ -255,10 +312,17 @@ export class EditGrid {
     } else {
         this.selectedSeatList.push(seat);
     }
-
   }
 
 
+
+  /*
+   *
+   * Modifica o atributo 'this.showWindow' que é usado para ativar uma classe scss
+   * e apoz alternar o valor booleano desse atributo obtemos o Grid compartilhado pelo
+   * component SeatGridComponent por meio do subscriber que definimos aqui
+   *
+   * */
   public showBlurWindow() : void {
     this.showWindow = !this.showWindow;
     console.log("fuck");
@@ -287,54 +351,50 @@ export class EditGrid {
   }
 
 
-
+  /*
+   *
+   * Modifica o tamanho das colunas do Grid ou linhas
+   *
+   * */
   public increaseColumns() : void {
     this.columns = this.columns + 1;
     this.updateGrid();
   }
-
   public decreaseColumns() : void {
     this.columns = this.columns - 1;
     this.updateGrid();
   }
-
-
   public increaseRows() : void {
     this.rows = this.rows + 1;
     this.updateGrid();
   }
-
   public decreaseRows() : void {
     this.rows = this.rows - 1;
     this.updateGrid();
   }
 
 
-
-
-
-
-
+  /*
+   *
+   * Gera um grid novo baseado nas colunas e linhas acresentadas ou
+   * decrescidas e preservando o estado de cada elemento 'Seat'
+   *
+   * */
   public updateGrid() : void {
     const oldGrid = this.grid;
-    // Generate a new grid based on increased or decreased rows or columns.
     this.generateGrid();
     // Add the status and others properties that the oldGrid had to the new generated Grid.
     this.preserveSeatStates(oldGrid);
   }
 
-  // // Método para deep copy de todo o grid
-  // private deepCopyGrid(grid: Array<Seat[]>): Array<Seat[]> {
-  //   return grid.map(row =>
-  //     row.map(seat => ({
-  //       ...seat // Spread operator cria cópias
-  //     }))
-  //   );
-  // }
 
-
+  /*
+   *
+   * Função auxiliar para iterar sob cada um dos elementos 'Seat' do 'this.grid'
+   * e obter o seu estado e ao por no seu respectivo elemento no no Grid
+   *
+   * */
   private preserveSeatStates(oldGrid : Array<Seat[]>) : void  {
-
     for (let row = 0; row < this.MIN_SEARCHES_TO_ROWS(this.rows, oldGrid); row++) {
 
       for (let column = 0; column < this.MIN_SEARCHES_TO_COLUMNS(this.columns, oldGrid, row); column++) {
@@ -351,19 +411,30 @@ export class EditGrid {
     }
   }
 
-  public MIN_SEARCHES_TO_ROWS( rows: number, oldGrid: Array<Seat[]> ) : number {
+
+  /*
+   *
+   * Função auxiliar para sabermos o máximo de vezes que iremos iterar sob
+   * as colunas ou linhas do respectivo grid que seria o velho Grid
+   *
+   * */
+  private MIN_SEARCHES_TO_ROWS( rows: number, oldGrid: Array<Seat[]> ) : number {
     // If rows value greater than oldGrid.length that means on edit
     // the rows number was icreased otherwise it was decrease.
     return Math.min(rows, oldGrid.length);
   }
-
-  public MIN_SEARCHES_TO_COLUMNS( column: number, oldGrid : Array<Seat[]>, row: number ) : number {
+  private MIN_SEARCHES_TO_COLUMNS( column: number, oldGrid : Array<Seat[]>, row: number ) : number {
     // If column value greater than oldGrid[index].length that means on edit
     // the column number was icreased otherwise it was decrease.
     return Math.min(column, oldGrid[row]?.length || 0 );
   }
 
-
+  /*
+   *
+   * Função que é responsável por gerar o grid baseado no valores
+   * dos atributos 'this.column' e 'this.row'
+   *
+   * */
   private generateGrid() {
     this.grid = [];
 
@@ -374,7 +445,6 @@ export class EditGrid {
       this.grid.push(rowArray);
     }
   }
-
   private generateColums(row : Seat[], rowCount : number) {
     for (let c = 0; c < this.columns; c++) {
       row.push({
@@ -388,21 +458,24 @@ export class EditGrid {
     }
   }
 
-
-
-
+  /*
+   *
+   * Retorna uma string que serviá de menssagem para o PopUp de warning
+   *
+   * */
   private pickMessageToConfirmation( IsSavedAction : boolean ) : string {
     let message = '';
-
     if (IsSavedAction) return message = 'Do you want to save thoses changes? <br> This Changes will be applied to the current template!'
-
     return message = 'Do you want leave thoses changes? <br> Every changes that you made will be discard!'
   }
 
-
+  /*
+   *
+   * Apenas retorna a string 'Save'
+   *
+   * */
   private pickContentTextToConfirmation() : string {
     let message = '';
-
     return message = 'Save';
   }
 

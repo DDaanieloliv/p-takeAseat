@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { GridService_Observable } from '../../shared/services/grid-state';
-import { Subscription } from 'rxjs';
+import { async, Subscription } from 'rxjs';
 // import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { faXmark, IconDefinition } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,7 @@ import { ApiService } from '../../core/services/api-service';
 import { GridDTO } from '../../core/model/fetch/grid-dto';
 import { SafeStorageService } from '../../core/services/localStorageService/storage-service';
 import { Seat } from '../../core/model/Seat';
+import { strict } from 'node:assert';
 
 
 
@@ -66,7 +67,18 @@ export class SeatGridComponent {
     this.subscription.unsubscribe();
   }
 
+  private async make_aGridDTO_Request() : Promise<GridDTO | null> {
+    let  dto : GridDTO | null = null;
 
+    try {
+      dto = await this.api.fetchAPI();
+      console.log('Grid da API:', dto);
+    } catch (error) {
+      console.warn('API não disponível, usando fallback:', error);
+      dto = null;
+    }
+    return dto;
+  }
 
   async ngOnInit() : Promise<void> {
 
@@ -76,15 +88,16 @@ export class SeatGridComponent {
     const savedState = this.safeStorage.getItem<GridDTO>('currentGrid');
     console.log('Saved: ', savedState);
 
-    let apiGrid: GridDTO | null = null;
+    // let apiGrid : Promise<GridDTO | null> = this.make_aGridDTO_Request();
+    let apiGrid : GridDTO | null = await this.make_aGridDTO_Request();
 
-    try {
-        apiGrid = await this.api.fetchAPI();
-        console.log('Grid da API:', apiGrid);
-    } catch (error) {
-        console.warn('API não disponível, usando fallback:', error);
-        apiGrid = null;
-    }
+    // try {
+    //     apiGrid = await this.api.fetchAPI();
+    //     console.log('Grid da API:', apiGrid);
+    // } catch (error) {
+    //     console.warn('API não disponível, usando fallback:', error);
+    //     apiGrid = null;
+    // }
 
     // LÓGICA DE DECISÃO:
     if (savedState && apiGrid && this.isSameGridWithStates(savedState, apiGrid)) {
@@ -184,6 +197,11 @@ export class SeatGridComponent {
     this.checkList();
   }
 
+  /*
+   *
+   * Compartilha o Grid atualizado com o Observable para o compartilhar com outro subscriber
+   *
+   * */
   private shareGridWithSubscribers(grid : Array<Seat[]>) {
     this.gridObservable.updateGrid(grid);
   }
@@ -262,7 +280,12 @@ export class SeatGridComponent {
 
 
 
-
+  /*
+   *
+   * Defini o subscriber que para receber/obter o Grid
+   * enviado pelo 'EditGridComponent' para o observable
+   *
+   * */
   private setupGridSubscription() :void {
     // Envia grid inicial para o serviço. (Grid inicial é o grid que é gerado no
     // componente 'SeatGridComponent' pelos seus valores definidos em seu atributos).
@@ -270,7 +293,7 @@ export class SeatGridComponent {
     this.subscription.add(
       this.gridObservable.current_grid$
         .pipe(
-          filter(newGrid => newGrid && newGrid.length > 0) // ← Só emite se não for vazio
+          filter(newGrid => newGrid && newGrid.length > 0) // Só emite se não for vazio
         )
         .subscribe((newGrid: Array<Seat[]>) => {
           this.grid = newGrid;
@@ -282,7 +305,11 @@ export class SeatGridComponent {
   }
 
 
-  // Método para atualizar rows/columns baseado no grid
+  /*
+   *
+   * Atualiza os atributos rows/columns baseado no grid possuido
+   *
+   * */
   private updateDimensions(grid: Array<Seat[]>) {
     if (grid && grid.length > 0) {
       this.rows = grid.length;
@@ -320,7 +347,11 @@ export class SeatGridComponent {
   }
 
 
-
+  /*
+   *
+   * Gera um Grid de elementos 'Seat'(Array<Seat[]>) e o salva no atributo 'this.grid'
+   *
+   * */
   private generateGrid(rowDto ? : number, columnDto ? : number) {
     this.grid = [];
 
@@ -343,6 +374,12 @@ export class SeatGridComponent {
   }
 
 
+  /*
+   *
+   * Função auxiliar para gerar as colunas de cada
+   * indice da lista de seats(Seat[]) em Array<Seat[]>
+   *
+   * */
   private generateColums(row: Seat[], rowCount: number, columnDto ? : number) {
     if (columnDto) {
       for (let c = 0; c < columnDto; c++) {
