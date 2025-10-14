@@ -64,20 +64,8 @@ public class ServiceSeatImpl implements ISeatService {
     }
     seatRepository.saveAll(seatList);
 
-    // Caso queria para maior performace com grade volume dedos:
-    //
-    // // No repository
-    // @Modifying
-    // @Query("UPDATE Seat s SET s.free = true, s.status = 'AVAILABLE', s.person =
-    // null WHERE s.currentGrid.grid = :gridId")
-    // void eraseAllSeatsStateByGridId(@Param("gridId") UUID gridId);
-    //
-    // // No service
-    // @Override
-    // public void eraseAllSeatsState(UUID uuid) {
-    // seatRepository.eraseAllSeatsStateByGridId(uuid);
-    // }
   }
+
 
   // listando status de todas as poltronas
   @Override
@@ -90,12 +78,12 @@ public class ServiceSeatImpl implements ISeatService {
   // listando detalhes de uma poltrona específica
   @Override
   public SeatResponseDTO detailsFromSpecificSeat(Integer row, Integer column) {
-    // positionValidation(row, column);
     Seat seat = seatRepository.findByPosition(row, column)
         .orElseThrow(() -> new NotFoundException("Poltrona não encontrada."));
 
     return seatMapper.toDTO(seat);
   }
+
 
   @Transactional
   @Override
@@ -114,6 +102,7 @@ public class ServiceSeatImpl implements ISeatService {
         .build();
     allocating(seat, person);
   }
+
 
   @Override
   @Transactional
@@ -143,7 +132,7 @@ public class ServiceSeatImpl implements ISeatService {
               .column(seatDTO.getColumn())
               .free(seatDTO.getFree())
               .status(seatDTO.getStatus())
-              .currentGrid(gridEntity) // ← IMPORTANTE!
+              .currentGrid(gridEntity)
               .build();
           seatsToSave.add(newSeat);
         }
@@ -152,23 +141,25 @@ public class ServiceSeatImpl implements ISeatService {
 
     // Salva todos de uma vez (mais eficiente)
     seatRepository.saveAll(seatsToSave);
-
     // Remove assentos que não estão mais no grid
     cleanupOrphanedSeats(gridId, seatGridDTO);
   }
 
+
   private void cleanupOrphanedSeats(UUID gridId, List<List<SeatDTO>> newGrid) {
     List<Seat> existingSeats = seatRepository.findSeatsByGridId(gridId);
+    Set<String> validPositions = new HashSet<String>();
 
-    // Cria conjunto das posições que devem existir
-    Set<String> validPositions = new HashSet<>();
+    // Itera sobre cada elemento 'Seat' do novo Grid obtendo
+    // seu conjunto de 'row-column' e os salvando no Set
     for (List<SeatDTO> row : newGrid) {
       for (SeatDTO seat : row) {
         validPositions.add(seat.getRow() + "-" + seat.getColumn());
       }
     }
 
-    // Remove assentos que não estão mais no grid
+    // Verificamos se as 'Seats' do novo Grid tambem se encontram no Grid "antigo"
+    // persistido no banco de dados e caso não so deletamos do banco de dados
     for (Seat seat : existingSeats) {
       String positionKey = seat.getRow() + "-" + seat.getColumn();
       if (!validPositions.contains(positionKey)) {
@@ -177,15 +168,7 @@ public class ServiceSeatImpl implements ISeatService {
     }
   }
 
-  // private void positionValidation(Integer position) {
-  // var entity = gridRepository.isCurrentGrid().get();
-  // var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
-  //
-  // if (position <= 0 || position > totalSeats) { // Verifica se é um parâmetro
-  // válido
-  // throw new AssentoInvalidoException("O assento informado é inválido.");
-  // }
-  // }
+
 
   private Seat getSeatFromPosition(Integer row, Integer column) {
     return seatRepository.findByPosition(row, column)
