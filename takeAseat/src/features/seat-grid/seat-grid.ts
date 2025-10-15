@@ -60,6 +60,9 @@ export class SeatGridComponent {
   public is_visibleHandleSelection : boolean = true;
 
 
+  public showWindowSelection() {
+
+  }
 
 
 
@@ -101,49 +104,49 @@ export class SeatGridComponent {
 
     // LÓGICA DE DECISÃO:
     if (savedState && apiGrid && this.isSameGridWithStates(savedState, apiGrid)) {
-        // 1. Temos savedState E API respondeu E são compatíveis
-        console.log('Carregando grid salvo do localStorage (compatível com API)');
-        this.loadGridFromDTO(savedState);
-        return;
+      // 1. Temos savedState E API respondeu E são compatíveis
+      console.log('Carregando grid salvo do localStorage (compatível com API)');
+      this.loadGridFromDTO(savedState);
+      return;
     }
     else if (savedState && !apiGrid) {
-        // 2. Temos savedState mas API não respondeu
-        console.log('API indisponível, carregando grid do localStorage');
-        this.loadGridFromDTO(savedState);
-        return;
+      // 2. Temos savedState mas API não respondeu
+      console.log('API indisponível, carregando grid do localStorage');
+      this.loadGridFromDTO(savedState);
+      return;
     }
     else if (apiGrid) {
-        // 3. API respondeu (com ou sem savedState incompatível)
-        console.log('Carregando grid da API');
-        this.safeStorage.setItem('currentGrid', apiGrid);
-        this.loadGridFromDTO(apiGrid);
+      // 3. API respondeu (com ou sem savedState incompatível)
+      console.log('Carregando grid da API');
+      this.safeStorage.setItem('currentGrid', apiGrid);
+      this.loadGridFromDTO(apiGrid);
 
-        // Se tinha savedState mas era incompatível, substitui
-        if (savedState) {
-            console.log('Substituindo grid salvo incompatível');
-            this.safeStorage.setItem('currentGrid', apiGrid);
-        }
-        return;
+      // Se tinha savedState mas era incompatível, substitui
+      if (savedState) {
+        console.log('Substituindo grid salvo incompatível');
+        this.safeStorage.setItem('currentGrid', apiGrid);
+      }
+      return;
     }
     else {
-        // 4. Nem savedState nem API - gera padrão
-        console.log('Gerando grid padrão (sem savedState e sem API)');
-        this.generateGrid();
+      // 4. Nem savedState nem API - gera padrão
+      console.log('Gerando grid padrão (sem savedState e sem API)');
+      this.generateGrid();
 
-        // Cria um GridDTO com o grid padrão
-        const defaultGridDTO: GridDTO = {
-            entity: {
-                grid: "default-grid",
-                rowNumber: this.rows,
-                columnNumber: this.columns,
-                is_currentGrid: true
-            },
-            grid: this.grid
-        };
-        // this.safeStorage.setItem('gridState', defaultGridDTO);
-        this.safeStorage.setItem('currentGrid', defaultGridDTO);
+      // Cria um GridDTO com o grid padrão
+      const defaultGridDTO: GridDTO = {
+        entity: {
+          grid: "default-grid",
+          rowNumber: this.rows,
+          columnNumber: this.columns,
+          is_currentGrid: true
+        },
+        grid: this.grid
+      };
+      // this.safeStorage.setItem('gridState', defaultGridDTO);
+      this.safeStorage.setItem('currentGrid', defaultGridDTO);
     }
-}
+  }
 
   private loadGridFromDTO(dto: GridDTO) : void {
     this.grid = dto.grid;
