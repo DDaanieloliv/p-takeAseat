@@ -1,13 +1,22 @@
 <div class="window-bg" [class.handle-selection]="!is_visibleHandleSelection">
-  <div class="register-container">
-    <span>Add Person</span>
-    <div class="input-container">
 
-      <label> Name </label>
-      <input type="text" placeholder="First and Last name">
-      <label> Cpf </label>
-      <input type="text" placeholder="Cpf">
+  <div class="register-container">
+
+    <div class="title-container">
+      <span>Add Person</span>
     </div>
+
+    <div class="input-container">
+      <div class="name-input">
+        <label> Name </label>
+        <input type="text" placeholder="First and Last name">
+      </div>
+      <div class="cpf-input">
+        <label> Cpf </label>
+        <input type="text" placeholder="Cpf">
+      </div>
+    </div>
+
     <div
       class="allocation"
       [class.handle-selection]="!is_visibleHandleSelection"
@@ -23,12 +32,12 @@
         class="buttom"
         (click)="confirm()"
       >Confirm
-
       </div>
     </div>
 
   </div>
 </div>
+
 
   <div class="seat-grid-container" [class.grid-position-after-selection]="!is_visibleHandleSelection">
     <div class="seat-grid">
