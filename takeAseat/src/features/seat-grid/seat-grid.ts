@@ -59,10 +59,11 @@ export class SeatGridComponent {
 
   public is_visibleHandleSelection : boolean = true;
 
-
-  public showWindowSelection() {
-
-  }
+  // public showWindowSeatSelection : boolean = true;
+  //
+  // public showWindowSelection() {
+  //   this.showWindowSeatSelection = !this.showWindowSeatSelection;
+  // }
 
 
 

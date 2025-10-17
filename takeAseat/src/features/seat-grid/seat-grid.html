@@ -1,6 +1,36 @@
-<div class="window-bg"></div>
+<div class="window-bg" [class.handle-selection]="!is_visibleHandleSelection">
+  <div class="register-container">
+    <span>Add Person</span>
+    <div class="input-container">
 
-  <div class="seat-grid-container">
+      <label> Name </label>
+      <input type="text" placeholder="First and Last name">
+      <label> Cpf </label>
+      <input type="text" placeholder="Cpf">
+    </div>
+    <div
+      class="allocation"
+      [class.handle-selection]="!is_visibleHandleSelection"
+    >
+      <div
+        class="popup-container"
+        class="cancel"
+        (click)="cancel()"
+      >Uncheck
+      </div>
+      <div
+        class="popup-container"
+        class="buttom"
+        (click)="confirm()"
+      >Confirm
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <div class="seat-grid-container" [class.grid-position-after-selection]="!is_visibleHandleSelection">
     <div class="seat-grid">
 
       <div class="grid-wrapper">
@@ -27,22 +57,4 @@
       </div>
     </div>
 
-    <div
-      class="allocation"
-      [class.handle-selection]="!is_visibleHandleSelection"
-    >
-      <div
-        class="popup-container"
-        class="cancel"
-        (click)="cancel()"
-      >Uncheck
-      </div>
-      <div
-        class="popup-container"
-        class="buttom"
-        (click)="confirm()"
-      >Confirm
-
-      </div>
-    </div>
   </div>
