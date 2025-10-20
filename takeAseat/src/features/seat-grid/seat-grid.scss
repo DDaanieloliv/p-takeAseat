@@ -21,14 +21,50 @@
   transform:  translateX(-140px) translateY(50px);
 }
 
+.seatsSelectedContiner {
+  display: flex;
+  width: 100%;
+  height: 10%;
+  justify-content: center;
+  align-items: center;
+}
+
+.seatsSelected {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, .5);
+  margin: 0px 10px 0px 10px;
+}
+
+.seatSelected {
+  width: 35px;
+  height: 30px;
+  background: grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 7px;
+  border-radius: 2px;
+
+  &.current-seat {
+    background: #007bff;
+    border-color: #0056b3;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    z-index: 2;
+  }
+}
+
 .register-container {
   display: flex;
   flex-direction: column;
-  width: 20%;
-  height: 52%;
-  position: absolute;
-  right: 140px;
-  top: 130px;
+  width: 30%;
+  height: 100%;
+  position: fixed;
+  right: 0px;
+  /* top: 130px; */
   box-shadow: 2px 4px 8px rgba(0, 0, 0, .5);
   border-radius: 1vw;
   padding: 0;
@@ -50,11 +86,11 @@
 
   .input-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-direction: column;
     width: 90%;
-    height: 55%;
+    height: 200px;
     align-self: center;
   }
 
@@ -64,21 +100,21 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 50%;
+    height: 200px;
+
     label {
-      padding: 0px 0px 0px 8px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 0px 0px 4px 18px;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       font-size: 8pt;
       font-weight: 450;
       width: 100%;
     }
     input {
       width: 96%;
-      height: 40%;
+      height: 50px;
       border-radius: 7px;
       border: none;
-      box-shadow: 1px 2px 5px rgba(0, 0, 0, .5);
-      padding: 0px 0px 0px 10px;
+      box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
       outline: none;
     }
   }
@@ -89,21 +125,21 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 50%;
+    height: 200px;
+
     label {
       width: 100%;
-      padding: 0px 0px 0px 8px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 0px 0px 4px 18px;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       font-size: 8pt;
       font-weight: 450;
     }
     input {
       width: 96%;
-      height: 40%;
+      height: 50px;
       border-radius: 7px;
       border: none;
-      box-shadow: 1px 2px 5px rgba(0, 0, 0, .5);
-      padding: 0px 0px 0px 10px;
+      box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
       outline: none;
     }
   }
@@ -123,7 +159,7 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  margin-top: 25px;
+  margin-top: 70px;
 
   .cancel{
     height: 100%;

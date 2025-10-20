@@ -75,27 +75,54 @@ export class SeatGridComponent {
 
   onCPFInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/\D/g, '');
 
-    if (value.length > 11) {
-      value = value.substring(0, 11);
+    // Pega o último caractere digitado
+    const lastChar = input.value.slice(-1);
+
+    // Se o último caractere não é número e não é backspace, ignora
+    if (!/\d/.test(lastChar) && lastChar !== '') {
+      // Remove o último caractere não numérico (exceto backspace)
+      input.value = input.value.slice(0, -1);
+      return;
     }
 
-    // Aplica a formatação
-    if (value.length > 9) {
-      value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    } else if (value.length > 6) {
-      value = value.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3');
-    } else if (value.length > 3) {
-      value = value.replace(/(\d{3})(\d{3})/, '$1.$2');
+    // Limpa e formata
+    let cleanValue = input.value.replace(/\D/g, '');
+
+    if (cleanValue.length > 11) {
+      cleanValue = cleanValue.substring(0, 11);
     }
 
-    // Atualiza o valor
-    input.value = value; // Garante que o input mostre apenas números formatados
-    this.personData.cpf = value;
+    let formattedValue = cleanValue;
+    if (cleanValue.length > 9) {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    } else if (cleanValue.length > 6) {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+    } else if (cleanValue.length > 3) {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+    }
+
+    // 🔥 ATUALIZAÇÃO SÍNCRONA - sem setTimeout
+    this.personData.cpf = formattedValue;
+
+    // Força o Angular a detectar a mudança
+    setTimeout(() => {
+      // Isso garante que a view seja atualizada
+    }, 0);
+
+    console.log('CPF:', cleanValue, 'Formatado:', formattedValue);
   }
 
+  private clearInputElements(): void {
+    // Usando setTimeout para garantir que a atualização do DOM já aconteceu
+    setTimeout(() => {
+      const nameInput = document.querySelector('input[placeholder="First and Last name"]') as HTMLInputElement;
+      const cpfInput = document.querySelector('input[placeholder="CPF"]') as HTMLInputElement;
 
+      if (nameInput) nameInput.value = '';
+      if (cpfInput) cpfInput.value = '';
+    }, 0);
+  }
 
 
   public selectedSeatList : Array<Seat> = [];
@@ -257,15 +284,27 @@ export class SeatGridComponent {
    * */
   public confirm(): void {
     // Atualiza os assentos selecionados
-    this.selectedSeatList.forEach((seat: Seat) => {
+    // this.selectedSeatList.forEach((seat: Seat) => {
+    //   if (seat.status === 'SELECTED') {
+    //     seat.status = 'OCCUPIED';
+    //     seat.free = false;
+    //     seat.person = {
+    //       ...this.personData
+    //     }
+    //   }
+    // });
+
+    const seat : Seat | undefined = this.selectedSeatList.at(0);
+    if (seat) {
       if (seat.status === 'SELECTED') {
         seat.status = 'OCCUPIED';
         seat.free = false;
         seat.person = {
           ...this.personData
         }
+        this.selectedSeatList.shift();
       }
-    });
+    }
 
     // Atualiza o observable
     this.shareGridWithSubscribers(this.grid);
@@ -296,8 +335,9 @@ export class SeatGridComponent {
 
     const savedGrid = this.safeStorage.getItem<GridDTO>('currentGrid');
     console.log('Grid salvo localmente:', savedGrid);
-    this.selectedSeatList = [];
+    // this.selectedSeatList = [];
     this.checkList();
+    this.clearInputElements();
   }
 
 
