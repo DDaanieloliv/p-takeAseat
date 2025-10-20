@@ -453,7 +453,11 @@ export class EditGrid {
         column : c + 1,
         selected : false,
         free : false,
-        status : 'AVAILABLE'
+        status : 'AVAILABLE',
+        person: {
+          name: "ok",
+          cpf: "111"
+        }
       });
     }
   }

@@ -9,11 +9,22 @@
     <div class="input-container">
       <div class="name-input">
         <label> Name </label>
-        <input type="text" placeholder="First and Last name" [maxLength]="50">
+        <input type="text"
+          placeholder="First and Last name"
+          [maxLength]="50"
+          [value]="personData.name"
+          (input)="onNameInput($event)"
+        >
       </div>
       <div class="cpf-input">
         <label> Cpf </label>
-        <input type="text" placeholder="Cpf" [maxLength]="11">
+        <input
+          type="text"
+          placeholder="CPF"
+          [maxLength]="14"
+          [value]="personData.cpf"
+          (input)="onCPFInput($event)"
+        >
       </div>
     </div>
 

@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { GridService_Observable } from '../../shared/services/grid-state';
-import { async, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 // import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { faXmark, IconDefinition } from '@fortawesome/free-solid-svg-icons';
@@ -10,9 +10,7 @@ import { ApiService } from '../../core/services/api-service';
 import { GridDTO } from '../../core/model/fetch/grid-dto';
 import { SafeStorageService } from '../../core/services/localStorageService/storage-service';
 import { Seat } from '../../core/model/Seat';
-import { strict } from 'node:assert';
-
-
+import { PersonData } from '../../core/model/Person';
 
 @Component({
   selector: 'app-seat-grid',
@@ -43,6 +41,11 @@ export class SeatGridComponent {
   public columns: number = 22;
 
   @Input()
+  public personData : PersonData = { name: '', cpf: '' };
+
+
+
+  @Input()
   public newGrid: Array<Seat[]> = [];
 
   @Output()
@@ -52,6 +55,46 @@ export class SeatGridComponent {
   public seatSelected : EventEmitter<Seat> = new EventEmitter<Seat>();
 
 
+  onNameInput(event : Event) : void {
+
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Remove caracteres não permitidos (mantém letras, espaço, hífen, apóstrofo)
+    value = value.replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '');
+
+    // Limita o comprimento se necessário
+    if (value.length > 50) {
+      value = value.substring(0, 50);
+    }
+
+    // Atualiza o valor
+    this.personData.name = value;
+    input.value = value;
+  }
+
+  onCPFInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, '');
+
+    if (value.length > 11) {
+      value = value.substring(0, 11);
+    }
+
+    // Aplica a formatação
+    if (value.length > 9) {
+      value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    } else if (value.length > 6) {
+      value = value.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3');
+    } else if (value.length > 3) {
+      value = value.replace(/(\d{3})(\d{3})/, '$1.$2');
+    }
+
+    // Atualiza o valor
+    input.value = value; // Garante que o input mostre apenas números formatados
+    this.personData.cpf = value;
+  }
+
 
 
 
@@ -59,11 +102,6 @@ export class SeatGridComponent {
 
   public is_visibleHandleSelection : boolean = true;
 
-  // public showWindowSeatSelection : boolean = true;
-  //
-  // public showWindowSelection() {
-  //   this.showWindowSeatSelection = !this.showWindowSeatSelection;
-  // }
 
 
 
@@ -223,6 +261,9 @@ export class SeatGridComponent {
       if (seat.status === 'SELECTED') {
         seat.status = 'OCCUPIED';
         seat.free = false;
+        seat.person = {
+          ...this.personData
+        }
       }
     });
 
@@ -393,7 +434,11 @@ export class SeatGridComponent {
           column: c + 1,
           selected: false,
           free: true,
-          status: 'AVAILABLE'
+          status: 'AVAILABLE',
+          person: {
+            name: "ok",
+            cpf: "1111"
+          }
         });
       }
     }
@@ -405,7 +450,11 @@ export class SeatGridComponent {
           column: c + 1,
           selected: false,
           free: true,
-          status: 'AVAILABLE'
+          status: 'AVAILABLE',
+          person: {
+            name: "ok",
+            cpf: "111"
+          }
         });
       }
     }
