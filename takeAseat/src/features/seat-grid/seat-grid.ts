@@ -12,6 +12,12 @@ import { SafeStorageService } from '../../core/services/localStorageService/stor
 import { Seat } from '../../core/model/Seat';
 import { PersonData } from '../../core/model/Person';
 
+interface FieldError {
+  field: 'name' | 'cpf';
+  message: string;
+  inputElement?: HTMLInputElement;
+}
+
 @Component({
   selector: 'app-seat-grid',
   standalone: true,
@@ -54,138 +60,16 @@ export class SeatGridComponent {
   @Output()
   public seatSelected : EventEmitter<Seat> = new EventEmitter<Seat>();
 
-
-  public doNotShould_click : boolean = true;
-
-  public isFormValid() :void {
-        // Usando setTimeout para garantir que a atualização do DOM já aconteceu
-    setTimeout(() => {
-      const nameInput : HTMLInputElement = document.querySelector('input[placeholder="First and Last name"]') as HTMLInputElement;
-      const cpfInput : HTMLInputElement = document.querySelector('input[placeholder="CPF"]') as HTMLInputElement;
-
-      if (this.inputValidate(nameInput, cpfInput)) {
-        this.doNotShould_click = false;
-      }
-    }, 0);
-  }
-
-  private inputValidate(nameInput: HTMLInputElement, cpfInput: HTMLInputElement): boolean {
-    const nameValue = nameInput.value.trim();
-    const cpfValue = cpfInput.value.replace(/\D/g, '');
-
-    let isValid = true;
-
-    // Validação do NOME
-    if (nameValue.length === 0) {
-      console.log("Nome é obrigatório!");
-      // this.showError(nameInput, "Nome é obrigatório");
-      isValid = false;
-    } else if (nameValue.length > 50) {
-      console.log("Nome deve ter no máximo 50 caracteres!");
-      // this.showError(nameInput, "Máximo 50 caracteres");
-      isValid = false;
-    } else {
-      // this.clearError(nameInput);
-    }
-
-    // Validação do CPF
-    if (cpfValue.length === 0) {
-      console.log("CPF é obrigatório!");
-      // this.showError(cpfInput, "CPF é obrigatório");
-      isValid = false;
-    } else if (cpfValue.length !== 11) {
-      console.log("CPF deve ter 11 dígitos!");
-      // this.showError(cpfInput, "CPF deve ter 11 dígitos");
-      isValid = false;
-    } else if (/^(\d)\1{10}$/.test(cpfValue)) {
-      console.log("CPF não pode ter todos dígitos iguais!");
-      // this.showError(cpfInput, "CPF inválido");
-      isValid = false;
-    } else {
-      // this.clearError(cpfInput);
-    }
-
-    return isValid;
-  }
-
-  onNameInput(event : Event) : void {
-
-    const input = event.target as HTMLInputElement;
-    let value = input.value;
-
-    // Remove caracteres não permitidos (mantém letras, espaço, hífen, apóstrofo)
-    value = value.replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '');
-
-    // Limita o comprimento se necessário
-    if (value.length > 50) {
-      value = value.substring(0, 50);
-    }
-
-    // Atualiza o valor
-    this.personData.name = value;
-    input.value = value;
-
-    this.isFormValid();
-  }
-
-  onCPFInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    // Pega o último caractere digitado
-    const lastChar = input.value.slice(-1);
-
-    // Se o último caractere não é número e não é backspace, ignora
-    if (!/\d/.test(lastChar) && lastChar !== '') {
-      // Remove o último caractere não numérico (exceto backspace)
-      input.value = input.value.slice(0, -1);
-      return;
-    }
-
-    // Limpa e formata
-    let cleanValue = input.value.replace(/\D/g, '');
-
-    if (cleanValue.length > 11) {
-      cleanValue = cleanValue.substring(0, 11);
-    }
-
-    let formattedValue = cleanValue;
-
-
-    if (cleanValue.length <= 3) {
-      formattedValue = cleanValue;
-    } else if (cleanValue.length <= 6) {
-      formattedValue = cleanValue.replace(/(\d{3})(\d{0,3})/, '$1.$2');
-    } else if (cleanValue.length <= 9) {
-      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
-    } else {
-      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
-    }
-
-    // Atualiza o modelo
-    this.personData.cpf = formattedValue;
-
-    console.log('CPF:', cleanValue, 'Formatado:', formattedValue);
-
-    this.isFormValid();
-
-  }
-
-
-  private clearInputElements(): void {
-    // Usando setTimeout para garantir que a atualização do DOM já aconteceu
-    setTimeout(() => {
-      const nameInput = document.querySelector('input[placeholder="First and Last name"]') as HTMLInputElement;
-      const cpfInput = document.querySelector('input[placeholder="CPF"]') as HTMLInputElement;
-
-      if (nameInput) nameInput.value = '';
-      if (cpfInput) cpfInput.value = '';
-    }, 0);
-  }
-
-
   public selectedSeatList : Array<Seat> = [];
 
   public is_visibleHandleSelection : boolean = true;
+
+  public doNotShould_click : boolean = true;
+
+  public hiddenMessage : boolean = true;
+
+  public errorsMessage: FieldError[] = [];
+
 
 
 
@@ -440,6 +324,217 @@ export class SeatGridComponent {
     );
 
   }
+
+  private applyErrorStyles(errors: FieldError[]): void {
+    // Primeiro remove todos os estilos de erro
+    this.clearAllErrorStyles();
+
+    // Aplica estilos apenas nos inputs com erro
+    errors.forEach(error => {
+      if (error.inputElement) {
+        error.inputElement.classList.add('input-error');
+
+        // Adiciona um indicador visual específico para cada campo
+        if (error.field === 'name') {
+          error.inputElement.style.borderLeft = '4px solid #e74c3c';
+        } else if (error.field === 'cpf') {
+          error.inputElement.style.borderLeft = '4px solid #e74c3c';
+        }
+      }
+    });
+  }
+
+  private clearAllErrorStyles(): void {
+    const inputs = document.querySelectorAll('input[placeholder="First and Last name"], input[placeholder="CPF"]');
+    inputs.forEach(input => {
+      input.classList.remove('input-error');
+      (input as HTMLInputElement).style.borderLeft = '';
+    });
+  }
+
+  private clearAllErrors(): void {
+    this.errorsMessage = [];
+    this.clearAllErrorStyles();
+  }
+
+  public isFormValid(): void {
+    setTimeout(() => {
+      const nameInput = document.querySelector('input[placeholder="First and Last name"]') as HTMLInputElement;
+      const cpfInput = document.querySelector('input[placeholder="CPF"]') as HTMLInputElement;
+
+      const errors = this.inputValidate(nameInput, cpfInput);
+
+      // Limpa erros anteriores
+      this.clearAllErrors();
+
+      if (errors.length === 0) {
+        this.doNotShould_click = false;
+        this.hiddenMessage = true;
+      } else {
+        this.doNotShould_click = true;
+        this.hiddenMessage = false;
+        this.errorsMessage = errors;
+
+        // Aplica estilos visuais nos inputs com erro
+        this.applyErrorStyles(errors);
+      }
+    }, 0);
+  }
+
+  // Métodos para usar no template
+  hasError(field: 'name' | 'cpf'): boolean {
+    return this.errorsMessage?.some(error => error.field === field) || false;
+  }
+
+  getErrorMessage(field: 'name' | 'cpf'): string {
+    const error = this.errorsMessage?.find(e => e.field === field);
+    return error?.message || '';
+  }
+
+  getErrorsForField(field: 'name' | 'cpf'): FieldError[] {
+    return this.errorsMessage?.filter(error => error.field === field) || [];
+  }
+
+
+  private inputValidate(nameInput: HTMLInputElement, cpfInput: HTMLInputElement): FieldError[] {
+    const nameValue = nameInput.value.trim();
+    const cpfValue = cpfInput.value.replace(/\D/g, '');
+
+    const errors: FieldError[] = [];
+
+    // Validação do NOME
+    if (nameValue.length === 0) {
+      errors.push({
+        field: 'name',
+        message: "Nome é obrigatório",
+        inputElement: nameInput
+      });
+    } else if (nameValue.length > 50) {
+      errors.push({
+        field: 'name',
+        message: "Nome deve ter no máximo 50 caracteres",
+        inputElement: nameInput
+      });
+    }
+
+    // Validação do CPF
+    if (cpfValue.length === 0) {
+      errors.push({
+        field: 'cpf',
+        message: "CPF é obrigatório",
+        inputElement: cpfInput
+      });
+    } else if (cpfValue.length !== 11) {
+      errors.push({
+        field: 'cpf',
+        message: "CPF deve ter 11 dígitos",
+        inputElement: cpfInput
+      });
+    } else if (/^(\d)\1{10}$/.test(cpfValue)) {
+      errors.push({
+        field: 'cpf',
+        message: "CPF não pode ter todos dígitos iguais",
+        inputElement: cpfInput
+      });
+    }
+
+    return errors;
+  }
+
+  // onNameInput(event : Event) : void {
+  //   const input = event.target as HTMLInputElement;
+  //   let value = input.value;
+  //   // Remove caracteres não permitidos (mantém letras, espaço, hífen, apóstrofo)
+  //   value = value.replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '');
+  //   // Limita o comprimento se necessário
+  //   if (value.length > 50) {
+  //     value = value.substring(0, 50);
+  //   }
+  //   // Atualiza o valor
+  //   this.personData.name = value;
+  //   input.value = value;
+  //   this.isFormValid();
+  // }
+
+  onNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    value = value.replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '');
+    if (value.length > 50) {
+      value = value.substring(0, 50);
+    }
+
+    this.personData.name = value;
+    input.value = value;
+
+    // Limpa erros específicos do nome quando usuário começa a digitar
+    this.clearFieldErrors('name');
+    this.isFormValid();
+  }
+
+  private clearFieldErrors(field: 'name' | 'cpf'): void {
+    if (this.errorsMessage) {
+      this.errorsMessage = this.errorsMessage.filter(error => error.field !== field);
+    }
+
+    // Atualiza estilos visuais
+    const input = document.querySelector(
+      field === 'name'
+        ? 'input[placeholder="First and Last name"]'
+        : 'input[placeholder="CPF"]'
+    ) as HTMLInputElement;
+
+    if (input) {
+      input.classList.remove('input-error', 'has-error');
+      input.style.borderLeft = '';
+    }
+  }
+
+  onCPFInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const lastChar = input.value.slice(-1);
+    // Se o último caractere não é número e não é backspace, ignora
+    if (!/\d/.test(lastChar) && lastChar !== '') {
+      // Remove o último caractere não numérico (exceto backspace)
+      input.value = input.value.slice(0, -1);
+      return;
+    }
+    // Limpa e formata
+    let cleanValue = input.value.replace(/\D/g, '');
+    if (cleanValue.length > 11) {
+      cleanValue = cleanValue.substring(0, 11);
+    }
+    let formattedValue = cleanValue;
+    if (cleanValue.length <= 3) {
+      formattedValue = cleanValue;
+    } else if (cleanValue.length <= 6) {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{0,3})/, '$1.$2');
+    } else if (cleanValue.length <= 9) {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+    } else {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+    }
+    // Atualiza o modelo
+    this.personData.cpf = formattedValue;
+
+    this.clearFieldErrors('cpf');
+    this.isFormValid();
+  }
+
+
+  private clearInputElements(): void {
+    // Usando setTimeout para garantir que a atualização do DOM já aconteceu
+    setTimeout(() => {
+      const nameInput = document.querySelector('input[placeholder="First and Last name"]') as HTMLInputElement;
+      const cpfInput = document.querySelector('input[placeholder="CPF"]') as HTMLInputElement;
+
+      if (nameInput) nameInput.value = '';
+      if (cpfInput) cpfInput.value = '';
+    }, 0);
+  }
+
+
 
 
   /*

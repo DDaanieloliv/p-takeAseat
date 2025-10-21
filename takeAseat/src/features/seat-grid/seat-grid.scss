@@ -152,7 +152,77 @@
 
 }
 
+.message-container{
+  display: flex;
+  justify-content: center;
+}
 
+.message-stack {
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #eff70f3b;
+  color: #bbac70;
+}
+
+.message-response{
+  /* padding: 8px; */
+  /* border-radius: 8px; */
+  /* background-color: #eff70f3b; */
+  /* color: #bbac70; */
+}
+
+// Estilos para inputs com erro
+.input-error,
+.has-error {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2) !important;
+}
+
+// Mensagens de erro específicas por campo
+.field-error-message {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  height: 10px;
+  /* margin-top: 5px; */
+  /* padding-left: 8px; */
+  font-weight: 500;
+}
+
+// Estilos para a stack de mensagens globais
+.message-response {
+  padding: 8px 12px;
+  margin: 4px 0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+
+  &.name-error {
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left: 3px solid #e74c3c;
+  }
+
+  &.cpf-error {
+    background-color: rgba(52, 152, 219, 0.1);
+    border-left: 3px solid #3498db;
+  }
+}
+
+// Indicador visual nos inputs
+.name-input, .cpf-input {
+  /* position: relative; */
+
+  &.has-error::before {
+    content: "⚠";
+    /* position: absolute; */
+    /* right: 10px; */
+    /* top: 35px; */
+    color: #e74c3c;
+  }
+}
+
+
+.hiddenMessageSuccessOrError {
+  opacity: 0;
+}
 
 .allocation{
   display: flex;
@@ -165,7 +235,7 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  margin-top: 70px;
+  margin-top: 30px;
 
   .cancel{
     height: 80%;
