@@ -16,6 +16,12 @@
   pointer-events: none;
 }
 
+.doNotShould-click {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
 .grid-position-after-selection{
   z-index: 2;
   transform:  translateX(-140px) translateY(50px);
@@ -24,7 +30,7 @@
 .seatsSelectedContiner {
   display: flex;
   width: 100%;
-  height: 10%;
+  height: 20%;
   justify-content: center;
   align-items: center;
 }
@@ -162,10 +168,10 @@
   margin-top: 70px;
 
   .cancel{
-    height: 100%;
+    height: 80%;
     background: grey;
     border-radius: 10px;
-    width: 40%;
+    width: 30%;
     margin: 0px 5px 0px 5px;
     display: flex;
     justify-content: center;
@@ -182,11 +188,11 @@
   }
 
   .buttom{
-    height: 100%;
+    height: 80%;
     background: grey;
     cursor: pointer;
     border-radius: 10px;
-    width: 40%;
+    width: 30%;
     margin: 0px 5px 0px 5px;
     display: flex;
     justify-content: center;

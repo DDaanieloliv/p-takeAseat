@@ -55,6 +55,59 @@ export class SeatGridComponent {
   public seatSelected : EventEmitter<Seat> = new EventEmitter<Seat>();
 
 
+  public doNotShould_click : boolean = true;
+
+  public isFormValid() :void {
+        // Usando setTimeout para garantir que a atualização do DOM já aconteceu
+    setTimeout(() => {
+      const nameInput : HTMLInputElement = document.querySelector('input[placeholder="First and Last name"]') as HTMLInputElement;
+      const cpfInput : HTMLInputElement = document.querySelector('input[placeholder="CPF"]') as HTMLInputElement;
+
+      if (this.inputValidate(nameInput, cpfInput)) {
+        this.doNotShould_click = false;
+      }
+    }, 0);
+  }
+
+  private inputValidate(nameInput: HTMLInputElement, cpfInput: HTMLInputElement): boolean {
+    const nameValue = nameInput.value.trim();
+    const cpfValue = cpfInput.value.replace(/\D/g, '');
+
+    let isValid = true;
+
+    // Validação do NOME
+    if (nameValue.length === 0) {
+      console.log("Nome é obrigatório!");
+      // this.showError(nameInput, "Nome é obrigatório");
+      isValid = false;
+    } else if (nameValue.length > 50) {
+      console.log("Nome deve ter no máximo 50 caracteres!");
+      // this.showError(nameInput, "Máximo 50 caracteres");
+      isValid = false;
+    } else {
+      // this.clearError(nameInput);
+    }
+
+    // Validação do CPF
+    if (cpfValue.length === 0) {
+      console.log("CPF é obrigatório!");
+      // this.showError(cpfInput, "CPF é obrigatório");
+      isValid = false;
+    } else if (cpfValue.length !== 11) {
+      console.log("CPF deve ter 11 dígitos!");
+      // this.showError(cpfInput, "CPF deve ter 11 dígitos");
+      isValid = false;
+    } else if (/^(\d)\1{10}$/.test(cpfValue)) {
+      console.log("CPF não pode ter todos dígitos iguais!");
+      // this.showError(cpfInput, "CPF inválido");
+      isValid = false;
+    } else {
+      // this.clearError(cpfInput);
+    }
+
+    return isValid;
+  }
+
   onNameInput(event : Event) : void {
 
     const input = event.target as HTMLInputElement;
@@ -71,6 +124,8 @@ export class SeatGridComponent {
     // Atualiza o valor
     this.personData.name = value;
     input.value = value;
+
+    this.isFormValid();
   }
 
   onCPFInput(event: Event): void {
@@ -94,24 +149,27 @@ export class SeatGridComponent {
     }
 
     let formattedValue = cleanValue;
-    if (cleanValue.length > 9) {
-      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    } else if (cleanValue.length > 6) {
-      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-    } else if (cleanValue.length > 3) {
-      formattedValue = cleanValue.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+
+
+    if (cleanValue.length <= 3) {
+      formattedValue = cleanValue;
+    } else if (cleanValue.length <= 6) {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{0,3})/, '$1.$2');
+    } else if (cleanValue.length <= 9) {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+    } else {
+      formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
     }
 
-    // 🔥 ATUALIZAÇÃO SÍNCRONA - sem setTimeout
+    // Atualiza o modelo
     this.personData.cpf = formattedValue;
 
-    // Força o Angular a detectar a mudança
-    setTimeout(() => {
-      // Isso garante que a view seja atualizada
-    }, 0);
-
     console.log('CPF:', cleanValue, 'Formatado:', formattedValue);
+
+    this.isFormValid();
+
   }
+
 
   private clearInputElements(): void {
     // Usando setTimeout para garantir que a atualização do DOM já aconteceu
@@ -160,13 +218,6 @@ export class SeatGridComponent {
     // let apiGrid : Promise<GridDTO | null> = this.make_aGridDTO_Request();
     let apiGrid : GridDTO | null = await this.make_aGridDTO_Request();
 
-    // try {
-    //     apiGrid = await this.api.fetchAPI();
-    //     console.log('Grid da API:', apiGrid);
-    // } catch (error) {
-    //     console.warn('API não disponível, usando fallback:', error);
-    //     apiGrid = null;
-    // }
 
     // LÓGICA DE DECISÃO:
     if (savedState && apiGrid && this.isSameGridWithStates(savedState, apiGrid)) {
@@ -300,7 +351,8 @@ export class SeatGridComponent {
         seat.status = 'OCCUPIED';
         seat.free = false;
         seat.person = {
-          ...this.personData
+          name: this.personData.name,
+          cpf: this.personData.cpf?.replace(/\D/g, '')
         }
         this.selectedSeatList.shift();
       }

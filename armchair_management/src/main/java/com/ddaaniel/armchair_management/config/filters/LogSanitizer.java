@@ -8,7 +8,7 @@ public class LogSanitizer {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Lista de campos sensíveis que queremos mascarar
-    private final String[] SENSITIVE_FIELDS = {"password", "token", "cpf", "email", "creditCard"};
+    private final String[] SENSITIVE_FIELDS = {"password", "token", /* "cpf", */ "email", "creditCard"};
 
     public String sanitizeJson(String json) {
         try {

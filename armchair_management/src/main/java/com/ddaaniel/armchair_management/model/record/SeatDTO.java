@@ -1,5 +1,6 @@
 package com.ddaaniel.armchair_management.model.record;
 
+import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.enums.SeatType;
 
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class SeatDTO {
     private Integer column;
     private SeatType status;
     private Boolean free;
+    private Person person;
 
 
 }

@@ -123,8 +123,19 @@ public class ServiceSeatImpl implements ISeatService {
           Seat seat = seatOpt.get();
           seat.setFree(seatDTO.getFree());
           seat.setStatus(seatDTO.getStatus());
+          if (seatDTO.getPerson() != null && seatDTO.getPerson().getCpf() != null && seatDTO.getPerson().getName() != null) {
+
+            // Person person = seatDTO.getPerson();
+            // String cleanCPF = person.getCpf().replaceAll("\\D", "");
+            // person.setCpf(cleanCPF);
+
+            personRepository.save(seatDTO.getPerson());
+            seat.setPerson(seatDTO.getPerson());
+          }
           seatsToSave.add(seat);
         } else {
+
+
           // Cria novo assento com currentGrid
           Seat newSeat = Seat.builder()
               .position(seatDTO.getPosition())
@@ -133,7 +144,14 @@ public class ServiceSeatImpl implements ISeatService {
               .free(seatDTO.getFree())
               .status(seatDTO.getStatus())
               .currentGrid(gridEntity)
+              // .person(seatDTO.getPerson())
               .build();
+
+          if (seatDTO.getPerson().getCpf() != null && seatDTO.getPerson().getName() != null) {
+            personRepository.save(seatDTO.getPerson());
+            newSeat.setPerson(seatDTO.getPerson());
+          }
+
           seatsToSave.add(newSeat);
         }
       }

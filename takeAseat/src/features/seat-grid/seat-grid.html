@@ -49,12 +49,14 @@
       <div
         class="popup-container"
         class="cancel"
+        [class.doNotShould-click]="doNotShould_click"
         (click)="cancel()"
       >Uncheck
       </div>
       <div
         class="popup-container"
         class="buttom"
+        [class.doNotShould-click]="doNotShould_click"
         (click)="confirm()"
       >Confirm
       </div>
