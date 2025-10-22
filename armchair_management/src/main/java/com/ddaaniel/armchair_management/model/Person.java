@@ -24,7 +24,7 @@ public class Person {
     @Column(length = 50, nullable = false)
     private String name;
 
-    @Column(length = 11, unique = true, nullable = false)
+    @Column(length = 11, /* unique = true, */ nullable = false)
     private String cpf;
 
     @OneToOne(mappedBy = "person")

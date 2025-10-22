@@ -33,9 +33,11 @@
   height: 20%;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s;
 }
 
 .seatsSelected {
+  transition: all 0.3s;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -45,6 +47,7 @@
 }
 
 .seatSelected {
+  transition: all 0.3s;
   width: 35px;
   height: 30px;
   background: grey;
@@ -53,15 +56,19 @@
   align-items: center;
   margin: 7px;
   border-radius: 2px;
+  transition: all 0.3s;
 
   &.current-seat {
-    background: #007bff;
-    border-color: #0056b3;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    background: grey;
+    /* border-color: #0056b3; */
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 2;
+    transition: all 0.3s;
   }
 }
+
+
 
 .register-container {
   display: flex;
@@ -152,6 +159,9 @@
 
 }
 
+
+
+
 .message-container{
   display: flex;
   justify-content: center;
@@ -171,53 +181,47 @@
   /* color: #bbac70; */
 }
 
-// Estilos para inputs com erro
-.input-error,
 .has-error {
-  border-color: #e74c3c !important;
-  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2) !important;
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
 }
 
-// Mensagens de erro específicas por campo
 .field-error-message {
+  transition: all 0.8s;
   color: #e74c3c;
   font-size: 0.8rem;
   height: 10px;
-  /* margin-top: 5px; */
-  /* padding-left: 8px; */
   font-weight: 500;
+
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
 }
 
-// Estilos para a stack de mensagens globais
 .message-response {
   padding: 8px 12px;
-  margin: 4px 0;
   border-radius: 4px;
-  font-size: 0.9rem;
 
-  &.name-error {
-    background-color: rgba(231, 76, 60, 0.1);
-    border-left: 3px solid #e74c3c;
+
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    padding: 0;
   }
 
-  &.cpf-error {
-    background-color: rgba(52, 152, 219, 0.1);
-    border-left: 3px solid #3498db;
-  }
-}
-
-// Indicador visual nos inputs
-.name-input, .cpf-input {
-  /* position: relative; */
-
-  &.has-error::before {
-    content: "⚠";
-    /* position: absolute; */
-    /* right: 10px; */
-    /* top: 35px; */
-    color: #e74c3c;
+  &.visible {
+    opacity: 1;
+    visibility: visible;
   }
 }
+
 
 
 .hiddenMessageSuccessOrError {

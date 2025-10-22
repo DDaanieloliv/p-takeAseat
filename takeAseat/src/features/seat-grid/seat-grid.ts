@@ -71,39 +71,7 @@ export class SeatGridComponent {
   public errorsMessage: FieldError[] = [];
 
 
-
-
-
-  ngOnDestroy() : void{
-    this.subscription.unsubscribe();
-  }
-
-  private async make_aGridDTO_Request() : Promise<GridDTO | null> {
-    let  dto : GridDTO | null = null;
-
-    try {
-      dto = await this.api.fetchAPI();
-      console.log('Grid da API:', dto);
-    } catch (error) {
-      console.warn('API não disponível, usando fallback:', error);
-      dto = null;
-    }
-    return dto;
-  }
-
-  async ngOnInit() : Promise<void> {
-
-    this.setupGridSubscription();
-    console.log('Esse é o grid armazenado no localStorage...');
-
-    const savedState = this.safeStorage.getItem<GridDTO>('currentGrid');
-    console.log('Saved: ', savedState);
-
-    // let apiGrid : Promise<GridDTO | null> = this.make_aGridDTO_Request();
-    let apiGrid : GridDTO | null = await this.make_aGridDTO_Request();
-
-
-    // LÓGICA DE DECISÃO:
+  private bootStrap(savedState : GridDTO | null, apiGrid : GridDTO | null) {
     if (savedState && apiGrid && this.isSameGridWithStates(savedState, apiGrid)) {
       // 1. Temos savedState E API respondeu E são compatíveis
       console.log('Carregando grid salvo do localStorage (compatível com API)');
@@ -148,6 +116,40 @@ export class SeatGridComponent {
       this.safeStorage.setItem('currentGrid', defaultGridDTO);
     }
   }
+
+
+  ngOnDestroy() : void{
+    this.subscription.unsubscribe();
+  }
+
+  async ngOnInit() : Promise<void> {
+
+    this.setupGridSubscription();
+    console.log('Esse é o grid armazenado no localStorage...');
+
+    const savedState = this.safeStorage.getItem<GridDTO>('currentGrid');
+    console.log('Saved: ', savedState);
+
+    // let apiGrid : Promise<GridDTO | null> = this.make_aGridDTO_Request();
+    let apiGrid : GridDTO | null = await this.make_aGridDTO_Request();
+
+    this.bootStrap(savedState, apiGrid);
+
+  }
+
+
+  private async make_aGridDTO_Request() : Promise<GridDTO | null> {
+    let  dto : GridDTO | null = null;
+    try {
+      dto = await this.api.fetchAPI();
+      console.log('Grid da API:', dto);
+    } catch (error) {
+      console.warn('API não disponível, usando fallback:', error);
+      dto = null;
+    }
+    return dto;
+  }
+
 
   private loadGridFromDTO(dto: GridDTO) : void {
     this.grid = dto.grid;
@@ -468,10 +470,26 @@ export class SeatGridComponent {
     this.personData.name = value;
     input.value = value;
 
-    // Limpa erros específicos do nome quando usuário começa a digitar
-    this.clearFieldErrors('name');
+    // 🔥 CORREÇÃO: Apenas valida, não limpa erros manualmente
     this.isFormValid();
   }
+
+  // onNameInput(event: Event): void {
+  //   const input = event.target as HTMLInputElement;
+  //   let value = input.value;
+  //
+  //   value = value.replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '');
+  //   if (value.length > 50) {
+  //     value = value.substring(0, 50);
+  //   }
+  //
+  //   this.personData.name = value;
+  //   input.value = value;
+  //
+  //   // Limpa erros específicos do nome quando usuário começa a digitar
+  //   this.clearFieldErrors('name');
+  //   this.isFormValid();
+  // }
 
   private clearFieldErrors(field: 'name' | 'cpf'): void {
     if (this.errorsMessage) {
@@ -494,17 +512,19 @@ export class SeatGridComponent {
   onCPFInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const lastChar = input.value.slice(-1);
+
     // Se o último caractere não é número e não é backspace, ignora
     if (!/\d/.test(lastChar) && lastChar !== '') {
-      // Remove o último caractere não numérico (exceto backspace)
       input.value = input.value.slice(0, -1);
       return;
     }
+
     // Limpa e formata
     let cleanValue = input.value.replace(/\D/g, '');
     if (cleanValue.length > 11) {
       cleanValue = cleanValue.substring(0, 11);
     }
+
     let formattedValue = cleanValue;
     if (cleanValue.length <= 3) {
       formattedValue = cleanValue;
@@ -515,12 +535,45 @@ export class SeatGridComponent {
     } else {
       formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
     }
+
     // Atualiza o modelo
     this.personData.cpf = formattedValue;
 
-    this.clearFieldErrors('cpf');
+    // 🔥 CORREÇÃO: Não limpa os erros imediatamente, apenas valida
+    // O estilo será mantido/atualizado pela validação sem piscar
     this.isFormValid();
   }
+
+  // onCPFInput(event: Event): void {
+  //   const input = event.target as HTMLInputElement;
+  //   const lastChar = input.value.slice(-1);
+  //   // Se o último caractere não é número e não é backspace, ignora
+  //   if (!/\d/.test(lastChar) && lastChar !== '') {
+  //     // Remove o último caractere não numérico (exceto backspace)
+  //     input.value = input.value.slice(0, -1);
+  //     return;
+  //   }
+  //   // Limpa e formata
+  //   let cleanValue = input.value.replace(/\D/g, '');
+  //   if (cleanValue.length > 11) {
+  //     cleanValue = cleanValue.substring(0, 11);
+  //   }
+  //   let formattedValue = cleanValue;
+  //   if (cleanValue.length <= 3) {
+  //     formattedValue = cleanValue;
+  //   } else if (cleanValue.length <= 6) {
+  //     formattedValue = cleanValue.replace(/(\d{3})(\d{0,3})/, '$1.$2');
+  //   } else if (cleanValue.length <= 9) {
+  //     formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+  //   } else {
+  //     formattedValue = cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+  //   }
+  //   // Atualiza o modelo
+  //   this.personData.cpf = formattedValue;
+  //
+  //   this.clearFieldErrors('cpf');
+  //   this.isFormValid();
+  // }
 
 
   private clearInputElements(): void {
