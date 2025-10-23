@@ -24,7 +24,7 @@ export class FormComponent {
   ) {}
 
 
-  @Input()
+  // @Input()
   public doNotShould_click : boolean = true;
 
   @Input()
@@ -39,11 +39,10 @@ export class FormComponent {
   @Input()
   public grid: Array<Seat[]> = [];
 
-  @Output()
-  public doNotShould_clickChange = new EventEmitter<boolean>();
+
 
   @Output()
-  public personDataChange = new EventEmitter<PersonData>();
+  public doNotShould_clickChange = new EventEmitter<boolean>();
 
   @Output()
   public selectedSeatListChange = new EventEmitter<Array<Seat>>();
@@ -51,27 +50,10 @@ export class FormComponent {
   @Output()
   public is_visibleHandleSelectionChange = new EventEmitter<boolean>();
 
-  @Output()
-  public gridChange = new EventEmitter<Array<Seat[]>>();
-
-  @Output()
-  public onConfirm = new EventEmitter<void>();
-
-  @Output()
-  public onCancel = new EventEmitter<void>();
 
   public errorsMessage: FieldError[] = [];
 
 
-  private emitDoNotShouldClick(value: boolean): void {
-    this.doNotShould_click = value;
-    this.doNotShould_clickChange.emit(value);
-  }
-
-  private emitPersonData(value: PersonData): void {
-    this.personData = value;
-    this.personDataChange.emit(value);
-  }
 
   private emitSelectedSeatList(value: Array<Seat>): void {
     this.selectedSeatList = value;
@@ -103,9 +85,11 @@ export class FormComponent {
    * */
   public checkList() : boolean | void {
     if (this.selectedSeatList.length !== 0) {
+      this.emitIsVisibleHandleSelection(false);
       return this.is_visibleHandleSelection = false;
 
     } else if (this.selectedSeatList.length === 0) {
+      this.emitIsVisibleHandleSelection(true);
       return this.is_visibleHandleSelection = true;
     }
   }
@@ -165,6 +149,7 @@ export class FormComponent {
     // this.selectedSeatList = [];
     this.checkList();
     this.clearInputElements();
+    // this.emitSelectedSeatList( [] );
   }
 
 
@@ -186,11 +171,12 @@ export class FormComponent {
       } );
 
     this.selectedSeatList = [];
-    this.emitSelectedSeatList([]);
+    this.emitSelectedSeatList( [] );
+
     console.log(this.selectedSeatList);
-    this.emitIsVisibleHandleSelection(true);
+
+    // this.emitIsVisibleHandleSelection(true);
     this.checkList();
-    // this.onCancel.emit();
   }
 
 

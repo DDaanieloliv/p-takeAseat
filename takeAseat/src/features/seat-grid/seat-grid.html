@@ -84,19 +84,14 @@
 
 
   <app-form-component
-    [doNotShould_click]="doNotShould_click"
     [personData]="personData"
     [selectedSeatList]="selectedSeatList"
     [is_visibleHandleSelection]="is_visibleHandleSelection"
     [grid]="grid"
 
     (doNotShould_clickChange)="onDoNotShouldClickChange($event)"
-    (personDataChange)="onPersonDataChange($event)"
     (selectedSeatListChange)="onSelectedSeatListChange($event)"
     (is_visibleHandleSelectionChange)="onIsVisibleHandleSelectionChange($event)"
-    (gridChange)="onGridChange($event)"
-    (onConfirm)="onFormConfirm()"
-    (onCancel)="onFormCancel()"
   ></app-form-component>
 
 </div>
