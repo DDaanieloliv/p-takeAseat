@@ -11,17 +11,14 @@ import { GridDTO } from '../../core/model/fetch/grid-dto';
 import { SafeStorageService } from '../../core/services/localStorageService/storage-service';
 import { Seat } from '../../core/model/Seat';
 import { PersonData } from '../../core/model/Person';
+import { FieldError } from '../../shared/components/ui/form-ui/form-error-handler/FieldError';
+import { FormComponent } from '../../shared/components/ui/form-ui/form-component/form-component';
 
-interface FieldError {
-  field: 'name' | 'cpf';
-  message: string;
-  inputElement?: HTMLInputElement;
-}
 
 @Component({
   selector: 'app-seat-grid',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormComponent],
   templateUrl: './seat-grid.html',
   styleUrls: ['./seat-grid.scss']
 })
@@ -66,9 +63,46 @@ export class SeatGridComponent {
 
   public doNotShould_click : boolean = true;
 
-  public hiddenMessage : boolean = true;
+  // public hiddenMessage : boolean = true;
 
   public errorsMessage: FieldError[] = [];
+
+
+  onDoNotShouldClickChange(value: boolean): void {
+    this.doNotShould_click = value;
+    console.log('doNotShould_click atualizado:', value);
+  }
+
+  onPersonDataChange(value: PersonData): void {
+    this.personData = value;
+    console.log('personData atualizado:', value);
+  }
+
+  onSelectedSeatListChange(value: Array<Seat>): void {
+    this.selectedSeatList = value;
+    console.log('selectedSeatList atualizado:', value);
+  }
+
+  onIsVisibleHandleSelectionChange(value: boolean): void {
+    this.is_visibleHandleSelection = value;
+    console.log('is_visibleHandleSelection atualizado:', value);
+  }
+
+  onGridChange(value: Array<Seat[]>): void {
+    this.grid = value;
+    console.log('grid atualizado:', value);
+  }
+
+  onFormConfirm(): void {
+    console.log('Formulário confirmado - executando lógica do seat-grid');
+    // Você pode adicionar lógica adicional aqui se necessário
+  }
+
+  onFormCancel(): void {
+    console.log('Formulário cancelado - executando lógica do seat-grid');
+    // Você pode adicionar lógica adicional aqui se necessário
+  }
+
 
 
   private bootStrap(savedState : GridDTO | null, apiGrid : GridDTO | null) {
@@ -371,10 +405,10 @@ export class SeatGridComponent {
 
       if (errors.length === 0) {
         this.doNotShould_click = false;
-        this.hiddenMessage = true;
+        // this.hiddenMessage = true;
       } else {
         this.doNotShould_click = true;
-        this.hiddenMessage = false;
+        // this.hiddenMessage = false;
         this.errorsMessage = errors;
 
         // Aplica estilos visuais nos inputs com erro

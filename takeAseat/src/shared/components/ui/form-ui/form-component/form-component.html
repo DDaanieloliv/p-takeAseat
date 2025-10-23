@@ -1,0 +1,84 @@
+<div class="register-container">
+    <div class="title-container">
+      <span>Add Person</span>
+    </div>
+
+    <div  class="seatsSelectedContiner">
+      <div class="seatsSelected">
+        <div
+          *ngFor="let seat of selectedSeatList; let i = index"
+          class="seatSelected"
+          [class.current-seat]="i === 0"
+          [class.pending-seat]="i > 0"
+          [title]="i === 0 ? 'Current seat being assigned' : 'Pending assignment'"
+        >
+          {{ seat.row }}-{{ seat.column }}
+        </div>
+      </div>
+    </div>
+
+
+    <div class="input-container">
+      <div class="name-input">
+        <label> Name </label>
+        <input
+          type="text"
+          placeholder="First and Last name"
+          [maxLength]="50"
+          [value]="personData.name"
+          (input)="onNameInput($event)"
+          [class.has-error]="hasError('name')"
+        >
+        <!-- Mensagem sempre no DOM, mas controlada por opacidade -->
+        <div
+          class="field-error-message"
+          [class.visible]="hasError('name')"
+          [class.hidden]="!hasError('name')"
+        >
+          {{ getErrorMessage('name') }}
+        </div>
+      </div>
+
+      <div class="cpf-input">
+        <label> Cpf </label>
+        <input
+          type="text"
+          placeholder="CPF"
+          [maxLength]="14"
+          [value]="personData.cpf"
+          (input)="onCPFInput($event)"
+          [class.has-error]="hasError('cpf')"
+        >
+        <!-- Mensagem sempre no DOM, mas controlada por opacidade -->
+        <div
+          class="field-error-message"
+          [class.visible]="hasError('cpf')"
+          [class.hidden]="!hasError('cpf')"
+        >
+          {{ getErrorMessage('cpf') }}
+        </div>
+      </div>
+    </div>
+
+
+    <div
+      class="allocation"
+      [class.handle-selection]="!is_visibleHandleSelection"
+    >
+      <div
+        class="popup-container"
+        class="cancel"
+        [class.doNotShould-click]="doNotShould_click"
+        (click)="cancel()"
+      >Uncheck
+      </div>
+      <div
+        class="popup-container"
+        class="buttom"
+        [class.doNotShould-click]="doNotShould_click"
+        (click)="confirm()"
+      >Confirm
+      </div>
+    </div>
+
+  </div>

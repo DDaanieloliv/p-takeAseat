@@ -162,25 +162,6 @@
 
 
 
-.message-container{
-  display: flex;
-  justify-content: center;
-}
-
-.message-stack {
-  padding: 8px;
-  border-radius: 8px;
-  background-color: #eff70f3b;
-  color: #bbac70;
-}
-
-.message-response{
-  /* padding: 8px; */
-  /* border-radius: 8px; */
-  /* background-color: #eff70f3b; */
-  /* color: #bbac70; */
-}
-
 .has-error {
   border-color: #e74c3c;
   box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
@@ -190,6 +171,7 @@
   transition: all 0.8s;
   color: #e74c3c;
   font-size: 0.8rem;
+  padding: 2px;
   height: 10px;
   font-weight: 500;
 
@@ -205,28 +187,8 @@
 
 }
 
-.message-response {
-  padding: 8px 12px;
-  border-radius: 4px;
 
 
-  &.hidden {
-    opacity: 0;
-    visibility: hidden;
-    padding: 0;
-  }
-
-  &.visible {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-
-
-.hiddenMessageSuccessOrError {
-  opacity: 0;
-}
 
 .allocation{
   display: flex;
