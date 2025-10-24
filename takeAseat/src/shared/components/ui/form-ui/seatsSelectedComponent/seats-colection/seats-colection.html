@@ -1,0 +1,14 @@
+<div  class="seatsSelectedContiner">
+  <div class="seatsSelected">
+    <div
+      *ngFor="let seat of selectedSeatList; let i = index"
+      class="seatSelected"
+      [class.current-seat]="i === 0"
+      [class.pending-seat]="i > 0"
+      [title]="i === 0 ? 'Current seat being assigned' : 'Pending assignment'"
+    >
+      {{ seat.row }}-{{ seat.column }}
+    </div>
+  </div>
+</div>
+

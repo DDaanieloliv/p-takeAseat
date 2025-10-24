@@ -148,7 +148,6 @@ export class SeatGridComponent {
   }
 
   async ngOnInit() : Promise<void> {
-
     this.setupGridSubscription();
     console.log('Esse é o grid armazenado no localStorage...');
 
@@ -159,7 +158,6 @@ export class SeatGridComponent {
     let apiGrid : GridDTO | null = await this.make_aGridDTO_Request();
 
     this.bootStrap(savedState, apiGrid);
-
   }
 
 
@@ -354,8 +352,8 @@ export class SeatGridComponent {
           free: true,
           status: 'AVAILABLE',
           person: {
-            name: "ok",
-            cpf: "1111"
+            name: "",
+            cpf: ""
           }
         });
       }
@@ -370,8 +368,8 @@ export class SeatGridComponent {
           free: true,
           status: 'AVAILABLE',
           person: {
-            name: "ok",
-            cpf: "111"
+            name: "",
+            cpf: ""
           }
         });
       }
