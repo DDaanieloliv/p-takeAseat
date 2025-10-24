@@ -7,11 +7,12 @@ import { GridDTO } from '../../../../../core/model/fetch/grid-dto';
 import { GridService_Observable } from '../../../../services/grid-state';
 import { ApiService } from '../../../../../core/services/api-service';
 import { CommonModule } from '@angular/common';
+import { SeatsColection } from '../seatsSelectedComponent/seats-colection/seats-colection';
 
 @Component({
   selector: 'app-form-component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SeatsColection],
   templateUrl: './form-component.html',
   styleUrl: './form-component.scss'
 })
@@ -356,6 +357,8 @@ export class FormComponent {
 
       if (nameInput) nameInput.value = '';
       if (cpfInput) cpfInput.value = '';
+      // this.isFormValid();
+      this.doNotShould_click = true;
     }, 0);
   }
 

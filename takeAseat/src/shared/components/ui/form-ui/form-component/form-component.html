@@ -1,21 +1,13 @@
 <div class="register-container">
-    <div class="title-container">
-      <span>Add Person</span>
-    </div>
+    <!-- <div class="title-container"> -->
+    <!--   <span>Add Person</span> -->
+    <!-- </div> -->
 
-    <div  class="seatsSelectedContiner">
-      <div class="seatsSelected">
-        <div
-          *ngFor="let seat of selectedSeatList; let i = index"
-          class="seatSelected"
-          [class.current-seat]="i === 0"
-          [class.pending-seat]="i > 0"
-          [title]="i === 0 ? 'Current seat being assigned' : 'Pending assignment'"
-        >
-          {{ seat.row }}-{{ seat.column }}
-        </div>
-      </div>
-    </div>
+  <div class="container-seats">
+    <app-seats-colection
+      [selectedSeatList]="selectedSeatList"
+    ></app-seats-colection>
+  </div>
 
 
     <div class="input-container">
