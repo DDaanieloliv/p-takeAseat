@@ -1,3 +1,5 @@
+@use 'colors' as *;
+
 Html/*, body */ {
   margin: 0;
   padding: 0;
@@ -13,7 +15,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background: #A9A9A9;
+  background: $layout-bg;
 }
 
 

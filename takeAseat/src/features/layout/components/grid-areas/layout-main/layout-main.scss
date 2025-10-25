@@ -1,11 +1,11 @@
-@import '../../../../../styles/colors';
+@use 'colors' as *;
 
 :host {
   position: relative;
   z-index: 1;
   grid-row: 1 / 10;      // Linhas 1 a 6
   grid-column: 2 / 10;   // Colunas 2 a
-  background: $layout-bg;
+  background: #f5f0f0;;
   border-radius: 1vw;
   overflow: visible;  // Permite que elementos filhos vazem para fora
 }
