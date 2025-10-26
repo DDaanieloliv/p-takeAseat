@@ -1,9 +1,11 @@
+@use 'colors' as *;
+
 :host {
   grid-row: 10 / 13;      // Linhas 6 a 8
   grid-column: 12 / 13;   // Colunas 7 a 8
-  background: #f5f0f0;
   border-radius: 1vw;
 
+  background: $layout-bg;
 }
 
 

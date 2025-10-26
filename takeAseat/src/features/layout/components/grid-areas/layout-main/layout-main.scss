@@ -5,7 +5,7 @@
   z-index: 1;
   grid-row: 1 / 10;      // Linhas 1 a 6
   grid-column: 2 / 10;   // Colunas 2 a
-  background: #f5f0f0;;
+  background: $layout-bg;
   border-radius: 1vw;
   overflow: visible;  // Permite que elementos filhos vazem para fora
 }

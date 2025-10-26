@@ -1,12 +1,13 @@
+@use 'colors' as *;
+
 :host {
   display: flex;
   position: relative;
   padding: 10px;
-  /* grid-row: 1 / 2; */
-  /* grid-column: 4 / 4; */
-  grid-row: 1 / 6;      // Linhas 1 a 2
-  grid-column: 10 / 13;   // Colunas 7 a
-  background: #f5f0f0;
+  grid-row: 1 / 6;
+  grid-column: 10 / 13;
   border-radius: 1vw;
+
+  background: $layout-bg;
 }
 

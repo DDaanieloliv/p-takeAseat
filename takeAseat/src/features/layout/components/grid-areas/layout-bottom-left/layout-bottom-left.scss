@@ -1,17 +1,16 @@
+@use 'colors' as *;
+
 :host {
-  /*position: relative;*/
-  /* z-index: 10; */
-  /* grid-row: 3 / 4; */
-  /* grid-column: 2 / 3; */
-  grid-row: 10 / 13;      // Linhas 7 a 8
-  grid-column: 2 / 12;   // Colunas 2 a 3
-  background: #f5f0f0;
+  grid-row: 10 / 13;
+  grid-column: 2 / 12;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   border-top: px solid #A9A9A9;
   border-right: px solid #A9A9A9;
+
+  background: $layout-bg;
 }
 
 
@@ -23,10 +22,7 @@
 @media (max-width: 901px) and (min-width: 701px){
 
   :host {
-    grid-row: 10 / 13;      // Linhas 7 a 8
-    grid-column: 2 / 11;   // Colunas 2 a 3
-    /* background: #f5f0f0; */
-    /* border-radius: 1vw; */
-    /**/
+    grid-row: 10 / 13;
+    grid-column: 2 / 11;
   }
 }

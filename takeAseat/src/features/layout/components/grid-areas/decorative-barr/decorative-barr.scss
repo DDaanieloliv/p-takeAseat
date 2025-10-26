@@ -9,7 +9,7 @@
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
 
-  background: $layout-bg;
+  background: $background;
 }
 
 .gambiarra3 {
@@ -17,7 +17,8 @@
   border-top-left-radius: 90vw;
   height: 100%;
   width: 40%;
-  background: #f5f0f0;
+
+  background: $layout-bg;
 }
 
 .gambiarra4 {
@@ -25,7 +26,8 @@
   border-top-right-radius: 90vw;
   height: 100%;
   width: 40%;
-  background: #f5f0f0;
+
+  background: $layout-bg;
 }
 
 .gambiarra-do-meio {
@@ -36,7 +38,7 @@
   border-bottom-left-radius: 10vw;
   border-bottom-right-radius: 10vw;
 
-  background: $layout-bg;
+  background: $background;
 }
 
 
