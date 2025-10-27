@@ -1,3 +1,4 @@
+@use 'colors' as *;
 
 :host {
   display: inline-block;
@@ -17,8 +18,7 @@
 }
 
 .gear-icon {
-  /* z-index: 2; */
-  color: #3f51b5;
+  color: $yellow-100;
   font-size: 2rem;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -28,15 +28,12 @@
 .info-box-container-gear {
   position: absolute;
   display: flex;
-  /* display: none; */
   opacity: 0;
   visibility: hidden;
   align-items: center;
   justify-content: center;
   width: 14vw;
   height: 12vh;
-  /* top: 41.2%; */
-  /* bottom: 5vh; */
   right: 2vw;
   transition: all 0.3s ease;
 
@@ -50,7 +47,6 @@
 .info-box-gear {
   position: absolute;
   display: flex;
-  /* text-align: end; */
   font-size: 1.2rem;
   font-family: "Gill Sans", sans-serif, bold;
   align-items: center;
@@ -66,36 +62,28 @@
 
 .gear-icon:hover {
   transform: translateX(-8px) scale(1.2, 1.2);
-  /* transition: all 0.5s ease; */
 }
 
-
-/* .gear-icon:hover ~ .info-box-container-gear { */
-/*   opacity: 1; */
-/*   visibility: visible; */
-/*   transition-delay: 0.05s; */
-/* } */
 
 .config-menu {
   position: absolute;
   right: 110%;
-  bottom: 0%; // Aparece acima do ícone
+  bottom: 0%;
   background: white;
   width: 0;
   height: 100%;
   opacity: 0;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  /* min-width: 200px; */
   z-index: 100;
   overflow: hidden;
-  transform: translateX(200%); /* Começa escondido à direita */
+  transform: translateX(200%);
   transition: all 0.5s ease;
-  pointer-events: none; /* impede clique quando invisível */
+  pointer-events: none;
 }
 
 .config-menu-animation {
-  transform: translateX(0); /* Desliza para a esquerda */
+  transform: translateX(0);
   width: 50vw;
   opacity: 1;
   pointer-events: auto;

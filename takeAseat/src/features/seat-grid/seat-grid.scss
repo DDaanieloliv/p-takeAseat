@@ -1,3 +1,6 @@
+@use 'colors' as *;
+
+
 :host {
   position: relative;
 }
@@ -98,7 +101,7 @@
     }
 
     &.available {
-      background-color: #FFD700;
+      background-color: $yellow-100;
       color: white;
     }
 

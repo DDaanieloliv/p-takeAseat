@@ -12,8 +12,8 @@
   width: 100vw;
   height: 100vh;
 
-  grid-template-columns: repeat(12, 1fr);  // 8 colunas de tamanho igual
-  grid-template-rows: repeat(12, 1fr);     // 8 linhas de tamanho igual
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, 1fr);
   gap: 1vw 1vw;
 
   box-sizing: border-box;
@@ -22,13 +22,6 @@
 
 }
 
-/* .small-window { */
-/*   grid-row: 10 / 13;      // Linhas 6 a 8 */
-/*   grid-column: 12 / 13;   // Colunas 7 a 8 */
-/*   background: #f5f0f0; */
-/*   border-radius: 1vw; */
-/**/
-/* } */
 
 .bottom-left-corner:hover {
   transform: scale(1.026, 1.020);
@@ -47,28 +40,18 @@
   transform: scale(1.026, 1.015);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-/* .sidebar:hover { */
-/*   transform: scale(1.026, 1.01); */
-/*   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
-/* } */
+
+
+
 
 /* Condição	Significa...
    min-width: 801px	A tela estar mais larga que 800px
    max-width: 600px	A tela estar mais estreita que 600px
    min-height: 700px	A tela estar mais alta que 700px
    max-height: 620px	A tela estar mais baixa que 620px */
-/* @media (min-width: 800px) and (max-height: 620px) { */
-/**/
-/*   .gambiarra2 { */
-/*     height: 2vw; */
-/*   } */
-/* } */
-
-
 @media (max-width: 600px) {
 
   .sidebar:hover {
-    /* transform: scale(1.001, 1.001); */
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   }
 }
@@ -76,19 +59,10 @@
 
 
 @media (max-width: 701px), (min-height: 1025px) {
-  /* Esconda as gambiarras */
-  /* .gambiarra1, */
-  /* .gambiarra2, */
-  /* .gambiarra3, */
-  /* .gambiarra4, */
-  /* .gambiarra-do-meio { */
-  /*   display: none !important; */
-  /* } */
 
   .container {
-    /* Redefina completamente o grid para mobile */
-    grid-template-columns: repeat(12, 1fr);  // 8 colunas de tamanho igual
-    grid-template-rows: repeat(12, 1fr);     // 8 linhas de tamanho igual
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
   }
 
 
@@ -109,7 +83,6 @@
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   }
   .sidebar:hover {
-    /* transform: scale(1.001, 1.001); */
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   }
 
@@ -145,8 +118,8 @@
   }
 
   .bottom-left-corner {
-    grid-row: 10 / 13;      // Linhas 6 a 8
-    grid-column: 11 / 13;   // Colunas 7 a 8
+    grid-row: 10 / 13;
+    grid-column: 11 / 13;
   }
 }
 
