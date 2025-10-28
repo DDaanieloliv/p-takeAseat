@@ -11,7 +11,6 @@
 
 
   <div class="window-blur" [class.window-blur-show]="showWindow">
-
     <div class="seat-grid" [class.seat-grid-active]="showWindow">
       <div class="grid-wrapper">
 
@@ -58,10 +57,8 @@
         </div>
 
         <div class="grid-row-container">
-
           <div class="grid-row-wrapper">
             <div *ngFor="let row of grid.slice().reverse(); let r = index" class="grid-row">
-
               <div *ngFor="let seat of row; let c = index"
                 class="seat"
                 [class.available]="seat.status === 'AVAILABLE'"
@@ -74,14 +71,13 @@
               </div>
             </div>
           </div>
-
         </div>
+
       </div>
     </div>
 
     <div class="edit-menu-options">
       <div class="menu cancel-option" id="cancel-option" (click)="openWarning(!flagConfirmation)">
-
         <div class="xmark-container" [class.xmark-container-visible]="showWindow">
           <fa-icon
             [icon]="faXmark"
@@ -89,9 +85,7 @@
             class="xmark-icon"
           ></fa-icon>
         </div>
-
       </div>
-
     </div>
 
 
@@ -113,7 +107,6 @@
       ></fa-icon>
     </div>
 
+
   </div>
-
-
 </div>

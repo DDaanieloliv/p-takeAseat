@@ -69,7 +69,7 @@
   z-index: 7;
   transform: translateY(100%);
   position: absolute;
-  opacity: 0.8;
+  opacity: 0.98;
   transition: all 0.3s ease;
   width: 110vw;
   height: 110vh;
@@ -77,9 +77,7 @@
   bottom: -110vh;
   pointer-events: none;
 
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  /* background-color: rgba(139, 128, 135, 0.84); */
+  background-color: rgba(0, 0, 0, 0.75);
 
   .input-barr {
     pointer-events: none;

@@ -1,5 +1,5 @@
 @use 'colors' as *;
-
+@use "sass:color";
 
 :host {
   display: flex;
@@ -432,7 +432,6 @@
   justify-content: center;
   align-items: center;
 
-  /* backdrop-filter: blur(8px); */
   opacity: 0.98;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -509,7 +508,11 @@
 
 
 .cancel-option:hover {
-  background: linear-gradient(145deg, $error-color, darken($error-color, 10%));
+  background: linear-gradient(
+    145deg,
+    $error-color,
+    color.adjust($error-color, $lightness: -10%)
+  );
 }
 
 .cancel-option:active {
@@ -529,15 +532,23 @@
 
 
 .save-changes-option {
-  background: linear-gradient(145deg, darken($seat-available, 15%), $seat-available);
-  border: 1px solid darken($seat-available, 25%);
+  background: linear-gradient(
+    145deg,
+    color.adjust($seat-available, $lightness: -15%),
+    $seat-available
+  );
+  border: 1px solid color.adjust($seat-available, $lightness: -25%);
   color: $white;
   transition: all 0.3s ease;
   margin-left: 15vw;
 }
 
 .save-changes-option:hover {
-    background: linear-gradient(145deg, $success-color, lighten($success-color, 10%));
+    background: linear-gradient(
+    145deg,
+    $success-color,
+    color.adjust($success-color, $lightness: 10%)
+    );
     box-shadow: 0 4px 15px rgba($success-color, 0.3);
     transform: translateY(-2px);
 }
@@ -561,15 +572,22 @@
   overflow: hidden;
   margin-left: 15vw;
 
-
-  background: linear-gradient(145deg, darken($seat-available, 15%), $seat-available);
-  border: 1px solid darken($seat-available, 25%);
+  background: linear-gradient(
+  145deg,
+  color.adjust($seat-available, $lightness: -15%),
+  $seat-available
+  );
+  border: 1px solid color.adjust($seat-available, $lightness: -25%);
   color: $white;
   transition: all 0.3s ease;
 }
 
 .save-changes-option:hover {
-  background: linear-gradient(145deg, $success-color, lighten($success-color, 10%));
+  background: linear-gradient(
+  145deg,
+  $success-color,
+  color.adjust($success-color, $lightness: 10%)
+  );
   box-shadow: 0 4px 15px rgba($success-color, 0.3);
   transform: translateY(-2px);
 
@@ -636,7 +654,7 @@
   color: $icon-danger;
 
   &:hover {
-    color: lighten($icon-danger, 10%);
+    color: color.adjust($icon-danger, $lightness: 10%);
     filter: drop-shadow(0 0 6px rgba($error-color, 0.4));
     transform: scale(1.5);
   }

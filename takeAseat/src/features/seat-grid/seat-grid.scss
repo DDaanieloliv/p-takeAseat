@@ -1,4 +1,5 @@
 @use 'colors' as *;
+@use "sass:color";
 
 
 :host {
@@ -8,7 +9,7 @@
 
 
 .window-bg {
-  background: white;
+  background: $layout-bg;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -94,20 +95,22 @@
     font-size: 8px;
     font-weight: bold;
     transition: all 0.2s;
+    color: $text-primary;
+    box-shadow: 0 1px 3px $shadow-color;
 
     &:hover:not(.unavailable):not(.reserved) {
       transform: scale(1.1);
-      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      box-shadow: 0 0 10px #{color.adjust($primary-color, $lightness: -15%)};
     }
 
     &.available {
       background-color: $yellow-100;
-      color: white;
+      color: $white;
     }
 
     &.unavailable {
-      background-color: #f44336;
-      color: white;
+      background-color: $seat-unavailable;
+      color: $white;
       cursor: not-allowed;
     }
 
@@ -117,7 +120,7 @@
     }
 
     &.reserved {
-      background-color: #9E9E9E;
+      background-color: $seat-reserved;
       cursor: not-allowed;
     }
 
@@ -129,8 +132,8 @@
     }
 
     &.occupied {
-      background-color: #dcc337;
-      color: black;
+      background-color: $seat-occupied;
+      color: $gray-900;
       cursor: pointer;
     }
 
@@ -186,12 +189,16 @@
 
       .plus-icon {
         position: absolute;
-        color: grey;
+        color: $icon-muted;
         z-index: 6;
         font-size: 0.8rem;
         cursor: pointer;
         transition: all 0.5s ease;
         border-radius: 12px;
+
+        &:hover {
+          color: $icon-active;
+        }
       }
 
       .faPlus-container {
@@ -221,13 +228,13 @@
       .arrow-left {
         border-top: 15px solid transparent;
         border-bottom: 15px solid transparent;
-        border-right: 25px solid grey;
+        border-right: 25px solid $gray-500;
       }
 
       .arrow-right {
         border-top: 15px solid transparent;
         border-bottom: 15px solid transparent;
-        border-left: 25px solid grey;
+        border-left: 25px solid $gray-500;
       }
 
     }
@@ -255,13 +262,17 @@
 
       .minus-icon {
         position: absolute;
-        color: grey;
+        color: $icon-muted;
         z-index: 6;
         font-size: 0.8rem;
         padding-top: 7px;
         cursor: pointer;
         transition: all 0.5s ease;
         border-radius: 12px;
+
+        &:hover {
+          color: $icon-active;
+        }
       }
 
       .faMinus-container {
@@ -272,6 +283,8 @@
         height: 6.4%;
         border-radius: 7px;
         box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+
+        background: $control-bg;
       }
       .count-number {
         display: flex;
@@ -300,6 +313,8 @@
         height: 6.4%;
         border-radius: 7px;
         box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+
+        background: $control-bg;
       }
 
       .arrow-container {
@@ -317,13 +332,13 @@
       .arrow-up {
         border-left: 15px solid transparent;
         border-right: 15px solid transparent;
-        border-bottom: 25px solid grey;
+        border-bottom: 25px solid $gray-500;
       }
 
       .arrow-down {
         border-left: 15px solid transparent;
         border-right: 15px solid transparent;
-        border-top: 25px solid grey;
+        border-top: 25px solid $gray-500;
       }
     }
 
@@ -351,8 +366,10 @@
     width: 60%;
     height: 10vh;
     margin: 0 auto 0;
-    border-radius: 10px;
-    box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
+    background: $control-bg;
+    border: 1px solid $control-border;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px $control-shadow;
 
     .sub-menu-control {
 
@@ -367,11 +384,17 @@
       .menu-clicable {
         width: 14%;
         height: 90%;
-        background: white;
+        background: $gray-700;
         border-radius: 8px;
         box-shadow: 3px 0px 8px rgba(0,0,0,0.3);
         margin: 0px 2px 0px 2px;
 
+        &:hover {
+          background: $secondary-color;
+        }
+        &:active {
+          background: $secondary-dark;
+        }
       }
     }
   }
