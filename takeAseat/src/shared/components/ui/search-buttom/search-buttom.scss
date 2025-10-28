@@ -57,7 +57,6 @@
   height: 100%;
   padding-right: 15px;
   border-radius: 2vw;
-  background-color: #f5f0f0;
   box-shadow: 10px 8px 10px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -68,7 +67,6 @@
 
 .window-blur {
   z-index: 7;
-  background-color: rgba(240, 231, 236, 0.95);
   transform: translateY(100%);
   position: absolute;
   opacity: 0.8;
@@ -78,6 +76,10 @@
   left: -30px;
   bottom: -110vh;
   pointer-events: none;
+
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  /* background-color: rgba(139, 128, 135, 0.84); */
 
   .input-barr {
     pointer-events: none;
@@ -108,20 +110,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0px solid #000;
+  border: 0px solid none;
   border-radius: 2vh;
   left: 15vw;
   top: 5vh;
   transform: translateY(1000vh);
-  background-color: #fff;
   width: 70vw;
   height: 10vh;
   transition: all 0.3s ease;
   box-shadow: 10px 8px 10px 10px rgba(0, 0, 0, 0.1);
+
+  background-color: #2C2C2C;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
 }
 
 .input-barr {
-  border: 0px solid #000;
+  border: 0px solid none;
   outline: none;
   border-radius: 2vh;
   width: 100%;
@@ -130,6 +134,18 @@
   opacity: 0.6;
   font-size: 2rem;
   text-align: center;
+
+  background-color: transparent;
+  color: #F5F5F5;
+  font-size: 1.4rem;
+  text-align: center;
+  &::placeholder {
+    color: #9E9E9E;
+  }
+  &:focus {
+    border: 1px solid #FFD600;
+  }
+
 }
 
 .xmark-container {
@@ -149,10 +165,12 @@
 
 
 .xmark {
-  color: #3f51b5;
   font-size: 2.2rem;
   cursor: pointer;
   transition: all 0.3s ease;
+
+
+  color: $gray-100;
 }
 
 .search-barr-visible {
@@ -175,36 +193,41 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.5s ease;
   overflow: hidden;
+
+  background-color: #1E1E1E;
+  border: 1px solid #333333;
 }
 
 .result-item {
   padding: 12px 16px;
-  border-bottom: 1px solid #eee;
-  background: white;
-  transition: background 0.2s;
+  transition: all 0.2s;
+
+  border-bottom: 1px solid #3a3a3a;
+  background: #1E1E1E;
 
   &:hover {
-    background: #f8f8f8;
+    background: #333333;
   }
 
   h3 {
     margin: 0;
-    color: #333;
     font-size: 16px;
+    color: #FFFFFF;
   }
 
   .category {
     margin: 4px 0 0;
-    color: #666;
     font-size: 14px;
+    color: #B0B0B0;
   }
 }
 
 .no-results {
   padding: 16px;
   text-align: center;
-  color: #666;
-  background: white;
+
+  background: $white;
+  color: $gray-400;
 }
 
 .results-container-visible {

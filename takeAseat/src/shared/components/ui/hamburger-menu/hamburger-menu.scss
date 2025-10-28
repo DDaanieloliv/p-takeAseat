@@ -35,6 +35,8 @@
   overflow: hidden;
   transition: all 0.5s ease;
   pointer-events: none;
+
+  background: $gray-50;
 }
 
 .hamburger-window-active {
@@ -43,6 +45,8 @@
   height: calc(100vh - 16px);
   opacity: 1;
   pointer-events: auto;
+
+  background: $layout-bg;
 }
 
 
@@ -68,20 +72,20 @@
     display: block;
     width: 100%;
     height: 7px;
-    background: $yellow-100;
     position: absolute;
     left: 0;
     transition: all 0.3s ease;
     border-radius: 2px;
 
+
+    background: $yellow-100;
+
     &.top {
       top: var(--spacing);
     }
-
     &.middle {
       top: calc(var(--spacing) * 2 + var(--line-height));
     }
-
     &.bottom {
       top: calc(var(--spacing) * 3 + var(--line-height) * 2);
     }
@@ -91,11 +95,9 @@
     .top {
       transform: translateY(calc(var(--line-height) + var(--spacing))) rotate(45deg);
     }
-
     .middle {
       opacity: 0;
     }
-
     .bottom {
       transform: translateY(calc(-1 * (var(--line-height) + var(--spacing)))) rotate(-45deg);
     }
@@ -174,8 +176,10 @@ Altura total: 50px
   height: 100%;
   padding-right: 15px;
   border-radius: 2vw;
-  background-color: #f5f0f0;
   box-shadow: 10px 8px 10px 10px rgba(0, 0, 0, 0.1);
+
+
+  background-color: $layout-bg;
 }
 
 

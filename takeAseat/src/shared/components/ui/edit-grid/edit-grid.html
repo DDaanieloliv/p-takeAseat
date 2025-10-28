@@ -8,9 +8,6 @@
   >
   </fa-icon>
 
-  <!-- <div class="info-box-container-pencil"> -->
-  <!--   <div class="info-box-pencil">Edit Template</div> -->
-  <!-- </div> -->
 
 
   <div class="window-blur" [class.window-blur-show]="showWindow">
@@ -63,11 +60,8 @@
         <div class="grid-row-container">
 
           <div class="grid-row-wrapper">
-            <!-- 'grid' é um Array de tipo Seat[] ou seja Array<Seat[]>. -->
-            <!-- Para cada item (Seat[]) iterado no Array<Seat[]> será gerada uma grid-row. -->
             <div *ngFor="let row of grid.slice().reverse(); let r = index" class="grid-row">
 
-              <!-- Iteraremos sobre cada um dos itens (Seat) em grid-row gerando para cada um deles uma "Seat". -->
               <div *ngFor="let seat of row; let c = index"
                 class="seat"
                 [class.available]="seat.status === 'AVAILABLE'"
@@ -96,27 +90,8 @@
           ></fa-icon>
         </div>
 
-        <!-- <div class="option-name-cancel"> -->
-        <!--   Back -->
-        <!-- </div> -->
-
       </div>
 
-      <!-- <div class="menu save-changes-option" id="save-changes-option" (click)="openWarning(flagConfirmation)"> -->
-      <!---->
-      <!--   <div class="save-container" > -->
-      <!--     <fa-icon -->
-      <!--       [icon]="faFloppyDisk" -->
-      <!--       size="lg" -->
-      <!--       class="save-icon" -->
-      <!---->
-      <!--     ></fa-icon> -->
-      <!--   </div> -->
-      <!---->
-      <!--   <div class="option-name-save"> -->
-      <!--     Save -->
-      <!--   </div> -->
-      <!-- </div> -->
     </div>
 
 
@@ -128,15 +103,6 @@
       (confirm)="handleConfirm()"
     ></app-warning-popup>
 
-    <!-- <app-warning-popup -->
-    <!--   #warningPopup -->
-    <!--   [title]="'Confirm action'" -->
-    <!--   [message]="pickMessageToConfirmation(true)" -->
-    <!--   [cancelText]="'Cancel'" -->
-    <!--   [confirmText]="pickContentTextToConfirmation(true)" -->
-    <!--   (confirm)="onDiscardConfirm()" -->
-    <!--   (cancel)="onDiscardCancel()" -->
-    <!-- ></app-warning-popup> -->
 
     <div class="trash-icon-container">
       <fa-icon

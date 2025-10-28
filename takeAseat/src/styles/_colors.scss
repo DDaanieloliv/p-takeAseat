@@ -1,31 +1,80 @@
-// src/styles/_colors.scss
+// ==============================
+// 🎨 PALETA DE CORES GLOBAL
+// ==============================
 
-// Cores Primárias
-$primary-color: #3498db;
-$primary-dark: #2980b9;
-$primary-light: #5dade2;
+// --- Primárias ---
+$primary-color: #FFD600;      // Amarelo ouro – destaque principal
+$primary-light: #FFE34D;
+$primary-dark: #CCAD00;
 
-// Cores de Estado
-$success-color: #2ecc71;
-$warning-color: #f39c12;
-$error-color: #e74c3c;
-
-// Cores de Assentos
-$seat-available: #4CAF50;
-$seat-selected: #2196F3;
-$seat-occupied: #dcc337;
-$seat-unavailable: #f44336;
-$seat-reserved: #9E9E9E;
-
-// Neutras
-$white: #ffffff;
-$gray-50: #f8f9fa;
-$gray-100: #e9ecef;
-$gray-800: #343a40;
-$gray-900: #121416;
+$secondary-color: #5A5AFF;    // Azul violeta – interações secundárias
+$secondary-light: #7C7CFF;
+$secondary-dark: #4040CC;
 
 
-$yellow-100: #FFD600;
+// --- Estados (feedbacks) ---
+$success-color: #00E676;      // Verde menta (confirmações)
+$warning-color: #FFC400;      // Amarelo alerta
+$error-color: #FF5252;        // Vermelho coral
 
-$layout-bg: #2b2a2a;
-$background: #1a1a1a;
+
+// --- Assentos ---
+$seat-available: #4CAF50;     // Verde – disponível
+$seat-selected: #2196F3;      // Azul – selecionado
+$seat-occupied: #DCC337;      // Amarelo queimado – ocupado
+$seat-unavailable: #F44336;   // Vermelho – indisponível
+$seat-reserved: #9E9E9E;      // Cinza – reservado
+
+
+// --- Escala de Cinzas / Neutras ---
+$white: #FFFFFF;
+$white-ice: #F5F5F5;          // Branco gelo – texto principal claro
+
+$gray-50:  #FAFAFA;
+$gray-100: #E0E0E0;
+$gray-300: #9E9E9E;
+$gray-400: #B0B0B0;           // Texto secundário
+$gray-500: #757575;
+$gray-600: #3A3A3A;           // Bordas suaves
+$gray-700: #333333;           // Hover em componentes escuros
+$gray-800: #2C2C2C;           // Painéis / janelas internas
+$gray-900: #1E1E1E;           // Fundo principal (background base)
+
+
+// --- Cores Específicas de Layout ---
+$background: $gray-900;       // Fundo principal da aplicação
+$layout-bg: $gray-800;        // Painéis e containers internos
+$divider: $gray-600;          // Linhas divisórias / bordas
+
+
+// --- Efeitos e Overlays ---
+$overlay-dark: rgba(0, 0, 0, 0.65);   // Fundo escurecido (blur)
+$shadow-color: rgba(0, 0, 0, 0.4);    // Sombra padrão de componentes
+
+
+// --- Extras (usabilidade visual) ---
+$text-primary: $white-ice;
+$text-secondary: $gray-400;
+$text-placeholder: #9E9E9E;
+
+
+$yellow-100: $primary-color;
+
+
+
+// --- Utilitários para UI interativa ---
+$accent-color: #FFC107;       // Amarelo quente intermediário para botões / ícones de ação
+$accent-dark: #FFB300;        // Amarelo queimado, usado em hover do pencil-icon
+
+$neutral-overlay: rgba(20, 20, 20, 0.75); // Fundo escuro translúcido (substitui #f5f0f0 do blur)
+$panel-surface: #242424;      // Fundo suave para o painel interno de edição
+
+$control-bg: #2E2E2E;         // Fundo de containers de controle (rows/columns)
+$control-hover: #3A3A3A;      // Hover leve sobre controles
+$control-border: #444;        // Bordas de containers
+$control-shadow: rgba(0, 0, 0, 0.25); // Sombras internas suaves
+
+$icon-muted: #9E9E9E;         // Ícones desabilitados
+$icon-active: $primary-color; // Ícones ativos (faPencil, faTrash, etc.)
+$icon-danger: $error-color;   // Ícones de exclusão
+
