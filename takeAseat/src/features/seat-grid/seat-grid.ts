@@ -4,7 +4,7 @@ import { GridService_Observable } from '../../shared/services/grid-state';
 import { Subscription } from 'rxjs';
 // import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 // import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-import { faXmark, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faXmark, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api-service';
 import { GridDTO } from '../../core/model/fetch/grid-dto';
@@ -13,18 +13,19 @@ import { Seat } from '../../core/model/Seat';
 import { PersonData } from '../../core/model/Person';
 import { FieldError } from '../../shared/components/ui/form-ui/form-error-handler/FieldError';
 import { FormComponent } from '../../shared/components/ui/form-ui/form-component/form-component';
-
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-seat-grid',
   standalone: true,
-  imports: [CommonModule, FormComponent],
+  imports: [CommonModule, FormComponent, FaIconComponent],
   templateUrl: './seat-grid.html',
   styleUrls: ['./seat-grid.scss']
 })
 export class SeatGridComponent {
 
   faXmark : IconDefinition = faXmark;
+  faUser : IconDefinition = faUser;
 
   constructor(
     private gridObservable: GridService_Observable,

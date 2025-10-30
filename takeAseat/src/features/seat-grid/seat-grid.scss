@@ -98,6 +98,12 @@
     color: $text-primary;
     box-shadow: 0 1px 3px $shadow-color;
 
+    .user-icon {
+      color: $background;
+      font-size: 1.2rem;
+    }
+
+
     &:hover:not(.unavailable):not(.reserved) {
       transform: scale(1.1);
       box-shadow: 0 0 10px #{color.adjust($primary-color, $lightness: -15%)};
@@ -400,30 +406,60 @@
   }
 
 
+.column-header {
+  /* margin-bottom: 5px; */
+}
+
+.empty-corner {
+  width: 8px; // Mesma largura dos números das linhas
+  margin-right: 12px;
+}
+
+.column-number {
+  width: 38.2px; // Mesma largura dos assentos
+  height: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: $background;
+}
+
+.row-number {
+  width: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  color: $background;
+  text-align: center;
+  margin-right: 5px;
+  align-self: center;
+}
+
+
   /* Condição	Significa...
   min-width: 801px	A tela estar mais larga que 800px
   max-width: 600px	A tela estar mais estreita que 600px
   min-height: 700px	A tela estar mais alta que 700px
   max-height: 620px	A tela estar mais baixa que 620px */
-  @media (max-height: 451px) {
+@media (max-height: 451px) {
 
-    .seat-grid {
-      .seat {
-        width: 2.2vw;
-        height: 4.5vh;
-      }
-    }
-
-  }
-
-  @media (max-height: 355px) {
-
-    .seat-grid {
-      .seat {
-        width: 2.2vw;
-        height: 4vh;
-      }
+  .seat-grid {
+    .seat {
+      width: 2.2vw;
+      height: 4.5vh;
     }
   }
+
+}
+
+@media (max-height: 355px) {
+
+  .seat-grid {
+    .seat {
+      width: 2.2vw;
+      height: 4vh;
+    }
+  }
+}
 
 }

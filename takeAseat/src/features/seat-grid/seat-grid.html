@@ -11,11 +11,22 @@
   ></app-form-component>
 </div>
 
-
 <div class="seat-grid-container" [class.grid-position-after-selection]="!is_visibleHandleSelection">
   <div class="seat-grid">
     <div class="grid-wrapper">
+      <!-- Linha dos números das colunas (igual às linhas, mas na horizontal) -->
+      <div class="grid-row column-header">
+        <span class="empty-corner"></span> <!-- Espaço vazio para alinhar com os números das linhas -->
+        <div *ngFor="let col of grid[0]; let c = index" class="column-number">
+          {{c + 1}}
+        </div>
+      </div>
+
+      <!-- Grid principal -->
       <div *ngFor="let row of grid.slice().reverse(); let r = index" class="grid-row">
+        <!-- Número da linha -->
+
+        <!-- Assentos -->
         <div *ngFor="let seat of row; let c = index"
           class="seat"
           [class.available]="seat.status === 'AVAILABLE'"
@@ -24,11 +35,46 @@
           [class.occupied]="seat.status === 'OCCUPIED'"
           [class.reserved]="!seat.free"
           (click)="toggleSeat(seat)"
-          [title]="'Row ' + (grid.length - r + 1) + ', Seat ' + (c + 1)"
+          [title]="'Row ' + (grid.length - r ) + ', Seat ' + (c + 1)"
         >
-          {{ grid.length - r }}-{{ c + 1 }}
+          <fa-icon
+            [icon]="faUser"
+            size="lg"
+            class="user-icon"
+          ></fa-icon>
         </div>
+        <span class="row-number">{{grid.length - r}}</span>
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- <div class="seat-grid-container" [class.grid-position-after-selection]="!is_visibleHandleSelection"> -->
+<!--   <div class="seat-grid"> -->
+<!--     <div class="grid-wrapper"> -->
+<!--       <div *ngFor="let row of grid.slice().reverse(); let r = index" class="grid-row"> -->
+<!--         <div *ngFor="let seat of row; let c = index" -->
+<!--           class="seat" -->
+<!--           [class.available]="seat.status === 'AVAILABLE'" -->
+<!--           [class.unavailable]="seat.status === 'UNAVAILABLE'" -->
+<!--           [class.selected]="seat.status === 'SELECTED'" -->
+<!--           [class.occupied]="seat.status === 'OCCUPIED'" -->
+<!--           [class.reserved]="!seat.free" -->
+<!--           (click)="toggleSeat(seat)" -->
+<!--           [title]="'Row ' + (grid.length - r + 1) + ', Seat ' + (c + 1)" -->
+<!--         > -->
+<!--           <fa-icon -->
+<!--             [icon]="faUser" -->
+<!--             size="lg" -->
+<!--             class="user-icon" -->
+<!--           ></fa-icon> -->
+<!--         </div> -->
+<!--         <span class="span">{{r + 1}}</span> -->
+<!--       </div> -->
+<!--     </div> -->
+<!--   </div> -->
+<!-- </div> -->
+
+          <!-- {{ grid.length - r }}-{{ c + 1 }} -->
+
