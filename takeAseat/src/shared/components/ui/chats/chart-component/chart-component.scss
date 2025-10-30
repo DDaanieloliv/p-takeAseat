@@ -11,13 +11,22 @@
   display: flex;
   flex-direction: column;
   color: $white;
+  justify-content: center;
+  align-items: center;
 
+  .label-content {
+    display: flex;
+    padding: 7px;
+    color: rgba(200, 200, 200, 0.5);
+    font-weight: bold;
+  }
 
   canvas {
     width: 100%;
     height: 100%;
     color: $white;
   }
+
 
   .chart-loading {
     display: flex;
