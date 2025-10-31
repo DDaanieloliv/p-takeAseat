@@ -68,14 +68,14 @@
 
 .config-menu {
   position: absolute;
-  right: 110%;
+  right: 0%;
   bottom: 0%;
   width: 0;
   height: 100%;
   opacity: 0;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 100;
+  z-index: 1;
   overflow: hidden;
   transform: translateX(200%);
   transition: all 0.5s ease;
@@ -86,11 +86,27 @@
 
 .config-menu-animation {
   transform: translateX(0);
-  width: 50vw;
+
+  width: calc(100vw - 16px);
   opacity: 1;
   pointer-events: auto;
+  height: calc(100vh - 16px);
+
+
+  .gear-icon {
+    z-index: 2;
+  }
 }
 
+.gear-icon-on-config-window {
+  color: $yellow-100;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  position: fixed;
+  right: 30px;
+  bottom: 30px
+}
 
 .menu-item {
   display: block;
@@ -101,9 +117,6 @@
   text-align: left;
   cursor: pointer;
 
-  &:hover {
-    background: $layout-bg;
-  }
 }
 
 

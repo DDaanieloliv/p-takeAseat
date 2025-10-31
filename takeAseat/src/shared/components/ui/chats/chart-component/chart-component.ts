@@ -1,16 +1,13 @@
 import { Component, OnDestroy, ElementRef, ViewChild, Inject, PLATFORM_ID, AfterViewInit, Input } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
+import { ChartType } from '../charts-enum/ChartType';
+
+
+
 
 // Registrar todos os componentes do Chart.js apenas uma vez
 let chartJsRegistered = false;
-
-export enum ChartType {
-  Rooms_capacity = 'Rooms_capacity',
-  Current_room_capacity = 'Curren_rooms_capacity',
-  Rows_capacity = 'Row_capacity'
-}
-
 
 @Component({
   selector: 'app-chart-component',

@@ -77,11 +77,12 @@
   .grid-row {
     display: flex;
     margin-bottom: 5px;
+    justify-content: center;
 
     .span {
       display: flex;
       align-self: center;
-      padding: 4px;
+      padding: 0px 14px 0px 7px;
       color: $gray-400;
     }
 

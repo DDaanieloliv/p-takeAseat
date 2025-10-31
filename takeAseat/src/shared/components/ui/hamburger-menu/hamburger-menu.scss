@@ -41,7 +41,7 @@
 
 .hamburger-window-active {
   transform: translateX(0);
-  width: 10vw;
+  width: calc(100vw - 142px);
   height: calc(100vh - 16px);
   opacity: 1;
   pointer-events: auto;
