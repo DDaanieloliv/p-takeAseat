@@ -2,8 +2,7 @@ import { Component, Input, Output, EventEmitter, Inject, PLATFORM_ID } from '@an
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { GridService_Observable } from '../../shared/services/grid-state';
 import { Subscription } from 'rxjs';
-// import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-// import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
 import { faUser, faXmark, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api-service';
@@ -25,6 +24,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 export class SeatGridComponent {
 
   faXmark : IconDefinition = faXmark;
+  faUserRegular : IconDefinition = faUserRegular;
   faUser : IconDefinition = faUser;
 
   constructor(

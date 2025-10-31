@@ -78,6 +78,13 @@
     display: flex;
     margin-bottom: 5px;
 
+    .span {
+      display: flex;
+      align-self: center;
+      padding: 4px;
+      color: $gray-400;
+    }
+
     &:last-child {
       margin-bottom: 0;
     }
@@ -406,34 +413,6 @@
   }
 
 
-.column-header {
-  /* margin-bottom: 5px; */
-}
-
-.empty-corner {
-  width: 8px; // Mesma largura dos números das linhas
-  margin-right: 12px;
-}
-
-.column-number {
-  width: 38.2px; // Mesma largura dos assentos
-  height: 20px;
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  font-weight: bold;
-  color: $background;
-}
-
-.row-number {
-  width: 25px;
-  font-size: 12px;
-  font-weight: bold;
-  color: $background;
-  text-align: center;
-  margin-right: 5px;
-  align-self: center;
-}
 
 
   /* Condição	Significa...
