@@ -13,7 +13,7 @@ import { take } from 'rxjs/operators';
 import { Seat } from '../../../../core/model/Seat';
 import { SafeStorageService } from '../../../../core/services/localStorageService/storage-service';
 import { GridDTO } from '../../../../core/model/fetch/grid-dto';
-import { GridUpdatedDTO } from '../../../../core/model/fetch/seatsUpdated-dto';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { ApiService } from '../../../../core/services/api-service';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { CurrentGrid } from '../../../../core/model/fetch/grid-entity-dto';
@@ -31,6 +31,8 @@ import { CurrentGrid } from '../../../../core/model/fetch/grid-entity-dto';
 })
 export class EditGrid {
 
+
+
   constructor(
     private gridObservable: GridService_Observable,
     private safeStorage: SafeStorageService,
@@ -44,7 +46,7 @@ export class EditGrid {
   public faFloppyDisk : IconDefinition  = faFloppyDisk;
   public faReply : IconDefinition  = faReply;
   public faTrash : IconDefinition  = faTrash;
-
+  public faUser : IconDefinition = faUser
 
   // Estabelecendo cominicação Imperativa, ou seja sem ser apenas pelo template.
   // Permitindo acessar métodos, propriedades publicas do filho e ter o controle programático

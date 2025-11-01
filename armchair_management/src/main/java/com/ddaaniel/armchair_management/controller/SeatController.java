@@ -5,13 +5,13 @@ import com.ddaaniel.armchair_management.controller.service.IPersonService;
 import com.ddaaniel.armchair_management.controller.service.ISeatService;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
+import com.ddaaniel.armchair_management.model.record.ChartsResponceDTO;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
 import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
 import com.ddaaniel.armchair_management.model.record.MessageResponseDTO;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.SeatsUpdatedDTO;
-import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +67,9 @@ public class SeatController {
     return ResponseEntity.ok(message);
   }
 
-  @GetMapping("/sharts")
-  public ResponseEntity<ShartsResponceDTO> sharts() {
-    return ResponseEntity.ok(serviceSeat.sharts());
+  @GetMapping("/charts")
+  public ResponseEntity<ChartsResponceDTO> charts() {
+    return ResponseEntity.ok(serviceSeat.charts());
   }
 
   @GetMapping("/grid")

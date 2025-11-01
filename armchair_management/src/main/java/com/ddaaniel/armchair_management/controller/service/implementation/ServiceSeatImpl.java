@@ -14,7 +14,7 @@ import com.ddaaniel.armchair_management.model.enums.SeatType;
 import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
 import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
-import com.ddaaniel.armchair_management.model.record.ShartsResponceDTO;
+import com.ddaaniel.armchair_management.model.record.ChartsResponceDTO;
 import com.ddaaniel.armchair_management.model.repository.IGridRepository;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
@@ -219,7 +219,7 @@ public class ServiceSeatImpl implements ISeatService {
   }
 
   @Override
-  public ShartsResponceDTO sharts() {
+  public ChartsResponceDTO charts() {
     Integer seatsOccupied = seatRepository.countSeatsOccupied();
     Integer countAllSeats = seatRepository.countAllSeats();
     Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied();
@@ -228,7 +228,7 @@ public class ServiceSeatImpl implements ISeatService {
 
     Map<String, Long> occupancyByRow = new HashMap<>()/* seatRepository.countOccupiedByRow() */;
 
-    ShartsResponceDTO dto = new ShartsResponceDTO(
+    ChartsResponceDTO dto = new ChartsResponceDTO(
         percentOccupation,
         seatsUnoccupied,
         occupancyByRow);

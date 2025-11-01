@@ -86,6 +86,8 @@
   justify-content: center;
   flex-direction: column;
   width: 100%;
+  margin-bottom: 5px;
+
 
   .grid-container {
     display: inline-block;
@@ -95,10 +97,19 @@
   .grid-row {
     position: relative;
     display: flex;
+    margin-top: 5px;
     margin-bottom: 5px;
+    justify-content: center;
 
-    &:last-child {
-      margin-bottom: 0;
+    /* &:last-child { */
+    /*   margin-bottom: 5px; */
+    /* } */
+
+    .span {
+      display: flex;
+      align-self: center;
+      color: $gray-400;
+      padding: 0px 7px 0px 7px;
     }
   }
 
@@ -166,15 +177,20 @@
     padding: 10px;
   }
 
-  .grid-row {
-    margin-top: 5px;
-    margin-bottom: 5px;
+  /* .grid-row { */
+  /*   margin-top: 5px; */
+  /*   margin-bottom: 5px; */
+  /**/
+  /*   &:last-child { */
+  /*     margin-bottom: 0; */
+  /*   } */
+  /* } */
 
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
+}
 
+.user-icon {
+  color: $background;
+  font-size: 0.8rem;
 }
 
 .control-container {
@@ -435,7 +451,8 @@
   opacity: 0.98;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: $neutral-overlay;
+  /* background-color: $neutral-overlay; */
+  background-color: rgba(0, 0, 0, 0.75);
 
   .xmark {
     pointer-events: none;
