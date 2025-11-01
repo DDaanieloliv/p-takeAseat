@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { ChartComponent } from '../../../../../shared/components/ui/chats/chart-component/chart-component';
+import { ChartRowsCapacity } from '../../../../../shared/components/chats/chart-rows-capacity/chart-rows-capacity';
+
 
 @Component({
   selector: 'app-layout-bottom-right',
   standalone: true,
-  imports: [ChartComponent],
+  imports: [ChartRowsCapacity],
   templateUrl: './layout-bottom-right.html',
   styleUrl: './layout-bottom-right.scss'
 })

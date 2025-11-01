@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { ChartComponent } from '../../../../../shared/components/ui/chats/chart-component/chart-component';
+import { ChartCurrentCapacity } from '../../../../../shared/components/chats/chart-current-capacity/chart-current-capacity';
+
+
 
 @Component({
   selector: 'app-layout-top-right',
   standalone: true,
-  imports: [ChartComponent],
+  imports: [ChartCurrentCapacity],
   templateUrl: './layout-top-right.html',
   styleUrl: './layout-top-right.scss'
 })

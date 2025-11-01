@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { Seat } from '../../../../../../core/model/Seat';
+import { Seat } from '../../../../../core/model/Seat';
+
 
 @Component({
   selector: 'app-seats-colection',

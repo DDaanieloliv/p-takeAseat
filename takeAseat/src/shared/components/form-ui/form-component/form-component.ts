@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FieldError } from '../form-error-handler/FieldError';
-import { PersonData } from '../../../../../core/model/Person';
-import { SafeStorageService } from '../../../../../core/services/localStorageService/storage-service';
-import { Seat } from '../../../../../core/model/Seat';
-import { GridDTO } from '../../../../../core/model/fetch/grid-dto';
-import { GridService_Observable } from '../../../../services/grid-state';
-import { ApiService } from '../../../../../core/services/api-service';
+import { PersonData } from '../../../../core/model/Person';
+import { SafeStorageService } from '../../../../core/services/localStorageService/storage-service';
+import { Seat } from '../../../../core/model/Seat';
+import { GridDTO } from '../../../../core/model/fetch/grid-dto';
+import { GridService_Observable } from '../../../services/grid-state';
+import { ApiService } from '../../../../core/services/api-service';
 import { CommonModule } from '@angular/common';
 import { SeatsColection } from '../seatsSelectedComponent/seats-colection/seats-colection';
 
@@ -22,20 +22,20 @@ export class FormComponent {
     private gridObservable: GridService_Observable,
     private safeStorage: SafeStorageService,
     private api: ApiService,
-  ) {}
+  ) { }
 
 
   // @Input()
-  public doNotShould_click : boolean = true;
+  public doNotShould_click: boolean = true;
 
   @Input()
-  public personData : PersonData = { name: '', cpf: '' };
+  public personData: PersonData = { name: '', cpf: '' };
 
   @Input()
-  public selectedSeatList : Array<Seat> = [];
+  public selectedSeatList: Array<Seat> = [];
 
   @Input()
-  public is_visibleHandleSelection : boolean = true;
+  public is_visibleHandleSelection: boolean = true;
 
   @Input()
   public grid: Array<Seat[]> = [];
@@ -73,7 +73,7 @@ export class FormComponent {
    * Compartilha o Grid atualizado com o Observable para o compartilhar com outro subscriber
    *
    * */
-  private shareGridWithSubscribers(grid : Array<Seat[]>) {
+  private shareGridWithSubscribers(grid: Array<Seat[]>) {
     this.gridObservable.updateGrid(grid);
   }
 
@@ -84,7 +84,7 @@ export class FormComponent {
    * vazia. E caso vazia defini o valor da propriedade is_visibleHandleSelection para true
    *
    * */
-  public checkList() : boolean | void {
+  public checkList(): boolean | void {
     if (this.selectedSeatList.length !== 0) {
       this.emitIsVisibleHandleSelection(false);
       return this.is_visibleHandleSelection = false;
@@ -105,7 +105,7 @@ export class FormComponent {
    *
    * */
   public confirm(): void {
-    const seat : Seat | undefined = this.selectedSeatList.at(0);
+    const seat: Seat | undefined = this.selectedSeatList.at(0);
     if (seat) {
       if (seat.status === 'SELECTED') {
         seat.status = 'OCCUPIED';
@@ -166,13 +166,13 @@ export class FormComponent {
      * adote a programação funcional.
      * */
     this.selectedSeatList.forEach
-      ((seat : Seat) => {
+      ((seat: Seat) => {
         seat.selected = !seat.selected;
         seat.status = seat.selected ? 'SELECTED' : 'AVAILABLE';
-      } );
+      });
 
     this.selectedSeatList = [];
-    this.emitSelectedSeatList( [] );
+    this.emitSelectedSeatList([]);
 
     console.log(this.selectedSeatList);
 

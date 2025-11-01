@@ -1,0 +1,41 @@
+
+@use 'colors' as *;
+
+.chart-container {
+  width: 100%;
+  height: 100%;
+  padding: 0px 5px 0px 5px;
+  background: $layout-bg;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  color: $white;
+  justify-content: center;
+  align-items: center;
+
+  .label-content {
+    display: flex;
+    padding: 5px;
+    color: rgba(200, 200, 200, 0.5);
+    font-weight: bold;
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    color: $white;
+  }
+
+
+  .chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: $white;
+    font-style: italic;
+  }
+}

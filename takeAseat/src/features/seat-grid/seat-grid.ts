@@ -10,8 +10,8 @@ import { GridDTO } from '../../core/model/fetch/grid-dto';
 import { SafeStorageService } from '../../core/services/localStorageService/storage-service';
 import { Seat } from '../../core/model/Seat';
 import { PersonData } from '../../core/model/Person';
-import { FieldError } from '../../shared/components/ui/form-ui/form-error-handler/FieldError';
-import { FormComponent } from '../../shared/components/ui/form-ui/form-component/form-component';
+import { FieldError } from '../../shared/components/form-ui/form-error-handler/FieldError';
+import { FormComponent } from '../../shared/components/form-ui/form-component/form-component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
