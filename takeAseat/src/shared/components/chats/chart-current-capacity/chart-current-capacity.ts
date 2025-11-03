@@ -2,13 +2,13 @@ import { Component, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@angular/
 import { isPlatformBrowser } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 import { ApiService } from '../../../../core/services/api-service';
+import { ChartDTO } from '../../../../core/model/chartModel/chartDTO';
 
 
 
 
-
-
-let chartJsRegistered = false;
+let chartJsRegistered
+  = false;
 
 @Component({
   selector: 'app-chart-current-capacity',
@@ -23,7 +23,7 @@ export class ChartCurrentCapacity {
     @Inject(PLATFORM_ID)
     private platformId: any,
 
-    private api : ApiService
+    private api: ApiService
   ) {
 
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -40,8 +40,9 @@ export class ChartCurrentCapacity {
 
   private isBrowser: boolean;
 
-  // Atributo lançado pela API
-  public seatsFree: number | null = null;
+  private chartsData: ChartDTO | null = null;
+
+  public freeSeats : number = 0;
 
 
   ngAfterViewInit(): void {
@@ -49,10 +50,22 @@ export class ChartCurrentCapacity {
       // Pequeno delay para garantir que o DOM esteja pronto
       setTimeout(() => {
         this.createChart();
-      }, 0);
+      }, 100);
     }
   }
 
+
+  async ngOnInit(): Promise<void> {
+
+    const chartsData = await this.api.charts();
+    this.chartsData = chartsData;
+    this.freeSeats = chartsData.seatsUnoccupied;
+
+    console.log("Dados do gráfico: ");
+    console.log(chartsData);
+
+    this.createChart();
+  }
 
   ngOnDestroy(): void {
     this.destroyChart();
@@ -71,9 +84,7 @@ export class ChartCurrentCapacity {
     // Destruir chart existente antes de criar um novo
     this.destroyChart();
 
-    const chartsData = /*await*/ this.api.charts();
-    console.log("Dados do gráfico: ")
-    console.log(chartsData)
+    if (!this.chartsData) return
 
     const ctx = this.chartCurrentRoomCanvas.nativeElement.getContext('2d');
     if (!ctx) {
@@ -83,49 +94,51 @@ export class ChartCurrentCapacity {
 
     try {
       // Porcentagem de ocupação lançada pela API
-      const occupancy = 75;
-      this.chart_current_room_capacity = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Ocupado', 'Livre'],
-          datasets: [{
-            data: [occupancy, 100 - occupancy],
-            backgroundColor: [
-              '#FFD600',
-              'rgba(200, 200, 200, 0.3)'
-            ],
-            borderColor: [
-              '#FFD600',
-              'rgba(200, 200, 200, 0.5)'
-            ],
-            borderWidth: 2,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '0%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 15,
-                usePointStyle: true,
-                font: {
-                  size: 11
+      const occupancy = this.chartsData?.percentOccupied;
+        this.chart_current_room_capacity = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Ocupado', 'Livre'],
+            datasets: [{
+              data: [occupancy, 100 - occupancy],
+              backgroundColor: [
+                '#FFD600',
+                'rgba(200, 200, 200, 0.3)'
+              ],
+              borderColor: [
+                '#FFD600',
+                'rgba(200, 200, 200, 0.5)'
+              ],
+              borderWidth: 2,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '0%',
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 15,
+                  usePointStyle: true,
+                  font: {
+                    size: 11
+                  }
                 }
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.label}: ${context.parsed}%`;
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.label}: ${context.parsed}%`;
+                  }
                 }
-              }
-            },
+              },
+            }
           }
-        }
-      });
+        });
+
+
     } catch (error) {
       console.error('Error creating chart:', error);
     }

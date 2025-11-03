@@ -1,6 +1,6 @@
 import { RowOccupacy } from "./rowOccupacyDTO";
 
-export interface Chart {
+export interface ChartDTO {
   percentOccupied : number,
   seatsUnoccupied : number,
   rowOccupacyDTO : Array<RowOccupacy>

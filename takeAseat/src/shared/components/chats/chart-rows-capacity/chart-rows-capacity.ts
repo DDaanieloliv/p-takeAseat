@@ -1,10 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { ChartDTO } from '../../../../core/model/chartModel/chartDTO';
+import { ApiService } from '../../../../core/services/api-service';
 
 
 // Registrar todos os componentes do Chart.js apenas uma vez
-let chartJsRegistered = false;
+let chartJsRegistered
+  = false;
 
 @Component({
   selector: 'app-chart-rows-capacity',
@@ -18,7 +21,10 @@ export class ChartRowsCapacity {
   private isBrowser: boolean;
 
   constructor(
-    @Inject(PLATFORM_ID) private platformId: any,
+    @Inject(PLATFORM_ID)
+    private platformId: any,
+    private api: ApiService
+
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
 
@@ -194,6 +200,47 @@ export class ChartRowsCapacity {
   }
 
 
+  private chartsData: ChartDTO | null = null;
+
+  async ngOnInit(): Promise<void> {
+
+    const chartsData = await this.api.charts();
+    this.chartsData = chartsData;
+
+    console.log("Dados do gráfico: ");
+    console.log(chartsData);
+
+    this.createChart();
+  }
+
+
+  private generateSomething() {
+    const data = {
+      labels: [] as number[],
+      values: [] as number[],
+      colors: [] as string[]
+    };
+
+    this.chartsData?.rowOccupacyDTO.forEach(element => {
+      data.labels.push(element.fileira)
+      data.values.push(element.taxaDesocupacaoPercentual);
+    });
+
+    // if (!this.chartsData) return true;
+    // for (let i = 0; i < data.labels.length; i++) {
+    //
+    //   if (data.values.at(i) < 30) {
+    //     colors.push('rgba(76, 175, 80, 0.8)');    // Verde (baixa ocupação)
+    //   } else if (occupancy < 70) {
+    //     colors.push('rgba(255, 193, 7, 0.8)');    // Amarelo (média ocupação)
+    //   } else {
+    //     colors.push('rgba(244, 67, 54, 0.8)');    // Vermelho (alta ocupação)
+    //   }
+    //
+    // }
+  }
+
+
   // Método para gerar dados de exemplo para fileiras
   private generateRowData(count: number): { labels: string[], values: number[], colors: string[] } {
     const labels: string[] = [];
@@ -206,13 +253,6 @@ export class ChartRowsCapacity {
       values.push(occupancy);
 
       // Cores baseadas na ocupação
-      if (occupancy < 30) {
-        colors.push('rgba(76, 175, 80, 0.8)');    // Verde (baixa ocupação)
-      } else if (occupancy < 70) {
-        colors.push('rgba(255, 193, 7, 0.8)');    // Amarelo (média ocupação)
-      } else {
-        colors.push('rgba(244, 67, 54, 0.8)');    // Vermelho (alta ocupação)
-      }
     }
 
     return { labels, values, colors };
