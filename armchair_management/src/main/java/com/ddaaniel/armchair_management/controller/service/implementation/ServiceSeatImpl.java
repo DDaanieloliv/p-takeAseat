@@ -1,6 +1,5 @@
 package com.ddaaniel.armchair_management.controller.service.implementation;
 
-import com.ddaaniel.armchair_management.controller.exception.AssentoInvalidoException;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;
 import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
 import com.ddaaniel.armchair_management.controller.exception.ValidationException;
@@ -11,7 +10,7 @@ import com.ddaaniel.armchair_management.model.Person;
 
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.enums.SeatType;
-import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
+import com.ddaaniel.armchair_management.model.record.RowOccupacyDTO;
 import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ChartsResponceDTO;
@@ -27,10 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -66,7 +63,6 @@ public class ServiceSeatImpl implements ISeatService {
 
   }
 
-
   // listando status de todas as poltronas
   @Override
   public List<SeatResponseDTO> listStatusOfAllSeats() {
@@ -83,7 +79,6 @@ public class ServiceSeatImpl implements ISeatService {
 
     return seatMapper.toDTO(seat);
   }
-
 
   @Transactional
   @Override
@@ -102,7 +97,6 @@ public class ServiceSeatImpl implements ISeatService {
         .build();
     allocating(seat, person);
   }
-
 
   @Override
   @Transactional
@@ -123,7 +117,8 @@ public class ServiceSeatImpl implements ISeatService {
           Seat seat = seatOpt.get();
           seat.setFree(seatDTO.getFree());
           seat.setStatus(seatDTO.getStatus());
-          if (seatDTO.getPerson() != null && seatDTO.getPerson().getCpf() != null && seatDTO.getPerson().getName() != null) {
+          if (seatDTO.getPerson() != null && seatDTO.getPerson().getCpf() != null
+              && seatDTO.getPerson().getName() != null) {
 
             // Person person = seatDTO.getPerson();
             // String cleanCPF = person.getCpf().replaceAll("\\D", "");
@@ -134,7 +129,6 @@ public class ServiceSeatImpl implements ISeatService {
           }
           seatsToSave.add(seat);
         } else {
-
 
           // Cria novo assento com currentGrid
           Seat newSeat = Seat.builder()
@@ -163,7 +157,6 @@ public class ServiceSeatImpl implements ISeatService {
     cleanupOrphanedSeats(gridId, seatGridDTO);
   }
 
-
   private void cleanupOrphanedSeats(UUID gridId, List<List<SeatDTO>> newGrid) {
     List<Seat> existingSeats = seatRepository.findSeatsByGridId(gridId);
     Set<String> validPositions = new HashSet<String>();
@@ -185,8 +178,6 @@ public class ServiceSeatImpl implements ISeatService {
       }
     }
   }
-
-
 
   private Seat getSeatFromPosition(Integer row, Integer column) {
     return seatRepository.findByPosition(row, column)
@@ -222,16 +213,32 @@ public class ServiceSeatImpl implements ISeatService {
   public ChartsResponceDTO charts() {
     Integer seatsOccupied = seatRepository.countSeatsOccupied();
     Integer countAllSeats = seatRepository.countAllSeats();
+
     Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied();
 
     Float percentOccupation = seatsOccupied * 100.0f / countAllSeats;
 
-    Map<String, Long> occupancyByRow = new HashMap<>()/* seatRepository.countOccupiedByRow() */;
+    List<RowOccupacyDTO> rowList = seatRepository.getOccupacyByRow();
+    List<RowOccupacyDTO> occupacyByRow = new ArrayList<RowOccupacyDTO>();
 
-    ChartsResponceDTO dto = new ChartsResponceDTO(
-        percentOccupation,
-        seatsUnoccupied,
-        occupancyByRow);
+    for (RowOccupacyDTO rowOccupacyDTO : rowList) {
+
+      var row = RowOccupacyDTO.builder()
+          .fileira(rowOccupacyDTO.getFileira())
+          .total_assentos(rowOccupacyDTO.getTotal_assentos())
+          .assentos_livre(rowOccupacyDTO.getAssentos_livre())
+          .taxa_ocupacao_percentual(rowOccupacyDTO.getTaxa_ocupacao_percentual())
+          .build();
+
+      occupacyByRow.add(row);
+    }
+
+    ChartsResponceDTO dto = ChartsResponceDTO.builder()
+        .percentOccupiedFloat(percentOccupation)
+        .seatsUnoccupied(seatsUnoccupied)
+        .rowOccupacyDTO(occupacyByRow)
+        .build();
+
     return dto;
   }
 

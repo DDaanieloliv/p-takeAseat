@@ -1,10 +1,18 @@
 package com.ddaaniel.armchair_management.model.record;
 
-import java.util.Map;
+import java.util.List;
 
-public record ChartsResponceDTO (
-  Float percentOccupiedFloat,
-  Integer seatsUnoccupied,
-  Map<String, Long> occupacyByRow) {
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Builder
+@Getter
+@Setter
+public class ChartsResponceDTO {
+
+  public Float percentOccupiedFloat;
+  public Integer seatsUnoccupied;
+  public List<RowOccupacyDTO> rowOccupacyDTO;
 
 }

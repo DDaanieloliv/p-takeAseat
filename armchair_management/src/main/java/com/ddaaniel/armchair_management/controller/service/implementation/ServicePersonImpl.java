@@ -56,14 +56,14 @@ public class ServicePersonImpl implements IPersonService {
 
 
 
-  private void positionIsValid(Integer position) {
-    var entity = gridRepository.isCurrentGrid().get();
-    var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
-
-    if (position <= 0 || position > totalSeats) {   // Verifica se é um parâmetro válido
-      throw new AssentoInvalidoException("O assento informado é inválido.");
-    }
-  }
+  // private void positionIsValid(Integer position) {
+  //   var entity = gridRepository.isCurrentGrid().get();
+  //   var totalSeats = entity.getRowNumber() * entity.getColumnNumber();
+  //
+  //   if (position <= 0 || position > totalSeats) {   // Verifica se é um parâmetro válido
+  //     throw new AssentoInvalidoException("O assento informado é inválido.");
+  //   }
+  // }
 
   private Seat findSeat(Integer row, Integer column) {
     return iSeatRepository.findByPosition(row, column)

@@ -1,6 +1,7 @@
 package com.ddaaniel.armchair_management.model.repository;
 
 import com.ddaaniel.armchair_management.model.Seat;
+import com.ddaaniel.armchair_management.model.record.RowOccupacyDTO;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,12 +15,29 @@ import java.util.UUID;
 public interface ISeatRepository extends JpaRepository<Seat, UUID> {
 
 
+  @Query(value =
+    """
+    SELECT
+      tb_seats.seat_row as fileira,
+      COUNT(tb_seats.seat_row) as total_assentos,
+      COUNT( CASE WHEN status != 'AVAILABLE' OR free = false THEN 1 END ) as assentos_livre,
+      ROUND(
+        (COUNT( CASE WHEN status != 'AVAILABLE' OR free = false THEN 1 END ) * 100.0 / COUNT(*)), 2
+      ) as taxa_ocupacao_percentual
+    FROM tb_seats
+    GROUP BY tb_seats.seat_row
+    ORDER BY tb_seats.seat_row;
+    """,
+  nativeQuery = true)
+  List<RowOccupacyDTO> getOccupacyByRow();
+
   void deleteById(UUID seatIdToDelete);
 
   @Query(value = """
     SELECT * FROM tb_seats
     WHERE tb_seats.grid_id = ?1
-    ORDER BY tb_seats.seat_row ASC, tb_seats.seat_column ASC;""",
+    ORDER BY tb_seats.seat_row ASC, tb_seats.seat_column ASC;
+    """,
     nativeQuery = true)
   List<Seat> findSeatsByGridId(UUID grid_uuid);
 
