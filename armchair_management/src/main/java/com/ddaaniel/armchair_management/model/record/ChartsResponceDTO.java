@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class ChartsResponceDTO {
 
-  public Float percentOccupiedFloat;
+  public Float percentOccupied;
   public Integer seatsUnoccupied;
   public List<RowOccupacyDTO> rowOccupacyDTO;
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { GridDTO } from '../model/fetch/grid-dto';
 import { GridUpdatedDTO } from '../model/fetch/seatsUpdated-dto';
 import { CurrentGrid } from '../model/fetch/grid-entity-dto';
+import { Chart } from '../model/chartModel/chartDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class ApiService {
     const data = await res.json();
     return data;
   }
+
 
   public async updateGrid(dto: GridDTO): Promise<GridDTO> {
     try {
@@ -56,4 +58,13 @@ export class ApiService {
       throw error;
     }
   }
+
+
+  public async charts() : Promise<Chart> {
+
+      const response  = await fetch('http://localhost:8080/seats/charts');
+      const data = await response.json();
+      return data as Chart;
+  }
+
 }

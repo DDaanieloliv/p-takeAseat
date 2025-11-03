@@ -1,9 +1,14 @@
 import { Component, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
+import { ApiService } from '../../../../core/services/api-service';
+
+
+
+
+
 
 let chartJsRegistered = false;
-
 
 @Component({
   selector: 'app-chart-current-capacity',
@@ -15,10 +20,13 @@ let chartJsRegistered = false;
 export class ChartCurrentCapacity {
 
   constructor(
-    @Inject(PLATFORM_ID) private platformId: any,
-  ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
+    @Inject(PLATFORM_ID)
+    private platformId: any,
 
+    private api : ApiService
+  ) {
+
+    this.isBrowser = isPlatformBrowser(this.platformId);
     // Registrar Chart.js apenas uma vez
     if (this.isBrowser && !chartJsRegistered) {
       Chart.register(...registerables);
@@ -58,10 +66,14 @@ export class ChartCurrentCapacity {
 
   }
 
+
   private createChart(): void {
     // Destruir chart existente antes de criar um novo
     this.destroyChart();
 
+    const chartsData = /*await*/ this.api.charts();
+    console.log("Dados do gráfico: ")
+    console.log(chartsData)
 
     const ctx = this.chartCurrentRoomCanvas.nativeElement.getContext('2d');
     if (!ctx) {

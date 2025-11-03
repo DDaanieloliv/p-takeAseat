@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class RowOccupacyDTO {
   public Integer fileira;
-  public Integer total_assentos;
-  public Integer assentos_livre;
-  public BigDecimal taxa_ocupacao_percentual;
+  public Integer totalAssentos;
+  public Integer assentosLivre;
+  public BigDecimal taxaDesocupacaoPercentual;
 }

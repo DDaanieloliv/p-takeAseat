@@ -11,6 +11,8 @@ import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.enums.SeatType;
 import com.ddaaniel.armchair_management.model.record.RowOccupacyDTO;
+import com.ddaaniel.armchair_management.model.record.RowOccupacyDTOooo;
+import com.ddaaniel.armchair_management.model.record.RowOccupacyProjection;
 import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ChartsResponceDTO;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ServiceSeatImpl implements ISeatService {
@@ -199,14 +202,12 @@ public class ServiceSeatImpl implements ISeatService {
   private void allocating(Seat seat, Person pessoa) {
     seat.setPerson(pessoa);
     seat.setFree(false);
-    // seat.setFree(false);
-    // seat.setPerson(pessoa);
+
     personRepository.save(pessoa);
     logger.info("Foreign key ( Person --> Seat ) successfully linked !");
 
     seatRepository.save(seat);
     logger.info("Entity Seat, successfully saved !");
-    // seatRepository.save(seat);
   }
 
   @Override
@@ -218,28 +219,23 @@ public class ServiceSeatImpl implements ISeatService {
 
     Float percentOccupation = seatsOccupied * 100.0f / countAllSeats;
 
-    List<RowOccupacyDTO> rowList = seatRepository.getOccupacyByRow();
-    List<RowOccupacyDTO> occupacyByRow = new ArrayList<RowOccupacyDTO>();
+    // * Interface-based Projections *
+    List<RowOccupacyProjection> results = seatRepository.getOccupacyByRow();
 
-    for (RowOccupacyDTO rowOccupacyDTO : rowList) {
+    List<RowOccupacyDTO> occupacyByRow = results.stream()
+        .map(projection -> RowOccupacyDTO.builder()
+            .fileira(projection.getFileira())
+            .totalAssentos(projection.getTotalAssentos())
+            .assentosLivre(projection.getAssentosLivres())
+            .taxaDesocupacaoPercentual(projection.getTaxaDesocupacaoPercentual())
+            .build())
+        .collect(Collectors.toList());
 
-      var row = RowOccupacyDTO.builder()
-          .fileira(rowOccupacyDTO.getFileira())
-          .total_assentos(rowOccupacyDTO.getTotal_assentos())
-          .assentos_livre(rowOccupacyDTO.getAssentos_livre())
-          .taxa_ocupacao_percentual(rowOccupacyDTO.getTaxa_ocupacao_percentual())
-          .build();
-
-      occupacyByRow.add(row);
-    }
-
-    ChartsResponceDTO dto = ChartsResponceDTO.builder()
-        .percentOccupiedFloat(percentOccupation)
+    return ChartsResponceDTO.builder()
+        .percentOccupied(percentOccupation)
         .seatsUnoccupied(seatsUnoccupied)
         .rowOccupacyDTO(occupacyByRow)
         .build();
-
-    return dto;
   }
 
 }
