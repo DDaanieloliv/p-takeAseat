@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -67,15 +68,21 @@ public class SeatController {
     return ResponseEntity.ok(message);
   }
 
-  @GetMapping("/charts")
-  public ResponseEntity<ChartsResponceDTO> charts() {
-    return ResponseEntity.ok(serviceSeat.charts());
+  @GetMapping("/charts/{gridId}")
+  public ResponseEntity<ChartsResponceDTO> charts(@PathVariable UUID gridId) {
+    return ResponseEntity.ok(serviceSeat.charts(gridId));
   }
 
   @GetMapping("/grid")
   public ResponseEntity<GridDTO> GridResponseEntity() {
     return ResponseEntity.ok(gridService.currentGrid());
   }
+
+  @GetMapping("/gridEntity")
+  public ResponseEntity<GridEntityDTO> CurrentGridEntity() {
+    return ResponseEntity.ok(gridService.currentGridEntity());
+  }
+
 
   @PutMapping("/grid/update")
   public ResponseEntity<GridDTO> UpdateGrid(@RequestBody GridDTO gridUpdatedDTO) {

@@ -6,5 +6,5 @@ public interface RowOccupacyProjection {
     Integer getFileira();
     Integer getTotalAssentos();
     Integer getAssentosLivres();
-    BigDecimal getTaxaDesocupacaoPercentual();
+    BigDecimal getTaxaOcupacaoPercentual();
 }

@@ -17,6 +17,13 @@ export class ApiService {
   }
 
 
+  public async fetchCurrentGridEntity(): Promise<CurrentGrid> {
+    const res = await fetch('http://localhost:8080/seats/gridEntity')
+    const data = await res.json();
+    return data as CurrentGrid;
+  }
+
+
   public async updateGrid(dto: GridDTO): Promise<GridDTO> {
     try {
       const response = await fetch('http://localhost:8080/seats/grid/update', {
@@ -60,11 +67,27 @@ export class ApiService {
   }
 
 
-  public async charts() : Promise<ChartDTO> {
+public async charts(gridId: string): Promise<ChartDTO> {
+    try {
+        const response = await fetch(`http://localhost:8080/seats/charts/${gridId}`);
 
-      const response  = await fetch('http://localhost:8080/seats/charts');
-      const data = await response.json();
-      return data as ChartDTO;
-  }
+        if (!response.ok) {
+            let errorMessage = `HTTP error! status: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch {
+                // Se não conseguir parsear o JSON de erro
+            }
+            throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+        return data as ChartDTO;
+    } catch (error) {
+        console.error('Error fetching charts:', error);
+        throw error;
+    }
+}
 
 }

@@ -71,27 +71,27 @@ export class SeatGridComponent {
 
   public onDoNotShouldClickChange(value: boolean): void {
     this.doNotShould_click = value;
-    console.log('doNotShould_click atualizado:', value);
+    // console.log('doNotShould_click atualizado:', value);
   }
 
   public onPersonDataChange(value: PersonData): void {
     this.personData = value;
-    console.log('personData atualizado:', value);
+    // console.log('personData atualizado:', value);
   }
 
   public onSelectedSeatListChange(value: Array<Seat>): void {
     this.selectedSeatList = value;
-    console.log('selectedSeatList atualizado:', value);
+    // console.log('selectedSeatList atualizado:', value);
   }
 
   public onIsVisibleHandleSelectionChange(value: boolean): void {
     this.is_visibleHandleSelection = value;
-    console.log('is_visibleHandleSelection atualizado:', value);
+    // console.log('is_visibleHandleSelection atualizado:', value);
   }
 
   public onGridChange(value: Array<Seat[]>): void {
     this.grid = value;
-    console.log('grid atualizado:', value);
+    // console.log('grid atualizado:', value);
   }
 
 
@@ -100,32 +100,32 @@ export class SeatGridComponent {
   private bootStrap(savedState : GridDTO | null, apiGrid : GridDTO | null) {
     if (savedState && apiGrid && this.isSameGridWithStates(savedState, apiGrid)) {
       // 1. Temos savedState E API respondeu E são compatíveis
-      console.log('Carregando grid salvo do localStorage (compatível com API)');
+      // console.log('Carregando grid salvo do localStorage (compatível com API)');
       this.loadGridFromDTO(savedState);
       return;
     }
     else if (savedState && !apiGrid) {
       // 2. Temos savedState mas API não respondeu
-      console.log('API indisponível, carregando grid do localStorage');
+      // console.log('API indisponível, carregando grid do localStorage');
       this.loadGridFromDTO(savedState);
       return;
     }
     else if (apiGrid) {
       // 3. API respondeu (com ou sem savedState incompatível)
-      console.log('Carregando grid da API');
+      // console.log('Carregando grid da API');
       this.safeStorage.setItem('currentGrid', apiGrid);
       this.loadGridFromDTO(apiGrid);
 
       // Se tinha savedState mas era incompatível, substitui
       if (savedState) {
-        console.log('Substituindo grid salvo incompatível');
+        // console.log('Substituindo grid salvo incompatível');
         this.safeStorage.setItem('currentGrid', apiGrid);
       }
       return;
     }
     else {
       // 4. Nem savedState nem API - gera padrão
-      console.log('Gerando grid padrão (sem savedState e sem API)');
+      // console.log('Gerando grid padrão (sem savedState e sem API)');
       this.generateGrid();
 
       // Cria um GridDTO com o grid padrão
@@ -150,10 +150,10 @@ export class SeatGridComponent {
 
   async ngOnInit() : Promise<void> {
     this.setupGridSubscription();
-    console.log('Esse é o grid armazenado no localStorage...');
+    // console.log('Esse é o grid armazenado no localStorage...');
 
     const savedState = this.safeStorage.getItem<GridDTO>('currentGrid');
-    console.log('Saved: ', savedState);
+    // console.log('Saved: ', savedState);
 
     // let apiGrid : Promise<GridDTO | null> = this.make_aGridDTO_Request();
     let apiGrid : GridDTO | null = await this.make_aGridDTO_Request();
@@ -166,9 +166,9 @@ export class SeatGridComponent {
     let  dto : GridDTO | null = null;
     try {
       dto = await this.api.fetchAPI();
-      console.log('Grid da API:', dto);
+      // console.log('Grid da API:', dto);
     } catch (error) {
-      console.warn('API não disponível, usando fallback:', error);
+      // console.warn('API não disponível, usando fallback:', error);
       dto = null;
     }
     return dto;
@@ -180,7 +180,7 @@ export class SeatGridComponent {
     this.rows = dto.entity.rowNumber;
     this.columns = dto.entity.columnNumber;
     this.shareGridWithSubscribers(this.grid);
-    console.log("Number column: " + this.columns + "\nNumber row: " + this.rows);
+    // console.log("Number column: " + this.columns + "\nNumber row: " + this.rows);
   }
 
 

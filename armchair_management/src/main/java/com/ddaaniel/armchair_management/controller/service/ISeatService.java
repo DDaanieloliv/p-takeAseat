@@ -15,7 +15,7 @@ public interface ISeatService {
 
   void allocateSeatToPessoa(Integer row, Integer column, String name, String cpf);
 
-  ChartsResponceDTO charts();
+  ChartsResponceDTO charts(UUID gridId);
 
   void updateModifiedSeats(List<List<SeatDTO>> seatGridDTO, UUID gridId);
 

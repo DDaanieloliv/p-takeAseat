@@ -9,6 +9,8 @@ import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
 
 public interface IGridService {
 
+  GridEntityDTO currentGridEntity();
+
   GridDTO currentGrid();
 
   Optional<GridEntity> findGridEntityById(UUID uuid);

@@ -24,14 +24,15 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
       COUNT(tb_seats.seat_row) as totalAssentos,
       COUNT( CASE WHEN status = 'AVAILABLE' AND free = true THEN 1 END ) as assentosLivres,
       ROUND(
-        (COUNT( CASE WHEN status = 'AVAILABLE' AND free = true THEN 1 END ) * 100.0 / COUNT(*)), 2
-      ) as taxaDesocupacaoPercentual
+        (COUNT( CASE WHEN free = false THEN 1 END ) * 100.0 / COUNT(*)), 2
+      ) as taxaOcupacaoPercentual
     FROM tb_seats
+    WHERE tb_seats.grid_id = ?1
     GROUP BY tb_seats.seat_row
     ORDER BY tb_seats.seat_row;
     """,
   nativeQuery = true)
-  List<RowOccupacyProjection> getOccupacyByRow();
+  List<RowOccupacyProjection> getOccupacyByRow(UUID gridId);
 
   void deleteById(UUID seatIdToDelete);
 

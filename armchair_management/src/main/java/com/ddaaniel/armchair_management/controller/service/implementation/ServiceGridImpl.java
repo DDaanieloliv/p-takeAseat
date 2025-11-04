@@ -32,24 +32,38 @@ public class ServiceGridImpl implements IGridService {
     this.seatRepository = seatRepository;
   }
 
-
   @Override
-  public Optional<GridEntity> findGridEntityById(UUID uuid){
+  public Optional<GridEntity> findGridEntityById(UUID uuid) {
     return gridRepository.findGridEntityById(uuid);
   }
 
   @Override
+  public GridEntityDTO currentGridEntity() {
+
+    Optional<GridEntity> entity = gridRepository.isCurrentGrid();
+
+    return GridEntityDTO.builder()
+        .grid(entity.get().getGrid())
+        .rowNumber(entity.get().getRowNumber())
+        .columnNumber(entity.get().getColumnNumber())
+        .is_currentGrid(entity.get().getIs_currentGrid())
+        .build();
+  }
+
+
+
+  @Override
   public GridDTO currentGrid() {
     List<List<SeatDTO>> currentGrid = generateGrid();
-    GridEntity initialGrid = gridRepository.initialGrid().orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
+    GridEntity initialGrid = gridRepository.initialGrid()
+        .orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
     List<Seat> allSeats = seatRepository.findSeatsByGridId(initialGrid.getGrid());
 
-    for (List<SeatDTO> seatList: currentGrid) {
+    for (List<SeatDTO> seatList : currentGrid) {
       parseSeatList(seatList, allSeats);
     }
     return pushToGridDTO(initialGrid, currentGrid);
   }
-
 
   @Override
   public void updateCurrentGrid(GridEntityDTO entity) {
@@ -62,14 +76,13 @@ public class ServiceGridImpl implements IGridService {
     }
   }
 
-
-
-  private void parseSeatList(List<SeatDTO> seatList, List<Seat> allSeats){
+  private void parseSeatList(List<SeatDTO> seatList, List<Seat> allSeats) {
     for (SeatDTO seat : seatList) {
-      for (Seat mirror: allSeats) {
+      for (Seat mirror : allSeats) {
         /*
          * (Autounboxing)
-         * O Java automaticamente converte o Integer (objeto) para int (primitivo) através do autounboxing.
+         * O Java automaticamente converte o Integer (objeto) para int (primitivo)
+         * através do autounboxing.
          * Permitindo a comparar os seus tipos primitivos com outros.
          *
          * // int position = seat.getPosition();
@@ -80,36 +93,38 @@ public class ServiceGridImpl implements IGridService {
          * // int row_mirror = mirror.getRow();
          * // int column_mirror = mirror.getColumn();
          *
-         * // if (position == position_mirror && row == row_mirror && column == column_mirror) {
+         * // if (position == position_mirror && row == row_mirror && column ==
+         * column_mirror) {
          *
-         * */
+         */
 
-         if ( /* seat.getPosition().intValue() == mirror.getPosition().intValue() && */
-              seat.getRow().intValue() == mirror.getRow().intValue() &&
-              seat.getColumn().intValue() == mirror.getColumn().intValue() ){
-        /* HOT-FIX
-         *
-         * Conditions never reached, since with '==' we are
-         * comparing the 'seat' pointer with the 'mirror' pointer.
-         * '.equals()' shoud be used to compare the pointers value.
-         * Or make the guffi approach above.
-         *
-         * if (
-         * seat.getPosition().equals(mirror.getPosition()) &&
-         * seat.getRow().equals(mirror.getRow()) &&
-         * seat.getColumn().equals(mirror.getColumn())) {
-         *
-         * Fun fact: "Java does a (cache) optimization to values between -128 e 127"
-         *
-         * Integer a = 127;  // Use the cached object
-         * Integer b = 127;  // Use the SAME cached object
-         * a == b            // TRUE - Same reference!
-         *
-         * Integer c = 128;  // New object
-         * Integer d = 128;  // Other new object
-         * c == d            // FALSE - Diferent Reference!
-         *
-         * */
+        if ( /* seat.getPosition().intValue() == mirror.getPosition().intValue() && */
+        seat.getRow().intValue() == mirror.getRow().intValue() &&
+            seat.getColumn().intValue() == mirror.getColumn().intValue()) {
+          /*
+           * HOT-FIX
+           *
+           * Conditions never reached, since with '==' we are
+           * comparing the 'seat' pointer with the 'mirror' pointer.
+           * '.equals()' shoud be used to compare the pointers value.
+           * Or make the guffi approach above.
+           *
+           * if (
+           * seat.getPosition().equals(mirror.getPosition()) &&
+           * seat.getRow().equals(mirror.getRow()) &&
+           * seat.getColumn().equals(mirror.getColumn())) {
+           *
+           * Fun fact: "Java does a (cache) optimization to values between -128 e 127"
+           *
+           * Integer a = 127; // Use the cached object
+           * Integer b = 127; // Use the SAME cached object
+           * a == b // TRUE - Same reference!
+           *
+           * Integer c = 128; // New object
+           * Integer d = 128; // Other new object
+           * c == d // FALSE - Diferent Reference!
+           *
+           */
           // seat.setSeatID(mirror.getSeatID());
           // seat.setStatus(mirror.getStatus());
           // seat.setFree(mirror.getFree());
@@ -123,8 +138,6 @@ public class ServiceGridImpl implements IGridService {
       }
     }
   }
-
-
 
   private List<List<SeatDTO>> generateGrid() {
     List<List<SeatDTO>> grid = new ArrayList<>();
@@ -144,34 +157,32 @@ public class ServiceGridImpl implements IGridService {
     return grid;
   }
 
-  private List<SeatDTO> generateColumns(int rowCount, int columns, List<SeatDTO> rowList, int position){
+  private List<SeatDTO> generateColumns(int rowCount, int columns, List<SeatDTO> rowList, int position) {
     for (int c = 1; c <= columns; c++) {
 
       // rowList.add(Seat.builder()
-      //    .position(position + 1)
-      //    .row(rowCount)
-      //    .column(c)
-      //    .build()
-      //  );
+      // .position(position + 1)
+      // .row(rowCount)
+      // .column(c)
+      // .build()
+      // );
       rowList.add(SeatDTO.builder()
-         .position(String.valueOf(Integer.valueOf(position) + 1))
-         .row(rowCount)
-         .column(c)
-         .build()
-       );
+          .position(String.valueOf(Integer.valueOf(position) + 1))
+          .row(rowCount)
+          .column(c)
+          .build());
       position++;
     }
     return rowList;
   }
 
-
   public GridDTO pushToGridDTO(GridEntity gridEntity, List<List<SeatDTO>> grid) {
 
     GridEntityDTO entityDTO = GridEntityDTO.builder()
-      .grid(gridEntity.getGrid())
-      .rowNumber(gridEntity.getRowNumber())
-      .columnNumber(gridEntity.getColumnNumber())
-      .is_currentGrid(gridEntity.getIs_currentGrid()).build();
+        .grid(gridEntity.getGrid())
+        .rowNumber(gridEntity.getRowNumber())
+        .columnNumber(gridEntity.getColumnNumber())
+        .is_currentGrid(gridEntity.getIs_currentGrid()).build();
 
     GridDTO dto = new GridDTO(entityDTO, grid);
     return dto;

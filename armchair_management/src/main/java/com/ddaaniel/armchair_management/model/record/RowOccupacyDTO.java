@@ -13,5 +13,5 @@ public class RowOccupacyDTO {
   public Integer fileira;
   public Integer totalAssentos;
   public Integer assentosLivre;
-  public BigDecimal taxaDesocupacaoPercentual;
+  public BigDecimal taxaOcupacaoPercentual;
 }

@@ -3,6 +3,9 @@ import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/
 import { Chart, registerables } from 'chart.js';
 import { ChartDTO } from '../../../../core/model/chartModel/chartDTO';
 import { ApiService } from '../../../../core/services/api-service';
+import { SafeStorageService } from '../../../../core/services/localStorageService/storage-service';
+import { GridDTO } from '../../../../core/model/fetch/grid-dto';
+import { CurrentGrid } from '../../../../core/model/fetch/grid-entity-dto';
 
 
 // Registrar todos os componentes do Chart.js apenas uma vez
@@ -23,36 +26,72 @@ export class ChartRowsCapacity {
   constructor(
     @Inject(PLATFORM_ID)
     private platformId: any,
-    private api: ApiService
+    private api: ApiService,
+    private safeStorage: SafeStorageService
 
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
 
-    // Registrar Chart.js apenas uma vez
     if (this.isBrowser && !chartJsRegistered) {
       Chart.register(...registerables);
       chartJsRegistered = true;
     }
   }
 
+  private chartsData: ChartDTO | null = null;
 
   @ViewChild('chart_rows_capacity_Canvas')
   chartRowsCanvas!: ElementRef<HTMLCanvasElement>;
   public chart_rows_capacity: Chart<'bar'> | null = null;
 
+  private createChartWithDefaultData(): void {
+    // Cria gráfico com dados padrão quando a API falha
+    this.chartsData = {
+      percentOccupied: 0,
+      seatsUnoccupied: 0,
+      rowOccupacyDTO: []
+    };
+    this.createChart();
+  }
+
+
+  async ngOnInit(): Promise<void> {
+    try {
+      const gridEntity: CurrentGrid = await this.api.fetchCurrentGridEntity();
+      const chartsData: ChartDTO = await this.api.charts(gridEntity.grid);
+      this.chartsData = chartsData;
+
+      // console.log("Dados do gráfico: ", chartsData);
+
+      if (this.isBrowser) {
+        setTimeout(() => {
+          this.createChart();
+        }, 0);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      if (this.isBrowser) {
+        this.createChartWithDefaultData();
+      }
+    }
+  }
+
 
   ngAfterViewInit(): void {
-    if (this.isBrowser) {
-      // Pequeno delay para garantir que o DOM esteja pronto
-      setTimeout(() => {
-        this.createChart();
-      }, 0);
-    }
+    // if (this.isBrowser) {
+    //   // Pequeno delay para garantir que o DOM esteja pronto
+    //   setTimeout(() => {
+    //     this.createChart();
+    //   }, 0);
+    // }
   }
 
   ngOnDestroy(): void {
     this.destroyChart();
   }
+
+
+
 
 
   private destroyChart(): void {
@@ -66,6 +105,10 @@ export class ChartRowsCapacity {
     // Destruir chart existente antes de criar um novo
     this.destroyChart();
 
+    if (!this.isBrowser) {
+      return;
+    }
+
     const ctx = this.chartRowsCanvas.nativeElement.getContext('2d');
 
     if (!ctx) {
@@ -76,7 +119,9 @@ export class ChartRowsCapacity {
     try {
       // Dados obtidos por meio de uma função que irá pegar a
       // taxa de ocupação de cada fileira e a quantidade de fileiras
-      const rowData = this.generateRowData(15);
+      const rowData = this.generateRowData();
+      // console.log("Objeto rowData: ")
+      // console.log(rowData);
 
       this.chart_rows_capacity = new Chart(ctx, {
         type: 'bar',
@@ -200,62 +245,33 @@ export class ChartRowsCapacity {
   }
 
 
-  private chartsData: ChartDTO | null = null;
 
-  async ngOnInit(): Promise<void> {
-
-    const chartsData = await this.api.charts();
-    this.chartsData = chartsData;
-
-    console.log("Dados do gráfico: ");
-    console.log(chartsData);
-
-    this.createChart();
-  }
-
-
-  private generateSomething() {
+  private generateRowData(): { labels: string[], values: number[], colors: string[] } {
     const data = {
-      labels: [] as number[],
+      labels: [] as string[],
       values: [] as number[],
       colors: [] as string[]
     };
 
     this.chartsData?.rowOccupacyDTO.forEach(element => {
-      data.labels.push(element.fileira)
-      data.values.push(element.taxaDesocupacaoPercentual);
+      data.labels.push(`Fileira ${element.fileira}`)
+      data.values.push(element.taxaOcupacaoPercentual);
+
     });
 
-    // if (!this.chartsData) return true;
-    // for (let i = 0; i < data.labels.length; i++) {
-    //
-    //   if (data.values.at(i) < 30) {
-    //     colors.push('rgba(76, 175, 80, 0.8)');    // Verde (baixa ocupação)
-    //   } else if (occupancy < 70) {
-    //     colors.push('rgba(255, 193, 7, 0.8)');    // Amarelo (média ocupação)
-    //   } else {
-    //     colors.push('rgba(244, 67, 54, 0.8)');    // Vermelho (alta ocupação)
-    //   }
-    //
-    // }
-  }
+    for (let index = 0; index < data.values.length; index++) {
+      const occupancy = data.values[index];
 
-
-  // Método para gerar dados de exemplo para fileiras
-  private generateRowData(count: number): { labels: string[], values: number[], colors: string[] } {
-    const labels: string[] = [];
-    const values: number[] = [];
-    const colors: string[] = [];
-
-    for (let i = 1; i <= count; i++) {
-      labels.push(`Fileira ${i}`);
-      const occupancy = Math.floor(Math.random() * 100);
-      values.push(occupancy);
-
-      // Cores baseadas na ocupação
+      if (occupancy < 30) {
+        data.colors.push('rgba(76, 175, 80, 0.8)');    // Verde (baixa ocupação)
+      } else if (occupancy < 70) {
+        data.colors.push('rgba(255, 193, 7, 0.8)');    // Amarelo (média ocupação)
+      } else {
+        data.colors.push('rgba(244, 67, 54, 0.8)');    // Vermelho (alta ocupação)
+      }
     }
 
-    return { labels, values, colors };
+    return data;
   }
 
 }

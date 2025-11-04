@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 import { ApiService } from '../../../../core/services/api-service';
 import { ChartDTO } from '../../../../core/model/chartModel/chartDTO';
+import { CurrentGrid } from '../../../../core/model/fetch/grid-entity-dto';
 
 
 
@@ -42,28 +43,50 @@ export class ChartCurrentCapacity {
 
   private chartsData: ChartDTO | null = null;
 
-  public freeSeats : number = 0;
+  public freeSeats: number = 0;
 
 
   ngAfterViewInit(): void {
-    if (this.isBrowser) {
-      // Pequeno delay para garantir que o DOM esteja pronto
-      setTimeout(() => {
-        this.createChart();
-      }, 100);
-    }
+    // if (this.isBrowser) {
+    //   // Pequeno delay para garantir que o DOM esteja pronto
+    //   setTimeout(() => {
+    //     this.createChart();
+    //   }, 100);
+    // }
   }
 
 
   async ngOnInit(): Promise<void> {
+    try {
 
-    const chartsData = await this.api.charts();
-    this.chartsData = chartsData;
-    this.freeSeats = chartsData.seatsUnoccupied;
+      const gridEntity: CurrentGrid = await this.api.fetchCurrentGridEntity();
 
-    console.log("Dados do gráfico: ");
-    console.log(chartsData);
+      const chartsData = await this.api.charts(gridEntity.grid);
+      this.chartsData = chartsData;
+      this.freeSeats = chartsData.seatsUnoccupied;
 
+      console.log("Dados do gráfico: ", chartsData);
+
+      // ✅ Só cria o chart se estiver no browser
+      if (this.isBrowser) {
+        setTimeout(() => {
+          this.createChart();
+        }, 0);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      if (this.isBrowser) {
+        this.createChartWithDefaultData();
+      }
+    }
+  }
+
+  private createChartWithDefaultData(): void {
+    this.chartsData = {
+      percentOccupied: 0,
+      seatsUnoccupied: 0,
+      rowOccupacyDTO: []
+    };
     this.createChart();
   }
 
@@ -84,6 +107,11 @@ export class ChartCurrentCapacity {
     // Destruir chart existente antes de criar um novo
     this.destroyChart();
 
+    if (!this.isBrowser) {
+      return;
+    }
+
+
     if (!this.chartsData) return
 
     const ctx = this.chartCurrentRoomCanvas.nativeElement.getContext('2d');
@@ -95,48 +123,48 @@ export class ChartCurrentCapacity {
     try {
       // Porcentagem de ocupação lançada pela API
       const occupancy = this.chartsData?.percentOccupied;
-        this.chart_current_room_capacity = new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Ocupado', 'Livre'],
-            datasets: [{
-              data: [occupancy, 100 - occupancy],
-              backgroundColor: [
-                '#FFD600',
-                'rgba(200, 200, 200, 0.3)'
-              ],
-              borderColor: [
-                '#FFD600',
-                'rgba(200, 200, 200, 0.5)'
-              ],
-              borderWidth: 2,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '0%',
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  padding: 15,
-                  usePointStyle: true,
-                  font: {
-                    size: 11
-                  }
+      this.chart_current_room_capacity = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Ocupado', 'Livre'],
+          datasets: [{
+            data: [occupancy, 100 - occupancy],
+            backgroundColor: [
+              '#FFD600',
+              'rgba(200, 200, 200, 0.3)'
+            ],
+            borderColor: [
+              '#FFD600',
+              'rgba(200, 200, 200, 0.5)'
+            ],
+            borderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '0%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                usePointStyle: true,
+                font: {
+                  size: 11
                 }
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    return `${context.label}: ${context.parsed}%`;
-                  }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.parsed}%`;
                 }
-              },
-            }
+              }
+            },
           }
-        });
+        }
+      });
 
 
     } catch (error) {
