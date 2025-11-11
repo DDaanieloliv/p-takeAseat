@@ -12,8 +12,8 @@
   width: 100vw;
   height: 100vh;
 
-  grid-template-columns: repeat(12, 1fr);  // 8 colunas de tamanho igual
-  grid-template-rows: repeat(12, 1fr);     // 8 linhas de tamanho igual
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, 1fr);
   gap: 1vw 1vw;
 
   box-sizing: border-box;
@@ -21,14 +21,6 @@
   overflow: hidden;
 
 }
-
-/* .small-window { */
-/*   grid-row: 10 / 13;      // Linhas 6 a 8 */
-/*   grid-column: 12 / 13;   // Colunas 7 a 8 */
-/*   background: #f5f0f0; */
-/*   border-radius: 1vw; */
-/**/
-/* } */
 
 .bottom-left-corner:hover {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -46,10 +38,7 @@
   transform: scale(1.026, 1.015);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-/* .sidebar:hover { */
-/*   transform: scale(1.026, 1.01); */
-/*   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
-/* } */
+
 
 /* Condição	Significa...
    min-width: 801px	A tela estar mais larga que 800px

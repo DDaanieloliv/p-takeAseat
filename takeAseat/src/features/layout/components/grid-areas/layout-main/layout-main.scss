@@ -3,10 +3,11 @@
 :host {
   position: relative;
   z-index: 1;
-  grid-row: 1 / 10;      // Linhas 1 a 6
-  grid-column: 2 / 10;   // Colunas 2 a
+  grid-row: 2/13;
+  grid-column: 1/13;
   background: $layout-bg;
-  border-radius: 1vw;
-  overflow: visible;  // Permite que elementos filhos vazem para fora
+  border-radius: 0vw 1vw 1vw 1vw ;
+  overflow: visible;
 }
+
 

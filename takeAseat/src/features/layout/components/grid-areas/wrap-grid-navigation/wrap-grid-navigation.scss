@@ -1,0 +1,11 @@
+:host {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, 1fr);
+  position: relative;
+  z-index: 1;
+  grid-row: 1 / 10;
+  grid-column: 2 / 10;
+  border-radius: 0vw 0vw 1vw 1vw ;
+  overflow: visible;
+}
