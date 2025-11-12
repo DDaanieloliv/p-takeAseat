@@ -15,7 +15,7 @@ export class NavigationTabs {
 
   constructor(private api: ApiService) {}
 
-  public gridList: CurrentGrid[] = []; // ← Array direto
+  public gridList: CurrentGrid[] = [];
 
   async ngOnInit(): Promise<void> {
     try {

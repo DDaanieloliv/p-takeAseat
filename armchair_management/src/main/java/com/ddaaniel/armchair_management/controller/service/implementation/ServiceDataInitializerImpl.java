@@ -52,24 +52,42 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
     if (gridRepository.findAll().isEmpty()) {
       var grid = GridEntity.builder().is_currentGrid(true).build();
       logger.warn(
-          "Nenhuma entidade grid com a flag 'is_itialGrid' foi encontrada. Uma Entidade Grid com a flag 'is_itialGrid foi persistida!");
+          "Nenhuma entidade grid com a flag 'is_currentGrid' foi encontrada. Uma Entidade Grid com a flag 'is_currentGrid foi persistida!");
 
       List<GridEntity> listEntity = new ArrayList<GridEntity>();
-
       for (int i = 0; i < 5; i++) {
         listEntity.add(GridEntity.builder().is_currentGrid(false).build());
       }
 
-      gridRepository.saveAll(listEntity);
       gridRepository.save(grid);
+      gridRepository.saveAll(listEntity);
     }
 
-    List<GridEntity> gridList = gridRepository.findAll();
-    for (GridEntity gridEntity : gridList) {
-      if (gridEntity.getSeatList().isEmpty()) {
-        generateSeats(gridEntity.getGrid());
-      }
-    }
+    // List<GridEntity> gridList = gridRepository.findAllWithSeatss();
+
+    // int position = 1;
+    // for (int countRows = 1; countRows <= appConfig.getRows(); countRows++) {
+    //
+    //   for (int countColumns = 1; countColumns <= appConfig.getColumns(); countColumns++) {
+    //     var entity = Seat.builder()
+    //         .position(String.valueOf(position))
+    //         .row(countRows)
+    //         .column(countColumns)
+    //         .status(SeatType.AVAILABLE)
+    //         .free(true)
+    //         .currentGrid(gridRepository.currentGrid().get())
+    //         .build();
+    //
+    //     seatRepository.save(entity);
+    //     position++;
+    //   }
+    // }
+
+    // for (GridEntity gridEntity : gridList) {
+    //   if (gridEntity.getSeatList().isEmpty()) {
+    //     generateSeats(gridEntity.getGrid());
+    //   }
+    // }
 
   }
 
@@ -79,13 +97,13 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
 
       for (int countColumns = 1; countColumns <= appConfig.getColumns(); countColumns++) {
         var entity = Seat.builder()
-        .position(String.valueOf(position))
-        .row(countRows)
-        .column(countColumns)
-        .status(SeatType.AVAILABLE)
-        .free(true)
-        .currentGrid(gridRepository.findById(gridId).get())
-        .build();
+            .position(String.valueOf(position))
+            .row(countRows)
+            .column(countColumns)
+            .status(SeatType.AVAILABLE)
+            .free(true)
+            .currentGrid(gridRepository.findById(gridId).get())
+            .build();
 
         seatRepository.save(entity);
         position++;

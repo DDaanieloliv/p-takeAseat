@@ -92,6 +92,13 @@ public class SeatController {
     return ResponseEntity.ok(gridUpdatedDTO);
   }
 
+  @PutMapping("/grid/currentGridSwitch")
+  public ResponseEntity<?> CurrentGridSwitch(UUID gridId){
+    gridService.currentGridSwitch(gridId);
+
+    return ResponseEntity.noContent().build();
+  }
+
 
   @PutMapping("/grid/erase")
   public ResponseEntity<?> EraseGridState(@RequestBody GridEntityDTO entityGrid) {
@@ -115,8 +122,10 @@ public class SeatController {
 
 
   @GetMapping("/grid/list")
-  public ResponseEntity<List<GridEntityDTO>> GridList(){
-    return ResponseEntity.ok(gridService.gridList());
+  public ResponseEntity<List<GridEntity>> GridList(){
+  // public ResponseEntity<List<GridEntityDTO>> GridList(){
+    // return ResponseEntity.ok(gridService.gridList());
+    return ResponseEntity.ok(gridService.dirtyListGrid());
   }
 
 

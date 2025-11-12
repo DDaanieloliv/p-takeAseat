@@ -33,6 +33,12 @@ public class ServiceGridImpl implements IGridService {
     this.seatRepository = seatRepository;
   }
 
+
+  @Override
+  public List<GridEntity> dirtyListGrid() {
+    return gridRepository.findAllWithSeats();
+  }
+
   @Override
   public List<GridEntityDTO> gridList() {
 
@@ -69,6 +75,22 @@ public class ServiceGridImpl implements IGridService {
         .is_currentGrid(entity.get().getIs_currentGrid())
         .build();
   }
+
+
+
+  @Override
+  public void currentGridSwitch(UUID gridId){
+
+    Optional<GridEntity> currentEntity = gridRepository.currentGrid();
+    currentEntity.get().setIs_currentGrid(false);
+    gridRepository.save(currentEntity.get());
+
+    var entity = gridRepository.findById(gridId);
+    entity.get().setIs_currentGrid(true);
+    gridRepository.save(entity.get());
+
+  }
+
 
   @Override
   public GridDTO currentGrid() {

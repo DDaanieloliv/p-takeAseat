@@ -12,6 +12,8 @@ public interface IGridService {
 
   GridEntityDTO currentGridEntity();
 
+  void currentGridSwitch(UUID gridId);
+
   GridDTO currentGrid();
 
   Optional<GridEntity> findGridEntityById(UUID uuid);
@@ -19,4 +21,6 @@ public interface IGridService {
   void updateCurrentGrid(GridEntityDTO entity);
 
   List<GridEntityDTO> gridList();
+
+  List<GridEntity> dirtyListGrid();
 }
