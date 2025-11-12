@@ -11,7 +11,6 @@ import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.enums.SeatType;
 import com.ddaaniel.armchair_management.model.record.RowOccupacyDTO;
-import com.ddaaniel.armchair_management.model.record.RowOccupacyDTOooo;
 import com.ddaaniel.armchair_management.model.record.RowOccupacyProjection;
 import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;

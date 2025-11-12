@@ -1,5 +1,6 @@
 package com.ddaaniel.armchair_management.controller.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,6 @@ public interface IGridService {
   Optional<GridEntity> findGridEntityById(UUID uuid);
 
   void updateCurrentGrid(GridEntityDTO entity);
+
+  List<GridEntity> gridList();
 }

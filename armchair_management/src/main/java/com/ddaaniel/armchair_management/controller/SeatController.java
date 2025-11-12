@@ -5,6 +5,7 @@ import com.ddaaniel.armchair_management.controller.service.IPersonService;
 import com.ddaaniel.armchair_management.controller.service.ISeatService;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServicePersonImpl;
 import com.ddaaniel.armchair_management.controller.service.implementation.ServiceSeatImpl;
+import com.ddaaniel.armchair_management.model.GridEntity;
 import com.ddaaniel.armchair_management.model.record.ChartsResponceDTO;
 import com.ddaaniel.armchair_management.model.record.GridDTO;
 import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
@@ -110,6 +111,12 @@ public class SeatController {
     errorResponse.put("status", "NOT_FOUND");
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+
+  @GetMapping("/grid/list")
+  public ResponseEntity<List<GridEntity>> GridList(){
+    return ResponseEntity.ok(gridService.gridList());
   }
 
   @PostMapping("/grid/newroom")

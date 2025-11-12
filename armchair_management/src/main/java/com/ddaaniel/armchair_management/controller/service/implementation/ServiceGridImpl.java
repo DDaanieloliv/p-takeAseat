@@ -32,6 +32,12 @@ public class ServiceGridImpl implements IGridService {
     this.seatRepository = seatRepository;
   }
 
+
+  @Override
+  public List<GridEntity> gridList() {
+    return gridRepository.findAll();
+  }
+
   @Override
   public Optional<GridEntity> findGridEntityById(UUID uuid) {
     return gridRepository.findGridEntityById(uuid);
@@ -40,7 +46,7 @@ public class ServiceGridImpl implements IGridService {
   @Override
   public GridEntityDTO currentGridEntity() {
 
-    Optional<GridEntity> entity = gridRepository.isCurrentGrid();
+    Optional<GridEntity> entity = gridRepository.currentGrid();
 
     return GridEntityDTO.builder()
         .grid(entity.get().getGrid())
@@ -50,12 +56,10 @@ public class ServiceGridImpl implements IGridService {
         .build();
   }
 
-
-
   @Override
   public GridDTO currentGrid() {
     List<List<SeatDTO>> currentGrid = generateGrid();
-    GridEntity initialGrid = gridRepository.initialGrid()
+    GridEntity initialGrid = gridRepository.currentGrid()
         .orElseThrow(() -> new InitialGridNotFoundException("Grid inicial não encontrado."));
     List<Seat> allSeats = seatRepository.findSeatsByGridId(initialGrid.getGrid());
 
@@ -143,7 +147,7 @@ public class ServiceGridImpl implements IGridService {
     List<List<SeatDTO>> grid = new ArrayList<>();
     int position = 0;
 
-    var initialEntity = gridRepository.initialGrid();
+    var initialEntity = gridRepository.currentGrid();
     var rows = initialEntity.get().getRowNumber();
     var columns = initialEntity.get().getColumnNumber();
 

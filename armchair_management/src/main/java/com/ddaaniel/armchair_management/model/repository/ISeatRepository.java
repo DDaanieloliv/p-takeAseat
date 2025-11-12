@@ -2,7 +2,6 @@ package com.ddaaniel.armchair_management.model.repository;
 
 import com.ddaaniel.armchair_management.model.Seat;
 import com.ddaaniel.armchair_management.model.record.RowOccupacyDTO;
-import com.ddaaniel.armchair_management.model.record.RowOccupacyDTOooo;
 import com.ddaaniel.armchair_management.model.record.RowOccupacyProjection;
 
 import org.springframework.data.jpa.repository.JpaRepository;
