@@ -2,6 +2,7 @@ package com.ddaaniel.armchair_management.controller.service.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
   private final Config appConfig;
 
   @Autowired
-  public ServiceDataInitializerImpl (ISeatRepository seatRepository, Config appConfig, IGridRepository gridRepository) {
+  public ServiceDataInitializerImpl(ISeatRepository seatRepository, Config appConfig, IGridRepository gridRepository) {
     this.seatRepository = seatRepository;
     this.appConfig = appConfig;
     this.gridRepository = gridRepository;
@@ -38,7 +39,7 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
   @PostConstruct
   @Transactional
   @Override
-  public void initilizeSeats (){
+  public void initilizeSeats() {
     if (!appConfig.isEnable()) {
       return;
     }
@@ -50,7 +51,8 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
 
     if (gridRepository.findAll().isEmpty()) {
       var grid = GridEntity.builder().is_currentGrid(true).build();
-      logger.warn("Nenhuma entidade grid com a flag 'is_itialGrid' foi encontrada. Uma Entidade Grid com a flag 'is_itialGrid foi persistida!");
+      logger.warn(
+          "Nenhuma entidade grid com a flag 'is_itialGrid' foi encontrada. Uma Entidade Grid com a flag 'is_itialGrid foi persistida!");
 
       List<GridEntity> listEntity = new ArrayList<GridEntity>();
 
@@ -62,18 +64,27 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
       gridRepository.save(grid);
     }
 
+    List<GridEntity> gridList = gridRepository.findAll();
+    for (GridEntity gridEntity : gridList) {
+      if (gridEntity.getSeatList().isEmpty()) {
+        generateSeats(gridEntity.getGrid());
+      }
+    }
 
+  }
+
+  private void generateSeats(UUID gridId) {
     int position = 1;
     for (int countRows = 1; countRows <= appConfig.getRows(); countRows++) {
 
       for (int countColumns = 1; countColumns <= appConfig.getColumns(); countColumns++) {
-        var entity =  Seat.builder()
+        var entity = Seat.builder()
         .position(String.valueOf(position))
         .row(countRows)
         .column(countColumns)
         .status(SeatType.AVAILABLE)
         .free(true)
-        .currentGrid(gridRepository.currentGrid().get())
+        .currentGrid(gridRepository.findById(gridId).get())
         .build();
 
         seatRepository.save(entity);
@@ -81,4 +92,5 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
       }
     }
   }
+
 }

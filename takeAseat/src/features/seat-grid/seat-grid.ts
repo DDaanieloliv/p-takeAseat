@@ -13,6 +13,7 @@ import { PersonData } from '../../core/model/Person';
 import { FieldError } from '../../shared/components/form-ui/form-error-handler/FieldError';
 import { FormComponent } from '../../shared/components/form-ui/form-component/form-component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { GridListDTO } from '../../core/model/fetch/GridListDTO';
 
 @Component({
   selector: 'app-seat-grid',
@@ -149,6 +150,8 @@ export class SeatGridComponent {
   }
 
   async ngOnInit() : Promise<void> {
+
+
     this.setupGridSubscription();
     // console.log('Esse é o grid armazenado no localStorage...');
 

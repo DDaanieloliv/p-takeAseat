@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.script.RenderingContext;
 
 import com.ddaaniel.armchair_management.controller.exception.InitialGridNotFoundException;
 import com.ddaaniel.armchair_management.controller.service.IGridService;
@@ -32,10 +33,23 @@ public class ServiceGridImpl implements IGridService {
     this.seatRepository = seatRepository;
   }
 
-
   @Override
-  public List<GridEntity> gridList() {
-    return gridRepository.findAll();
+  public List<GridEntityDTO> gridList() {
+
+    List<GridEntityDTO> listDto = new ArrayList<>();
+    var list = gridRepository.findAll();
+
+    for (GridEntity entity : list) {
+      listDto.add(
+          GridEntityDTO.builder()
+              .grid(entity.getGrid())
+              .rowNumber(entity.getRowNumber())
+              .columnNumber(entity.getColumnNumber())
+              .is_currentGrid(entity.getIs_currentGrid())
+              .build());
+    }
+
+    return listDto;
   }
 
   @Override

@@ -18,5 +18,5 @@ public interface IGridService {
 
   void updateCurrentGrid(GridEntityDTO entity);
 
-  List<GridEntity> gridList();
+  List<GridEntityDTO> gridList();
 }

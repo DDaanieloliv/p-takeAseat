@@ -115,9 +115,11 @@ public class SeatController {
 
 
   @GetMapping("/grid/list")
-  public ResponseEntity<List<GridEntity>> GridList(){
+  public ResponseEntity<List<GridEntityDTO>> GridList(){
     return ResponseEntity.ok(gridService.gridList());
   }
+
+
 
   @PostMapping("/grid/newroom")
   public ResponseEntity<?> CreateNewRoomWithSeatGrid() {

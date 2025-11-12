@@ -1,14 +1,31 @@
 import { Component } from '@angular/core';
+import { ApiService } from '../../../core/services/api-service';
+import { GridListDTO } from '../../../core/model/fetch/GridListDTO';
+import { CurrentGrid } from '../../../core/model/fetch/grid-entity-dto';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navigation-tabs',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './navigation-tabs.html',
   styleUrl: './navigation-tabs.scss'
 })
 export class NavigationTabs {
 
+  constructor(private api: ApiService) {}
+
+  public gridList: CurrentGrid[] = []; // ← Array direto
+
+  async ngOnInit(): Promise<void> {
+    try {
+      this.gridList = await this.api.fetchListGrid();
+      console.log("GridList carregado:", this.gridList);
+    } catch (error) {
+      console.error('Erro ao carregar grids:', error);
+      this.gridList = [];
+    }
+  }
 
 
 
