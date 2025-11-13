@@ -82,6 +82,78 @@ public class ServiceSeatImpl implements ISeatService {
     return seatMapper.toDTO(seat);
   }
 
+  @Override
+  @Transactional
+  public void updateModifiedSeats(List<List<SeatDTO>> seatGridDTO, UUID gridId) {
+    GridEntity gridEntity = gridRepository.findById(gridId)
+        .orElseThrow(() -> new NotFoundException("Grid não encontrado"));
+
+    List<Seat> seatsToSave = new ArrayList<>();
+
+    for (List<SeatDTO> row : seatGridDTO) {
+      for (SeatDTO seatDTO : row) {
+        Optional<Seat> seatOpt = seatRepository.getSeatByColumnAndRow(
+            seatDTO.getColumn(), seatDTO.getRow(), gridId);
+
+        if (seatOpt.isPresent()) {
+          // Atualiza assento existente
+          Seat seat = seatOpt.get();
+          updateExistingSeat(seat, seatDTO);
+          seatsToSave.add(seat);
+        } else {
+          // Cria novo assento
+          Seat newSeat = createNewSeat(seatDTO, gridEntity);
+          seatsToSave.add(newSeat);
+        }
+      }
+    }
+
+    seatRepository.saveAll(seatsToSave);
+    cleanupOrphanedSeats(gridId, seatGridDTO);
+  }
+
+  private void updateExistingSeat(Seat seat, SeatDTO seatDTO) {
+    seat.setFree(seatDTO.getFree());
+    seat.setStatus(seatDTO.getStatus());
+
+    // Verificação segura para pessoa
+    if (seatDTO.getPerson() != null) {
+      updatePersonForSeat(seat, seatDTO.getPerson());
+    } else {
+      seat.setPerson(null); // Remove pessoa se for null
+    }
+  }
+
+  private Seat createNewSeat(SeatDTO seatDTO, GridEntity gridEntity) {
+    Seat newSeat = Seat.builder()
+        .position(seatDTO.getPosition())
+        .row(seatDTO.getRow())
+        .column(seatDTO.getColumn())
+        .free(seatDTO.getFree())
+        .status(seatDTO.getStatus())
+        .currentGrid(gridEntity)
+        .build();
+
+    // Verificação segura para pessoa
+    if (seatDTO.getPerson() != null) {
+      updatePersonForSeat(newSeat, seatDTO.getPerson());
+    }
+
+    return newSeat;
+  }
+
+  private void updatePersonForSeat(Seat seat, Person personDTO) {
+    // Verifica se a pessoa tem dados válidos
+    if (personDTO.getCpf() != null && personDTO.getName() != null) {
+      // Limpa o CPF se necessário
+      String cleanCPF = personDTO.getCpf().replaceAll("\\D", "");
+      personDTO.setCpf(cleanCPF);
+
+      personRepository.save(personDTO);
+      seat.setPerson(personDTO);
+    }
+  }
+
   @Transactional
   @Override
   public void allocateSeatToPessoa(Integer row, Integer column, String name, String cpf) {
@@ -100,64 +172,6 @@ public class ServiceSeatImpl implements ISeatService {
     allocating(seat, person);
   }
 
-  @Override
-  @Transactional
-  public void updateModifiedSeats(List<List<SeatDTO>> seatGridDTO, UUID gridId) {
-    // Busca o grid entity uma vez
-    GridEntity gridEntity = gridRepository.findById(gridId)
-        .orElseThrow(() -> new NotFoundException("Grid não encontrado"));
-
-    List<Seat> seatsToSave = new ArrayList<>();
-
-    for (List<SeatDTO> row : seatGridDTO) {
-      for (SeatDTO seatDTO : row) {
-        Optional<Seat> seatOpt = seatRepository.getSeatByColumnAndRow(
-            seatDTO.getColumn(), seatDTO.getRow(), seatDTO.getGridId());
-
-        if (seatOpt.isPresent()) {
-          // Atualiza assento existente
-          Seat seat = seatOpt.get();
-          seat.setFree(seatDTO.getFree());
-          seat.setStatus(seatDTO.getStatus());
-          if (seatDTO.getPerson() != null && seatDTO.getPerson().getCpf() != null
-              && seatDTO.getPerson().getName() != null) {
-
-            // Person person = seatDTO.getPerson();
-            // String cleanCPF = person.getCpf().replaceAll("\\D", "");
-            // person.setCpf(cleanCPF);
-
-            personRepository.save(seatDTO.getPerson());
-            seat.setPerson(seatDTO.getPerson());
-          }
-          seatsToSave.add(seat);
-        } else {
-
-          // Cria novo assento com currentGrid
-          Seat newSeat = Seat.builder()
-              .position(seatDTO.getPosition())
-              .row(seatDTO.getRow())
-              .column(seatDTO.getColumn())
-              .free(seatDTO.getFree())
-              .status(seatDTO.getStatus())
-              .currentGrid(gridEntity)
-              // .person(seatDTO.getPerson())
-              .build();
-
-          if (seatDTO.getPerson().getCpf() != null && seatDTO.getPerson().getName() != null) {
-            personRepository.save(seatDTO.getPerson());
-            newSeat.setPerson(seatDTO.getPerson());
-          }
-
-          seatsToSave.add(newSeat);
-        }
-      }
-    }
-
-    // Salva todos de uma vez (mais eficiente)
-    seatRepository.saveAll(seatsToSave);
-    // Remove assentos que não estão mais no grid
-    cleanupOrphanedSeats(gridId, seatGridDTO);
-  }
 
   private void cleanupOrphanedSeats(UUID gridId, List<List<SeatDTO>> newGrid) {
     List<Seat> existingSeats = seatRepository.findSeatsByGridId(gridId);
@@ -211,8 +225,8 @@ public class ServiceSeatImpl implements ISeatService {
 
   @Override
   public ChartsResponceDTO charts(UUID gridID) {
-    Integer seatsOccupied = seatRepository.countSeatsOccupied();
-    Integer countAllSeats = seatRepository.countAllSeats();
+    Integer seatsOccupied = seatRepository.countSeatsOccupied(gridRepository.currentGrid().get().getGrid());
+    Integer countAllSeats = seatRepository.countAllSeats(gridRepository.currentGrid().get().getGrid());
 
     Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied(gridID);
 

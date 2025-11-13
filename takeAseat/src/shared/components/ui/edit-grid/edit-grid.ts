@@ -25,7 +25,7 @@ import { CurrentGrid } from '../../../../core/model/fetch/grid-entity-dto';
 @Component({
   selector: 'app-edit-grid',
   standalone: true,
-  imports: [ CommonModule, FaIconComponent, WarningPopupComponent /* , SeatGridComponent  */],
+  imports: [CommonModule, FaIconComponent, WarningPopupComponent /* , SeatGridComponent  */],
   templateUrl: './edit-grid.html',
   styleUrl: './edit-grid.scss'
 })
@@ -37,57 +37,57 @@ export class EditGrid {
     private gridObservable: GridService_Observable,
     private safeStorage: SafeStorageService,
     private api: ApiService
-  ) {}
+  ) { }
 
   private subscription: Subscription = new Subscription();
 
-  public faPencil : IconDefinition = faPencil;
-  public faXmark : IconDefinition  = faXmark;
-  public faFloppyDisk : IconDefinition  = faFloppyDisk;
-  public faReply : IconDefinition  = faReply;
-  public faTrash : IconDefinition  = faTrash;
-  public faUser : IconDefinition = faUser
+  public faPencil: IconDefinition = faPencil;
+  public faXmark: IconDefinition = faXmark;
+  public faFloppyDisk: IconDefinition = faFloppyDisk;
+  public faReply: IconDefinition = faReply;
+  public faTrash: IconDefinition = faTrash;
+  public faUser: IconDefinition = faUser
 
   // Estabelecendo cominicação Imperativa, ou seja sem ser apenas pelo template.
   // Permitindo acessar métodos, propriedades publicas do filho e ter o controle programático
   // e que o pai reaja a eventos do filho devido ao EventEmiter.emit() desencadeando um evento resposta do pai.
   // Ou seja um PONTEIRO para a instância do WarningPopupComponent
   @ViewChild('warningPopup')
-  private warningPopup! : WarningPopupComponent;
+  private warningPopup!: WarningPopupComponent;
 
   @Input()
-  public rows : number = 12;
+  public rows: number = 12;
 
   @Input()
-  public columns : number = 36;
+  public columns: number = 36;
 
   @Input() grid: Array<Seat[]> = [];
 
   @Output()
-  public seatSelected : EventEmitter<Seat> = new EventEmitter<Seat>();
+  public seatSelected: EventEmitter<Seat> = new EventEmitter<Seat>();
 
   @Output()
-  public gridUpdated : EventEmitter<Array<Seat[]>> = new EventEmitter<Array<Seat[]>>();
+  public gridUpdated: EventEmitter<Array<Seat[]>> = new EventEmitter<Array<Seat[]>>();
 
 
 
 
-  public showWindow : boolean = false
+  public showWindow: boolean = false
 
-  public flagConfirmation : boolean = true;
+  public flagConfirmation: boolean = true;
 
   private should_erase_seat_state: boolean = false;
 
-  public selectedSeatList : Array<Seat> = [];
+  public selectedSeatList: Array<Seat> = [];
 
 
 
 
-  ngOnDestroy() : void {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  public ngOnInit() : void {
+  public ngOnInit(): void {
     // this.generateGrid();
     // Escuta o grid inicial do SeatGrid
 
@@ -101,7 +101,7 @@ export class EditGrid {
    * enviado pelo 'SeatGridComponent' para o observable
    *
    * */
-  private setupGridSubscription() : void {
+  private setupGridSubscription(): void {
     this.subscription.add(
       this.gridObservable.current_grid$
         .pipe(
@@ -132,7 +132,7 @@ export class EditGrid {
    * Alterna o status do elemento 'Seat' no Grid
    *
    * */
-  public toggleSeat(seat: Seat) : void {
+  public toggleSeat(seat: Seat): void {
     // if (!seat.free) return;
     console.log("Toggle Seat to UNAVAILABLE or AVAILABLE...")
     seat.selected = !seat.selected;
@@ -147,7 +147,7 @@ export class EditGrid {
    * Compartilha o Grid atualizado com o Observable para o compartilhar com outro subscriber
    *
    * */
-  private shareGridWithSubscribers(grid : Array<Seat[]>) {
+  private shareGridWithSubscribers(grid: Array<Seat[]>) {
     this.gridObservable.updateGrid(grid);
   }
 
@@ -168,11 +168,11 @@ export class EditGrid {
       console.log("Should Emmit the new Grid format.");
 
       this.selectedSeatList.forEach
-        ((seat : Seat) => {
-            console.log("Iterando sobre cada assento selecionado...")
-            seat.free = !seat.free;
-            // seat.status = seat.status === 'UNAVAILABLE' ? 'AVAILABLE' : 'UNAVAILABLE';
-        } );
+        ((seat: Seat) => {
+          console.log("Iterando sobre cada assento selecionado...")
+          seat.free = !seat.free;
+          // seat.status = seat.status === 'UNAVAILABLE' ? 'AVAILABLE' : 'UNAVAILABLE';
+        });
       console.log("Assentos modificados pela iteração...");
       console.log(this.selectedSeatList);
 
@@ -181,15 +181,15 @@ export class EditGrid {
       // this.gridObservable.updateGrid(this.grid);
       // this.gridUpdated.emit(this.grid);
 
-      const currentGrid : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+      const currentGrid: GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
       if (currentGrid) {
-        const gridState : GridDTO = {
-          entity : {
-            grid : currentGrid?.entity.grid,
-            rowNumber : this.rows,
-            columnNumber : this.columns,
-            is_currentGrid : true
+        const gridState: GridDTO = {
+          entity: {
+            grid: currentGrid?.entity.grid,
+            rowNumber: this.rows,
+            columnNumber: this.columns,
+            is_currentGrid: true
           },
           grid: this.grid
         };
@@ -199,12 +199,12 @@ export class EditGrid {
 
 
       if (currentGrid) {
-        const dto : GridDTO = {
+        const dto: GridDTO = {
           entity: {
-            grid : currentGrid.entity.grid,
-            rowNumber : this.rows,
-            columnNumber : this.columns,
-            is_currentGrid : true
+            grid: currentGrid.entity.grid,
+            rowNumber: this.rows,
+            columnNumber: this.columns,
+            is_currentGrid: true
           },
           grid: this.grid
         }
@@ -242,7 +242,7 @@ export class EditGrid {
    * e por fim abrindo o PopUp
    *
    * */
-  public openWarning( flagConfirmation : boolean ) {
+  public openWarning(flagConfirmation: boolean) {
     this.warningPopup.message = this.pickMessageToConfirmation(flagConfirmation);
     this.warningPopup.confirmText = this.pickContentTextToConfirmation();
 
@@ -260,17 +260,17 @@ export class EditGrid {
    * restaurar o status padrão
    *
    * */
-  public erase_seat_state() : void {
-    const currentGrid : GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
+  public erase_seat_state(): void {
+    const currentGrid: GridDTO | null = this.safeStorage.getItem<GridDTO>('currentGrid');
 
     this.safeStorage.removeItem('currentGrid');
     // this.safeStorage.removeItem('currentGrid');
 
     console.log("Apagando essa porra");
 
-    this.grid.forEach((seatList : Array<Seat>) => {
+    this.grid.forEach((seatList: Array<Seat>) => {
       seatList.forEach(
-        (seat : Seat) => {
+        (seat: Seat) => {
           seat.selected = false;
           seat.status = 'AVAILABLE';
           seat.free = true;
@@ -287,11 +287,11 @@ export class EditGrid {
     // };
 
     if (currentGrid) {
-      const dto : CurrentGrid = {
-          grid : currentGrid.entity.grid,
-          rowNumber : currentGrid.entity.rowNumber,
-          columnNumber : currentGrid.entity.columnNumber,
-          is_currentGrid : true
+      const dto: CurrentGrid = {
+        grid: currentGrid.entity.grid,
+        rowNumber: currentGrid.entity.rowNumber,
+        columnNumber: currentGrid.entity.columnNumber,
+        is_currentGrid: true
       }
       console.log("Enviando assentos modificados no componente de edição para a API...");
       console.log(dto);
@@ -306,13 +306,13 @@ export class EditGrid {
    * inseridos na lista 'this.selectedSeatList'
    *
    * */
-  public checkSelections(seat : Seat) : void {
+  public checkSelections(seat: Seat): void {
     const existingIndex = this.selectedSeatList.findIndex(s => s.position === seat.position);
 
     if (existingIndex !== -1) {
-        this.selectedSeatList[existingIndex] = seat;
+      this.selectedSeatList[existingIndex] = seat;
     } else {
-        this.selectedSeatList.push(seat);
+      this.selectedSeatList.push(seat);
     }
   }
 
@@ -325,7 +325,7 @@ export class EditGrid {
    * component SeatGridComponent por meio do subscriber que definimos aqui
    *
    * */
-  public showBlurWindow() : void {
+  public showBlurWindow(): void {
     this.showWindow = !this.showWindow;
     console.log("fuck");
 
@@ -358,19 +358,19 @@ export class EditGrid {
    * Modifica o tamanho das colunas do Grid ou linhas
    *
    * */
-  public increaseColumns() : void {
+  public increaseColumns(): void {
     this.columns = this.columns + 1;
     this.updateGrid();
   }
-  public decreaseColumns() : void {
+  public decreaseColumns(): void {
     this.columns = this.columns - 1;
     this.updateGrid();
   }
-  public increaseRows() : void {
+  public increaseRows(): void {
     this.rows = this.rows + 1;
     this.updateGrid();
   }
-  public decreaseRows() : void {
+  public decreaseRows(): void {
     this.rows = this.rows - 1;
     this.updateGrid();
   }
@@ -382,7 +382,7 @@ export class EditGrid {
    * decrescidas e preservando o estado de cada elemento 'Seat'
    *
    * */
-  public updateGrid() : void {
+  public updateGrid(): void {
     const oldGrid = this.grid;
     this.generateGrid();
     // Add the status and others properties that the oldGrid had to the new generated Grid.
@@ -396,7 +396,7 @@ export class EditGrid {
    * e obter o seu estado e ao por no seu respectivo elemento no no Grid
    *
    * */
-  private preserveSeatStates(oldGrid : Array<Seat[]>) : void  {
+  private preserveSeatStates(oldGrid: Array<Seat[]>): void {
     for (let row = 0; row < this.MIN_SEARCHES_TO_ROWS(this.rows, oldGrid); row++) {
 
       for (let column = 0; column < this.MIN_SEARCHES_TO_COLUMNS(this.columns, oldGrid, row); column++) {
@@ -420,15 +420,15 @@ export class EditGrid {
    * as colunas ou linhas do respectivo grid que seria o velho Grid
    *
    * */
-  private MIN_SEARCHES_TO_ROWS( rows: number, oldGrid: Array<Seat[]> ) : number {
+  private MIN_SEARCHES_TO_ROWS(rows: number, oldGrid: Array<Seat[]>): number {
     // If rows value greater than oldGrid.length that means on edit
     // the rows number was icreased otherwise it was decrease.
     return Math.min(rows, oldGrid.length);
   }
-  private MIN_SEARCHES_TO_COLUMNS( column: number, oldGrid : Array<Seat[]>, row: number ) : number {
+  private MIN_SEARCHES_TO_COLUMNS(column: number, oldGrid: Array<Seat[]>, row: number): number {
     // If column value greater than oldGrid[index].length that means on edit
     // the column number was icreased otherwise it was decrease.
-    return Math.min(column, oldGrid[row]?.length || 0 );
+    return Math.min(column, oldGrid[row]?.length || 0);
   }
 
   /*
@@ -440,27 +440,33 @@ export class EditGrid {
   private generateGrid() {
     this.grid = [];
 
-    for ( let rowCount = 0; rowCount < this.rows; rowCount++ ) {
-      const rowArray : Seat[] = [];
+    for (let rowCount = 0; rowCount < this.rows; rowCount++) {
+      const rowArray: Seat[] = [];
 
       this.generateColums(rowArray, rowCount);
       this.grid.push(rowArray);
     }
   }
-  private generateColums(row : Seat[], rowCount : number) {
-    for (let c = 0; c < this.columns; c++) {
-      row.push({
-        position : `seat-${rowCount + 1}-${c + 1}`,
-        row : rowCount + 1,
-        column : c + 1,
-        selected : false,
-        free : false,
-        status : 'AVAILABLE',
-        person: {
-          name: "ok",
-          cpf: "111"
-        }
-      });
+  private generateColums(row: Seat[], rowCount: number) {
+    const grid = this.safeStorage.getItem<GridDTO>("currentGrid")
+
+    if (grid?.entity.grid) {
+
+      for (let c = 0; c < this.columns; c++) {
+        row.push({
+          gridId: grid.entity.grid,
+          position: `seat-${rowCount + 1}-${c + 1}`,
+          row: rowCount + 1,
+          column: c + 1,
+          selected: false,
+          free: false,
+          status: 'AVAILABLE',
+          person: {
+            name: "ok",
+            cpf: "111"
+          }
+        });
+      }
     }
   }
 
@@ -469,7 +475,7 @@ export class EditGrid {
    * Retorna uma string que serviá de menssagem para o PopUp de warning
    *
    * */
-  private pickMessageToConfirmation( IsSavedAction : boolean ) : string {
+  private pickMessageToConfirmation(IsSavedAction: boolean): string {
     let message = '';
     if (IsSavedAction) return message = 'Do you want to save thoses changes? <br> This Changes will be applied to the current template!'
     return message = 'Do you want leave thoses changes? <br> Every changes that you made will be discard!'
@@ -480,7 +486,7 @@ export class EditGrid {
    * Apenas retorna a string 'Save'
    *
    * */
-  private pickContentTextToConfirmation() : string {
+  private pickContentTextToConfirmation(): string {
     let message = '';
     return message = 'Save';
   }
