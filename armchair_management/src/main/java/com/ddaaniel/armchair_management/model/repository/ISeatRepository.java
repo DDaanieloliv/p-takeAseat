@@ -50,14 +50,14 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
   @Query(value = "SELECT COUNT(*) FROM tb_seats WHERE tb_seats.free = false;", nativeQuery = true)
   Integer countSeatsOccupied();
 
-  @Query(value = "SELECT COUNT(*) FROM tb_seats WHERE tb_seats.free = true;", nativeQuery = true)
-  Integer countSeatsUnoccupied();
+  @Query(value = "SELECT COUNT(*) FROM tb_seats WHERE tb_seats.free = true AND tb_seats.grid_id = ?1;", nativeQuery = true)
+  Integer countSeatsUnoccupied(UUID gridID);
 
   @Query(value = "SELECT COUNT(*) FROM tb_seats;", nativeQuery = true)
   Integer countAllSeats();
 
-  @Query(value = "SELECT * FROM tb_seats WHERE seat_column = ?1 AND seat_row = ?2;", nativeQuery = true)
-  Optional<Seat> getSeatByColumnAndRow(Integer column, Integer row);
+  @Query(value = "SELECT * FROM tb_seats WHERE seat_column = ?1 AND seat_row = ?2; AND tb_seats.grid_id = ?3;", nativeQuery = true)
+  Optional<Seat> getSeatByColumnAndRow(Integer column, Integer row, UUID gridId);
 
 
   @Query(value = "SELECT * FROM tb_seats WHERE grid_id = ?1;", nativeQuery = true)

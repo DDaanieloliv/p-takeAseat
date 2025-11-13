@@ -1,5 +1,7 @@
 package com.ddaaniel.armchair_management.model.record;
 
+import java.util.UUID;
+
 import com.ddaaniel.armchair_management.model.Person;
 import com.ddaaniel.armchair_management.model.enums.SeatType;
 
@@ -12,6 +14,7 @@ import lombok.Setter;
 @Setter
 public class SeatDTO {
 
+    private UUID gridId;
     private String position;
     private Integer row;
     @Builder.Default

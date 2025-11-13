@@ -1,6 +1,7 @@
 import { PersonData } from "./Person";
 
 export interface Seat {
+  gridId: string
   position: string
   row: number;
   column: number;

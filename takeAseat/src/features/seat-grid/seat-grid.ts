@@ -13,7 +13,6 @@ import { PersonData } from '../../core/model/Person';
 import { FieldError } from '../../shared/components/form-ui/form-error-handler/FieldError';
 import { FormComponent } from '../../shared/components/form-ui/form-component/form-component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { GridListDTO } from '../../core/model/fetch/GridListDTO';
 
 @Component({
   selector: 'app-seat-grid',
@@ -160,6 +159,7 @@ export class SeatGridComponent {
 
     // let apiGrid : Promise<GridDTO | null> = this.make_aGridDTO_Request();
     let apiGrid : GridDTO | null = await this.make_aGridDTO_Request();
+    console.log('From API: ', apiGrid);
 
     this.bootStrap(savedState, apiGrid);
   }
@@ -346,9 +346,14 @@ export class SeatGridComponent {
    *
    * */
   private generateColums(row: Seat[], rowCount: number, columnDto ? : number) {
+    const grid = this.safeStorage.getItem<GridDTO>("currentGrid")
+
+    if (grid?.entity.grid) {
+
     if (columnDto) {
       for (let c = 0; c < columnDto; c++) {
         row.push({
+          gridId: grid?.entity.grid,
           position: `seat-${rowCount + 1}-${c + 1}`,
           row: rowCount + 1,
           column: c + 1,
@@ -365,6 +370,7 @@ export class SeatGridComponent {
     else {
       for (let c = 0; c < this.columns; c++) {
         row.push({
+          gridId: grid?.entity.grid,
           position: `seat-${rowCount + 1}-${c + 1}`,
           row: rowCount + 1,
           column: c + 1,
@@ -375,8 +381,9 @@ export class SeatGridComponent {
             name: "",
             cpf: ""
           }
-        });
+       });
       }
+    }
     }
   }
 

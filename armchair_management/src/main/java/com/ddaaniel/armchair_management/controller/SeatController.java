@@ -92,8 +92,8 @@ public class SeatController {
     return ResponseEntity.ok(gridUpdatedDTO);
   }
 
-  @PutMapping("/grid/currentGridSwitch")
-  public ResponseEntity<?> CurrentGridSwitch(UUID gridId){
+  @PutMapping("/grid/currentGridSwitch/{gridId}")
+  public ResponseEntity<?> CurrentGridSwitch(@PathVariable UUID gridId){
     gridService.currentGridSwitch(gridId);
 
     return ResponseEntity.noContent().build();

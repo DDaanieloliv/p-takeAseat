@@ -63,7 +63,7 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
       gridRepository.saveAll(listEntity);
     }
 
-    // List<GridEntity> gridList = gridRepository.findAllWithSeatss();
+    List<GridEntity> gridList = gridRepository.findAllWithSeatss();
 
     // int position = 1;
     // for (int countRows = 1; countRows <= appConfig.getRows(); countRows++) {
@@ -83,11 +83,11 @@ public class ServiceDataInitializerImpl implements IDataInitializerService {
     //   }
     // }
 
-    // for (GridEntity gridEntity : gridList) {
-    //   if (gridEntity.getSeatList().isEmpty()) {
-    //     generateSeats(gridEntity.getGrid());
-    //   }
-    // }
+    for (GridEntity gridEntity : gridList) {
+      if (gridEntity.getSeatList().isEmpty()) {
+        generateSeats(gridEntity.getGrid());
+      }
+    }
 
   }
 

@@ -112,7 +112,7 @@ public class ServiceSeatImpl implements ISeatService {
     for (List<SeatDTO> row : seatGridDTO) {
       for (SeatDTO seatDTO : row) {
         Optional<Seat> seatOpt = seatRepository.getSeatByColumnAndRow(
-            seatDTO.getColumn(), seatDTO.getRow());
+            seatDTO.getColumn(), seatDTO.getRow(), seatDTO.getGridId());
 
         if (seatOpt.isPresent()) {
           // Atualiza assento existente
@@ -210,16 +210,16 @@ public class ServiceSeatImpl implements ISeatService {
   }
 
   @Override
-  public ChartsResponceDTO charts(UUID gridId) {
+  public ChartsResponceDTO charts(UUID gridID) {
     Integer seatsOccupied = seatRepository.countSeatsOccupied();
     Integer countAllSeats = seatRepository.countAllSeats();
 
-    Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied();
+    Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied(gridID);
 
     Float percentOccupation = seatsOccupied * 100.0f / countAllSeats;
 
     // * Interface-based Projections *
-    List<RowOccupacyProjection> results = seatRepository.getOccupacyByRow(gridId);
+    List<RowOccupacyProjection> results = seatRepository.getOccupacyByRow(gridID);
 
     List<RowOccupacyDTO> occupacyByRow = results.stream()
         .map(projection -> RowOccupacyDTO.builder()

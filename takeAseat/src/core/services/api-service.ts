@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { GridDTO } from '../model/fetch/grid-dto';
 import { CurrentGrid } from '../model/fetch/grid-entity-dto';
 import { ChartDTO } from '../model/chartModel/chartDTO';
-import { GridListDTO } from '../model/fetch/GridListDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +16,11 @@ export class ApiService {
   }
 
 
-  public async curretnGridSwitch(): Promise<void> {
-    await fetch('http://localhost:8080/seats/grid');
+  public async curretnGridSwitch(ID: string): Promise<void> {
+    await fetch(`http://localhost:8080/seats/grid/currentGridSwitch/${ID}`,
+      {
+        method: 'PUT'
+      });
   }
 
 

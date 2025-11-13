@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../../core/services/api-service';
-import { GridListDTO } from '../../../core/model/fetch/GridListDTO';
 import { CurrentGrid } from '../../../core/model/fetch/grid-entity-dto';
 import { CommonModule } from '@angular/common';
 
@@ -27,6 +26,9 @@ export class NavigationTabs {
     }
   }
 
-
+  public selectTab(ID: string) : void {
+    this.api.curretnGridSwitch(ID)
+    console.log(ID);
+  }
 
 }

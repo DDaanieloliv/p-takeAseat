@@ -2,6 +2,7 @@
   <div *ngFor="let entity of gridList; let i = index"
     class="tab-window"
     [class.selected]="entity.is_currentGrid"
+    (click)="selectTab(entity.grid)"
   >
     Room {{i + 1}}
   </div>
