@@ -14,6 +14,7 @@ import com.ddaaniel.armchair_management.model.record.RowOccupacyDTO;
 import com.ddaaniel.armchair_management.model.record.RowOccupacyProjection;
 import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
+import com.ddaaniel.armchair_management.model.record.ShortSeatDTO;
 import com.ddaaniel.armchair_management.model.record.ChartsResponceDTO;
 import com.ddaaniel.armchair_management.model.repository.IGridRepository;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
@@ -64,6 +65,15 @@ public class ServiceSeatImpl implements ISeatService {
     seatRepository.saveAll(seatList);
 
   }
+
+
+
+  @Override
+  public List<ShortSeatDTO> listAllSeats() {
+    List<Seat> list = seatRepository.findAll();
+    return seatMapper.toShortDTOList(list);
+  }
+
 
   // listando status de todas as poltronas
   @Override

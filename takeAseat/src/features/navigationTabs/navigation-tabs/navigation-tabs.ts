@@ -38,7 +38,8 @@ export class NavigationTabs {
   // Ordena os grids para manter ordem consistente
   private sortGrids(grids: CurrentGrid[]): CurrentGrid[] {
     return [...grids].sort((a, b) => {
-      // Ordena por grid ID ou por algum critério consistente
+      // Ordena por grid ID ou por algum critério consistente: comparação
+      // lexicográfica baseada na ordem dos caracteres na tabela Unicode
       return a.grid.localeCompare(b.grid);
       // Ou se tiver um número de ordem: return a.order - b.order;
     });
@@ -55,6 +56,7 @@ export class NavigationTabs {
     return index + 1; // Sempre retorna a posição atual na lista ordenada
   }
 
+
   // Método puro para verificação - não altera estado
   public isTabSelected(entity: CurrentGrid): boolean {
     return this.tabSelected?.grid === entity.grid;
@@ -70,9 +72,10 @@ export class NavigationTabs {
       // Atualiza no backend
       await this.api.curretnGridSwitch(grid.grid);
 
-      // Atualiza estado local
-      this.gridList.forEach(g => {
-        g.is_currentGrid = g.grid === grid.grid;
+      // Atualiza estado local de cada CurrentGrid.is_currentGrid
+      // caso não seja equivalente ao recebido como parâmetro
+      this.gridList.forEach(grid_parsed => {
+        grid_parsed.is_currentGrid = grid_parsed.grid === grid.grid;
       });
 
       this.tabSelected = grid;

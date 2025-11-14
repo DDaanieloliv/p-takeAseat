@@ -13,6 +13,7 @@ import com.ddaaniel.armchair_management.model.record.MessageResponseDTO;
 import com.ddaaniel.armchair_management.model.record.RequestAllocationDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.SeatsUpdatedDTO;
+import com.ddaaniel.armchair_management.model.record.ShortSeatDTO;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,12 @@ public class SeatController {
     this.gridService = gridService;
   }
 
+
   @GetMapping
-  public ResponseEntity<List<SeatResponseDTO>> getAllStatusPoltronas() {
-    var response = serviceSeat.listStatusOfAllSeats();
-    return ResponseEntity.ok().body(response);
+  public ResponseEntity<List<ShortSeatDTO>> getAllSeats() {
+    return ResponseEntity.ok(serviceSeat.listAllSeats());
   }
+
 
   @GetMapping("/{row}-{column}")
   public ResponseEntity<SeatResponseDTO> getBySeat(@PathVariable Integer row, @PathVariable Integer column) {
@@ -122,10 +124,8 @@ public class SeatController {
 
 
   @GetMapping("/grid/list")
-  public ResponseEntity<List<GridEntity>> GridList(){
-  // public ResponseEntity<List<GridEntityDTO>> GridList(){
-    // return ResponseEntity.ok(gridService.gridList());
-    return ResponseEntity.ok(gridService.dirtyListGrid());
+  public ResponseEntity<List<GridEntityDTO>> GridList(){
+    return ResponseEntity.ok(gridService.gridList());
   }
 
 

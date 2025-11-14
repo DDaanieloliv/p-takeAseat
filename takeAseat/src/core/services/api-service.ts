@@ -2,12 +2,20 @@ import { Injectable } from '@angular/core';
 import { GridDTO } from '../model/fetch/grid-dto';
 import { CurrentGrid } from '../model/fetch/grid-entity-dto';
 import { ChartDTO } from '../model/chartModel/chartDTO';
+import { SeatDto } from '../model/fetch/SeatDTO';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
+
+
+  public async fetchAllSeats(): Promise<any> {
+    const res = await fetch('http://localhost:8080/seats');
+    const data = await res.json();
+    return data as SeatDto[];
+  }
 
   public async fetchListGrid(): Promise<CurrentGrid[]> {
     const res = await fetch('http://localhost:8080/seats/grid/list');
