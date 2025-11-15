@@ -34,6 +34,7 @@ public class SeatMapper {
             seat.getPosition(),
             seat.getRow(),
             seat.getColumn(),
+            seat.getFree(),
             seat.getStatus(),
             gridEntityConverter(seat.getCurrentGrid())))
         .toList();

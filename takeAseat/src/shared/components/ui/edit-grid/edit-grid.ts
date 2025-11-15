@@ -404,9 +404,11 @@ export class EditGrid {
         if (oldGrid[row] && oldGrid[row][column]) {
 
           // Preserva o estado do assento
-          this.grid[row][column].selected = oldGrid[row][column].selected;
-          this.grid[row][column].free = oldGrid[row][column].free;
-          this.grid[row][column].status = oldGrid[row][column].status;
+          if (oldGrid[row][column].selected && oldGrid[row][column].free && oldGrid[row][column].status) {
+            this.grid[row][column].selected = oldGrid[row][column].selected;
+            this.grid[row][column].free = oldGrid[row][column].free;
+            this.grid[row][column].status = oldGrid[row][column].status;
+          }
         }
       }
 

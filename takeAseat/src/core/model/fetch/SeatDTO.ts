@@ -4,6 +4,7 @@ export interface SeatDto {
   position: number;
   row: number;
   column: number;
+  free: boolean;
   type: 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'MAINTENANCE' | 'DISABLED' | 'SELECTED' | 'UNAVAILABLE';
   grid: CurrentGrid;
 }

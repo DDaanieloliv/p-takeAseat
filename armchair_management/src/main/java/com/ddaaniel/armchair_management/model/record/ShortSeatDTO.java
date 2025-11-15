@@ -6,6 +6,7 @@ public record ShortSeatDTO(
     String position,
     Integer row,
     Integer column,
+    Boolean free,
     SeatType type,
     GridEntityDTO gridEntity) {
 }
