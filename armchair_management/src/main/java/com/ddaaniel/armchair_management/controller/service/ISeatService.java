@@ -20,6 +20,8 @@ public interface ISeatService {
 
   ChartsResponceDTO charts(UUID gridId);
 
+  ChartsResponceDTO charts();
+
   void updateModifiedSeats(List<List<SeatDTO>> seatGridDTO, UUID gridId);
 
   void eraseAllSeatsState(UUID uuid);

@@ -24,9 +24,9 @@ public class SeatMapper {
         seat.getColumn(),
         seat.getStatus(),
         Optional.ofNullable(seat.getPerson())
-            .map(person -> new SeatResponseDTO.PersonDTO(person.getName(), person.getCpf())));
+            .map(person -> new SeatResponseDTO.PersonDTO(person.getName(), person.getCpf())),
+        seat.getCurrentGrid());
   }
-
 
   public List<ShortSeatDTO> toShortDTOList(List<Seat> listSeats) {
     List<ShortSeatDTO> list = listSeats.stream()
@@ -49,8 +49,6 @@ public class SeatMapper {
         .columnNumber(entity.getColumnNumber())
         .is_currentGrid(entity.getIs_currentGrid()).build();
   }
-
-
 
   public List<SeatResponseDTO> toDTOList(List<Seat> seats) {
     return seats.stream()

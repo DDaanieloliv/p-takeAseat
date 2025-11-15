@@ -3,6 +3,7 @@ package com.ddaaniel.armchair_management.controller.service.implementation;
 import com.ddaaniel.armchair_management.controller.exception.BadRequestException;
 import com.ddaaniel.armchair_management.controller.exception.NotFoundException;
 import com.ddaaniel.armchair_management.controller.exception.ValidationException;
+import com.ddaaniel.armchair_management.controller.service.IGridService;
 import com.ddaaniel.armchair_management.controller.service.ISeatService;
 import com.ddaaniel.armchair_management.controller.service.mapper.SeatMapper;
 import com.ddaaniel.armchair_management.model.GridEntity;
@@ -16,6 +17,8 @@ import com.ddaaniel.armchair_management.model.record.SeatDTO;
 import com.ddaaniel.armchair_management.model.record.SeatResponseDTO;
 import com.ddaaniel.armchair_management.model.record.ShortSeatDTO;
 import com.ddaaniel.armchair_management.model.record.ChartsResponceDTO;
+import com.ddaaniel.armchair_management.model.record.GridEntityDTO;
+import com.ddaaniel.armchair_management.model.record.RoomOccupacyDTO;
 import com.ddaaniel.armchair_management.model.repository.IGridRepository;
 import com.ddaaniel.armchair_management.model.repository.IPersonRepository;
 import com.ddaaniel.armchair_management.model.repository.ISeatRepository;
@@ -44,14 +47,17 @@ public class ServiceSeatImpl implements ISeatService {
   private final ISeatRepository seatRepository;
   private final SeatMapper seatMapper;
   private final IGridRepository gridRepository;
+  private final IGridService gridService;
 
   @Autowired
   public ServiceSeatImpl(ISeatRepository seatRepository, IPersonRepository personRepository,
-      IPersonRepository personRepository1, SeatMapper seatMapper, IGridRepository gridRepository) {
+      IPersonRepository personRepository1, SeatMapper seatMapper, IGridRepository gridRepository,
+      IGridService gridService) {
     this.seatRepository = seatRepository;
     this.personRepository = personRepository1;
     this.seatMapper = seatMapper;
     this.gridRepository = gridRepository;
+    this.gridService = gridService;
   }
 
   @Override
@@ -66,14 +72,11 @@ public class ServiceSeatImpl implements ISeatService {
 
   }
 
-
-
   @Override
   public List<ShortSeatDTO> listAllSeats() {
     List<Seat> list = seatRepository.findAll();
     return seatMapper.toShortDTOList(list);
   }
-
 
   // listando status de todas as poltronas
   @Override
@@ -182,7 +185,6 @@ public class ServiceSeatImpl implements ISeatService {
     allocating(seat, person);
   }
 
-
   private void cleanupOrphanedSeats(UUID gridId, List<List<SeatDTO>> newGrid) {
     List<Seat> existingSeats = seatRepository.findSeatsByGridId(gridId);
     Set<String> validPositions = new HashSet<String>();
@@ -234,6 +236,36 @@ public class ServiceSeatImpl implements ISeatService {
   }
 
   @Override
+  public ChartsResponceDTO charts() {
+    var gridID = gridRepository.currentGrid().get().getGrid();
+    Integer seatsOccupied = seatRepository.countSeatsOccupied(gridID);
+    Integer countAllSeats = seatRepository.countAllSeats(gridID);
+
+    Integer seatsUnoccupied = seatRepository.countSeatsUnoccupied(gridID);
+
+    Float percentOccupation = seatsOccupied * 100.0f / countAllSeats;
+
+    // * Interface-based Projections *
+    List<RowOccupacyProjection> results = seatRepository.getOccupacyByRow(gridID);
+
+    List<RowOccupacyDTO> occupacyByRow = results.stream()
+        .map(projection -> RowOccupacyDTO.builder()
+            .fileira(projection.getFileira())
+            .totalAssentos(projection.getTotalAssentos())
+            .assentosLivre(projection.getAssentosLivres())
+            .taxaOcupacaoPercentual(projection.getTaxaOcupacaoPercentual())
+            .build())
+        .collect(Collectors.toList());
+
+    return ChartsResponceDTO.builder()
+        .percentOccupied(percentOccupation)
+        .seatsUnoccupied(seatsUnoccupied)
+        .rowOccupacyDTO(occupacyByRow)
+        .roomOccupacyDTOs(getOccupancyPerRoom())
+        .build();
+  }
+
+  @Override
   public ChartsResponceDTO charts(UUID gridID) {
     Integer seatsOccupied = seatRepository.countSeatsOccupied(gridRepository.currentGrid().get().getGrid());
     Integer countAllSeats = seatRepository.countAllSeats(gridRepository.currentGrid().get().getGrid());
@@ -258,7 +290,23 @@ public class ServiceSeatImpl implements ISeatService {
         .percentOccupied(percentOccupation)
         .seatsUnoccupied(seatsUnoccupied)
         .rowOccupacyDTO(occupacyByRow)
+        .roomOccupacyDTOs(getOccupancyPerRoom())
         .build();
+  }
+
+  private List<RoomOccupacyDTO> getOccupancyPerRoom() {
+    List<RoomOccupacyDTO> roomList = new ArrayList<>();
+
+    var e = gridService.gridList();
+    for (GridEntityDTO gridEntityDTO : e) {
+      var countAllSeats = seatRepository.countAllSeats(gridEntityDTO.getGrid());
+      var seatsOccupied = seatRepository.countSeatsOccupied(gridEntityDTO.getGrid());
+
+      RoomOccupacyDTO dto = new RoomOccupacyDTO(gridEntityDTO.getGrid(), seatsOccupied * 100.0f / countAllSeats);
+      roomList.add(dto);
+    }
+
+    return roomList;
   }
 
 }

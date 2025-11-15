@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Seat } from '../../../core/model/Seat';
 import { GridService_Observable } from '../../../shared/services/grid-state';
 import { SeatDto } from '../../../core/model/fetch/SeatDTO';
+import { GridDTO } from '../../../core/model/fetch/grid-dto';
 
 @Component({
   selector: 'app-navigation-tabs',
@@ -80,70 +81,6 @@ export class NavigationTabs {
 
 
 
-  /*
-   * Converte SeatDto[] para Array<Seat[]> (formato usado pelo grid)
-   */
-  private convertSeatsDtoToGrid(seatsDto: SeatDto[]): Array<Seat[]> {
-    if (!seatsDto || seatsDto.length === 0) {
-      return [];
-    }
-
-    const maxRow = Math.max(...seatsDto.map(seat => seat.row));
-    const maxCol = Math.max(...seatsDto.map(seat => seat.column));
-
-    const grid: Array<Seat[]> = [];
-
-    for (let row = 1; row <= maxRow; row++) {
-      const rowArray: Seat[] = [];
-
-      for (let col = 1; col <= maxCol; col++) {
-        const seatDto = seatsDto.find(s => s.row === row && s.column === col);
-
-        if (seatDto) {
-          rowArray.push(this.convertSeatDtoToSeat(seatDto));
-        } else {
-          rowArray.push(this.createEmptySeat(row, col));
-        }
-      }
-
-      grid.push(rowArray);
-    }
-
-    return grid;
-  }
-
-  /*
-   * Converte um SeatDto para Seat
-   */
-  private convertSeatDtoToSeat(seatDto: SeatDto): Seat {
-    return {
-      gridId: seatDto.grid.grid,
-      position: seatDto.position.toString(),
-      row: seatDto.row,
-      column: seatDto.column,
-      selected: false,
-      free: seatDto.free,
-      status: seatDto.type,
-      // Falta adicionar a pessao.
-      person: { name: "", cpf: "" }
-    };
-  }
-
-  /*
-   * Cria um seat vazio para posições sem dados
-   */
-  private createEmptySeat(row: number, col: number): Seat {
-    return {
-      gridId: this.tabSelected?.grid || '',
-      position: `seat-${row}-${col}`,
-      row: row,
-      column: col,
-      selected: false,
-      free: true,
-      status: 'AVAILABLE',
-      person: { name: "", cpf: "" }
-    };
-  }
 
 
 
@@ -156,7 +93,6 @@ export class NavigationTabs {
 
       // Atualiza no backend
       await this.api.curretnGridSwitch(grid.grid);
-      const allSeats: SeatDto[] = await this.api.fetchAllSeats();
 
       // Atualiza estado local de cada CurrentGrid.is_currentGrid
       // caso não seja equivalente ao recebido como parâmetro
@@ -166,16 +102,11 @@ export class NavigationTabs {
 
       this.tabSelected = grid;
 
-      const seatsById: SeatDto[] = [];
+      const currentArrangeOfSeats: Promise<GridDTO> = this.api.fetchAPI();
+      this.grid = (await currentArrangeOfSeats).grid;
 
-      allSeats.forEach(element => {
-        if (element.grid.grid === grid.grid) {
-          seatsById.push(element)
-        }
-      });
 
       // Converte e atualiza o grid
-      this.grid = this.convertSeatsDtoToGrid(seatsById);
       this.shareGridWithSubscribers(this.grid);
 
 

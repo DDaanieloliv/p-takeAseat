@@ -49,7 +49,8 @@ export class ChartRowsCapacity {
     this.chartsData = {
       percentOccupied: 0,
       seatsUnoccupied: 0,
-      rowOccupacyDTO: []
+      rowOccupacyDTO: [],
+      roomOccupacyDTOs: []
     };
     this.createChart();
   }

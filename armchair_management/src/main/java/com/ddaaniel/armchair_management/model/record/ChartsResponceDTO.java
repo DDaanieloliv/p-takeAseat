@@ -14,5 +14,6 @@ public class ChartsResponceDTO {
   public Float percentOccupied;
   public Integer seatsUnoccupied;
   public List<RowOccupacyDTO> rowOccupacyDTO;
+  public List<RoomOccupacyDTO> roomOccupacyDTOs;
 
 }

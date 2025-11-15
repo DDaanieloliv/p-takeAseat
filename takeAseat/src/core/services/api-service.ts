@@ -112,4 +112,28 @@ export class ApiService {
     }
   }
 
+  public async chartsNoArgs(): Promise<ChartDTO> {
+    try {
+      const response = await fetch(`http://localhost:8080/seats/charts`);
+
+      if (!response.ok) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          // Se não conseguir parsear o JSON de erro
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      return data as ChartDTO;
+    } catch (error) {
+      console.error('Error fetching charts:', error);
+      throw error;
+    }
+  }
+
+
 }

@@ -1,6 +1,8 @@
 import { Component, OnDestroy, ElementRef, ViewChild, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
+import { ApiService } from '../../../../core/services/api-service';
+import { ChartDTO } from '../../../../core/model/chartModel/chartDTO';
 
 
 
@@ -18,6 +20,7 @@ export class ChartRoomsCapacity implements AfterViewInit, OnDestroy {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: any,
+    private api: ApiService
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
 
@@ -53,6 +56,8 @@ export class ChartRoomsCapacity implements AfterViewInit, OnDestroy {
     // Destruir chart existente antes de criar um novo
     this.destroyChart();
 
+    const dataCharts: Promise<ChartDTO> = this.api.chartsNoArgs();
+
 
     const ctx = this.chartRoomsCanvas.nativeElement.getContext('2d');
     if (!ctx) {
@@ -63,6 +68,14 @@ export class ChartRoomsCapacity implements AfterViewInit, OnDestroy {
       try {
 
         // Dados dos rooms persistidos e sua respectiva taxa de ocupação
+        // const roomData = [
+        //   { name: 'Room 1', occupancy: 21 },
+        //   { name: 'Room 2', occupancy: 29 },
+        //   { name: 'Room 3', occupancy: 80 },
+        //   { name: 'Room 4', occupancy: 81 },
+        //   { name: 'Room 5', occupancy: 56 }
+        // ];
+
         const roomData = [
           { name: 'Room 1', occupancy: 21 },
           { name: 'Room 2', occupancy: 29 },

@@ -44,8 +44,8 @@ public class SeatController {
 
 
   @GetMapping
-  public ResponseEntity<List<ShortSeatDTO>> getAllSeats() {
-    return ResponseEntity.ok(serviceSeat.listAllSeats());
+  public ResponseEntity<List<SeatResponseDTO>> getAllSeats() {
+    return ResponseEntity.ok(serviceSeat.listStatusOfAllSeats());
   }
 
 
@@ -74,6 +74,11 @@ public class SeatController {
   @GetMapping("/charts/{gridId}")
   public ResponseEntity<ChartsResponceDTO> charts(@PathVariable UUID gridId) {
     return ResponseEntity.ok(serviceSeat.charts(gridId));
+  }
+
+  @GetMapping("/charts")
+  public ResponseEntity<ChartsResponceDTO> charts() {
+    return ResponseEntity.ok(serviceSeat.charts());
   }
 
   @GetMapping("/grid")
